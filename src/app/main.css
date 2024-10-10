@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+}
+
+.cr-gradient {
+  background-image: linear-gradient(
+    180deg,
+    hsl(224deg 69% 35%) 0%,
+    hsl(203deg 100% 38%) 5%,
+    hsl(186deg 100% 37%) 9%,
+    hsl(159deg 63% 57%) 13%,
+    hsl(81deg 88% 80%) 18%,
+    hsl(120deg 98% 87%) 22%,
+    hsl(154deg 100% 85%) 28%,
+    hsl(171deg 96% 86%) 33%,
+    hsl(185deg 96% 90%) 40%,
+    hsl(185deg 96% 90%) 47%,
+    hsl(185deg 96% 90%) 57%,
+    hsl(185deg 96% 90%) 70%,
+    hsl(185deg 96% 90%) 100%
+  );
+}
+
