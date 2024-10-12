@@ -1,0 +1,107 @@
+* Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
+
+** Prerequisite
+
+- Emacs Configured with Lsp-mode
+- Emacs package [[https://github.com/merrickluo/lsp-tailwindcss][lsp-tailwindcss]] installed
+
+** Basic Configure
+
+- Reference https://github.com/tailwindlabs/tailwindcss-intellisense/issues/400
+
+We will have to leverage one Tailwindcss server's experimental feature letting you telling the lsp server how to find classes in your source files using Regex. We can configure it in Emacs using ~lsp-tailwindcss-experimental-class-regex~ variable.
+
+#+BEGIN_SRC emacs-lisp
+  ;; from the issue above
+  ;; TODO
+  (setq lsp-tailwindcss-experimental-class-regex
+          (vector
+           (vector "\\[:[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\]]" "\\.([^.]*)")
+           (vector "\\(\\$ :?[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\)]" "\\.([^.]*)")
+           (vector "\\[:[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\]]" "\\.([^.]*)")
+           (vector "\\:class\\s+(\\:[^\\s\\}]*)[\\s\\}]" "[\\:.]([^.]*)")
+           (vector "\\s+(\"[^\\}\"]*)\"" "[\"\\s]([^\\s\"]*)")
+           (vector "\\:class\\s+\\[(.*)\\]" "[\"\\:]([^\\s\"]*)[\"]?")))
+#+END_SRC
+
+Then we need to tell [[https://github.com/merrickluo/lsp-tailwindcss][lsp-tailwindcss]], tailwindcss lsp should be actived in ~clojure-mode~ and its derivatives modes.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'lsp-tailwindcss-major-modes 'clojure-mode)
+(add-to-list 'lsp-tailwindcss-major-modes 'clojurec-mode)
+(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
+#+END_SRC
+
+If you are using clojure-lsp, you may also need to set
+
+#+BEGIN_SRC emacs-lisp
+(setq lsp-tailwindcss-add-on-mode t)
+#+END_SRC
+
+With this, we can have completions in strings, but it doesn't work or work reliably in hiccup shorthand.
+
+TODO
+I'm using uix, whose syntax differs from hiccup a little bit.
+
+** More Hacky Solution
+
+The problem lays in that, in Clojure mode, Emacs (and thus lsp client) treat something like ~:div.class~ as one symbol, while to the tailwindcss server, the ~.class~ should be a separate symbol. I have a hacky solution for this, and it works for me using ~cider~ along with ~lsp-mode~. I believe it won't work with clojure-lsp.
+
+#+BEGIN_SRC emacs-lisp
+  (defun akira/cape-wrap-hiccup-class (capf)
+    (lambda ()
+      (and (< (save-excursion
+                (re-search-backward "[[:space:]\n]")
+                (point))
+              (save-excursion
+                (re-search-backward "\\.")
+                (point)))
+           (funcall capf))))
+  (defun akira/set-super-capf-cider-lsp ()
+    (when (and cider-mode lsp-mode)
+      (setq-local completion-at-point-functions
+                  (list (cape-capf-inside-string #'lsp-completion-at-point)
+                        (akira/cape-wrap-hiccup-class #'lsp-completion-at-point)
+                        #'cider-complete-at-point))))
+
+  (defun akira/clojure-tailwindcss-boundary ()
+    (cons (save-excursion
+            ;;(rxt-pcre-to-elisp "[^\\w-_:]")
+            (re-search-backward "[^:_[:alnum:]-]")
+            (forward-char)
+            (point))
+          (point)))
+  (defun akira/lsp-tailwindcss-wrapper (oldfun &rest args)
+    (if (and cider-mode lsp-mode)
+        (let ((bounds-of-thing-at-point-provider-alist
+               (list
+                (cons 'symbol #'akira/clojure-tailwindcss-boundary))))
+          (apply oldfun args))
+      (apply oldfun args)))
+
+  (defun akira/tailwindcss-set-symbol-boundary ()
+    (when (and cider-mode lsp-mode)
+      (advice-add 'lsp-completion-at-point :around #'akira/lsp-tailwindcss-wrapper)))
+  (add-hook 'lsp-mode-hook #'akira/set-super-capf-cider-lsp 100)
+  (add-hook 'lsp-mode-hook #'akira/tailwindcss-set-symbol-boundary 100)
+  (with-eval-after-load 'cider
+    (add-hook 'cider-mode-hook #'akira/set-super-capf-cider-lsp 100)
+    (add-hook 'cider-mode-hook #'akira/tailwindcss-set-symbol-boundary 100)))
+#+END_SRC
+
+Emacs's completion framework works by looking at ~completion-at-point-functions~, and it will try functions in it one by one until one provides a result other than ~nil~.
+With this knowledge, the concept of the code above is very simple. We do two things:
+
+1. We only enable ~lsp-completion-at-point~ only when the cursor is in a string or there's a dot in current symbol, otherwise we use cider by fallback.
+2. We hack the ~lsp-completion-at-point~ by temporarily bind ~bounds-of-thing-at-point-provider-alist~, provide our own symbol extract function.
+
+It still has some little issues here and these, but I'm satisfied with current solution.
+
+** Showcase
+
+
+#+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:22:43
+[[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-22-43_showcase2.png]]
+
+#+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:23:10
+[[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-23-10_showcase2.png]]

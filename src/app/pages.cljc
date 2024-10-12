@@ -2,13 +2,16 @@
   (:require
    [clojure.core.async :as a]
    [uix.core :as uix :refer
-    [defui use-state use-effect use-context $]]
+    [defui use-state use-effect $]]
    [app.router :as router]
-   [app.utils :refer [use-asset] :as utils]
+   [app.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
    [reitit.core :as r]
    [stylefy.core :as stylefy :refer [use-style]]
-   #?@(:cljs [[uix.core :refer [create-context]]])))
+   [app.components :refer [btn-wrapper]]
+   #?@(:cljs [[uix.core :refer [create-context]]
+              [app.utils :refer [obj->clj]]])))
 
+(defcontext *header-context* nil)
 
 (defui blog [{{{:keys [id]} :path-params}
               :routing-data :as routing-data}]
@@ -20,31 +23,58 @@
   (let [{:keys [title id tags submmit-date modified-date author]} preview]
     ($ :div.blog-item {:class ""}
        ($ :div.relative.group
-          ($ :div.absolute.w-0.h-full.group-hover:bg-amber-200.group-hover:bg-opacity-70.group-hover:w-full.group-hover:h-full.transition-all.duration-300)
-          ($ :div.relative.flex.items-center.gap-4.p-4
-             ($ :div
-                ($ :span.text-xl.text-slate-600
-                   "Mar 5"))
-             ($ :div {:class ""}
-                ($ router/link {:href (str "blogs/" id)
-                                :class "text-3xl text-sky-950"} ($ :h1 title))))))))
+          ($ btn-wrapper
+             ($ :div.flex.items-center.gap-4.p-4
+                ($ :div
+                   ($ :span.text-xl.text-slate-600
+                      "Mar 5"))
+                ($ :div {:class ""}
+                   ($ router/link {:href (str "blogs/" id)
+                                   :class "text-3xl text-sky-950"} ($ :h1 title)))))))))
 
 (def temp-links [{:href "home" :text "HOME"}
                  {:href "about" :text "ABOUT"}
-                 {:href "PROJECTS" :text "PROJECTS"}])
+                 {:href "projects" :text "PROJECTS"}])
+
+(defui header [_]
+  ($ :div.w-full.h-full.bg-opacity-100.flex.justify-between.items-center.px-4 {:class "bg-[#193A92]"}
+     ($ :div.text-5xl.text-cyan-50.opacity-80
+        "Coruscation")
+     ($ :div.flex.items-end.flex-col
+        ($ :div.navigator-bar.flex.gap-3.text-xl.text-slate-50.opacity-80
+           (for [{:keys [href text]} temp-links]
+             ($ btn-wrapper {:key href :bg-class "group-hover:bg-yellow-400"}
+                ($ :div.px-1.group-hover:text-cyan-50 {:key href}
+                   ($ router/link {:href href}
+                      text))))))))
 
 (defui home [_]
-  (let [blogs  (use-asset "blogs")]
+  (let [blogs  (use-asset "blogs")
+        [show-header? set-header!] (use-context *header-context*)]
+    (use-effect
+     (fn []
+       #?(:cljs
+          (let [scroll-listener
+                (fn [_]
+                  (tap> (obj->clj _))
+                  (set-header! true))]
+            (js/addEventListener "scroll" scroll-listener)
+            (fn []
+              (js/removeEventListener "scroll" scroll-listener)))))
+     [])
     ($ :div.flex.flex-col.justify-center.items-center
-       ($ :div.flex.flex-col.justify-center.items-center {:class "w-7/12"}
-          ($ :div.header.my-12
-             ($ :div.title.text-9xl.text-cyan-50.text-opacity-80
-                ($ :span "Cerulean"))
-             ($ :div.flex.items-end.flex-col.mt-2
+       ($ :div.py-14.w-full.flex.justify-center.items-center.relative.cr-landscape.h-96
+          ($ :div
+             ($ :div.title.text-9xl.text-cyan-50.text-opacity-80.relative
+                ($ :span "Coruscation"))
+             ($ :div.flex.items-end.flex-col.mt-3
                 ($ :div.navigator-bar.flex.gap-3.text-xl.text-sky-900
                    (for [{:keys [href text]} temp-links]
-                     ($ router/link {:href href :key href}
-                        text)))))
+                     ($ btn-wrapper {:key href}
+                        ($ :div.px-1 {:key href}
+                           ($ router/link {:href href}
+                              text))))))))
+       ($ :div.flex.flex-col.justify-center.items-center {:class "w-7/12"}
           ($ :div
              ($ :div.mb-8 {:class "px-3.5"}
                 ($ :span.text-4xl "Latest Articles"))
@@ -62,7 +92,12 @@
    ["/about"]])
 
 (defui app [{:keys [initial-route]}]
-  ($ :div.app.h-full.w-full
-     ($ :div.w-screen.h-screen.fixed.cr-gradient.-z-50)
-     ($ router/router {:routes routes :initial-route initial-route}
-        ($ router/router-outlet))))
+  (let [[show-header? set-header!] (use-state false)]
+    (context-binding [*header-context* [show-header? set-header!]]
+      ($ :div.app.h-full.w-full
+         ($ :div.w-screen.h-screen.fixed.-z-50.bg-cyan-50.fixed)
+         ($ :div.w-screen.h-20.z-50.fixed {:class (if show-header? "" "hidden")}
+            ($ header))
+         ($ router/router {:routes routes :initial-route initial-route}
+            ($ router/router-outlet))))))
+

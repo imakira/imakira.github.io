@@ -7,22 +7,23 @@ html, body, #root {
     width: 100%;
 }
 
-.cr-gradient {
+
+.cr-landscape {
   background-image: linear-gradient(
     180deg,
-    hsl(224deg 69% 35%) 0%,
-    hsl(203deg 100% 38%) 5%,
-    hsl(186deg 100% 37%) 9%,
-    hsl(159deg 63% 57%) 13%,
-    hsl(81deg 88% 80%) 18%,
-    hsl(120deg 98% 87%) 22%,
-    hsl(154deg 100% 85%) 28%,
-    hsl(171deg 96% 86%) 33%,
-    hsl(185deg 96% 90%) 40%,
-    hsl(185deg 96% 90%) 47%,
-    hsl(185deg 96% 90%) 57%,
-    hsl(185deg 96% 90%) 70%,
-    hsl(185deg 96% 90%) 100%
+    hsl(224deg 70% 34%) 0%,
+    hsl(207deg 100% 36%) 21%,
+    hsl(198deg 100% 38%) 36%,
+    hsl(186deg 100% 37%) 48%,
+    hsl(172deg 100% 39%) 57%,
+    hsl(138deg 63% 70%) 64%,
+    hsl(81deg 89% 79%) 70%,
+    hsl(104deg 97% 85%) 75%,
+    hsl(133deg 100% 88%) 80%,
+    hsl(153deg 100% 88%) 84%,
+    hsl(166deg 100% 90%) 88%,
+    hsl(176deg 100% 93%) 93%,
+    hsl(183deg 100% 96%) 100%
   );
 }
 
