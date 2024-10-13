@@ -14,6 +14,6 @@
    [:category :string]])
 
 (def Blog
-  (->> [[:body :string]]
+  (->> [[:content :string]]
        (concat BlogPreview)
        (into [])))

@@ -1,3 +1,4 @@
+#+title: Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
 * Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
 
 ** Prerequisite

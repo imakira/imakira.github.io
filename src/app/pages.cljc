@@ -2,7 +2,7 @@
   (:require
    [clojure.core.async :as a]
    [uix.core :as uix :refer
-    [defui use-state use-effect $]]
+    [defui use-state use-effect $ use-ref]]
    [app.router :as router]
    [app.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
    [reitit.core :as r]
@@ -36,8 +36,8 @@
                  {:href "about" :text "ABOUT"}
                  {:href "projects" :text "PROJECTS"}])
 
-(defui header [_]
-  ($ :div.w-full.h-full.bg-opacity-100.flex.justify-between.items-center.px-4 {:class "bg-[#193A92]"}
+(defui header []
+  ($ :div.w-full.h-full.bg-opacity-100.flex.justify-between.items-center.px-4 {:class "bg-[#0260B3]"}
      ($ :div.text-5xl.text-cyan-50.opacity-80
         "Coruscation")
      ($ :div.flex.items-end.flex-col
@@ -50,20 +50,27 @@
 
 (defui home [_]
   (let [blogs  (use-asset "blogs")
-        [show-header? set-header!] (use-context *header-context*)]
+        [show-header? set-header!] (use-context *header-context*)
+
+        landscape-ref (use-ref nil)]
     (use-effect
      (fn []
        #?(:cljs
           (let [scroll-listener
                 (fn [_]
-                  (tap> (obj->clj _))
-                  (set-header! true))]
+                  (let [{:keys [bottom] :as rect}
+                        (obj->clj (.getBoundingClientRect @landscape-ref)
+                                  :keywordize-keys true)]
+                    (if (>(* 4 16) bottom)
+                      (set-header! true)
+                      (set-header! false))))]
             (js/addEventListener "scroll" scroll-listener)
             (fn []
               (js/removeEventListener "scroll" scroll-listener)))))
-     [])
+     [set-header!])
     ($ :div.flex.flex-col.justify-center.items-center
        ($ :div.py-14.w-full.flex.justify-center.items-center.relative.cr-landscape.h-96
+          {:ref landscape-ref}
           ($ :div
              ($ :div.title.text-9xl.text-cyan-50.text-opacity-80.relative
                 ($ :span "Coruscation"))
@@ -84,7 +91,11 @@
                                 :key (:id blog)}))))))))
 
 (def routes
-  [["/index.html" {:component home}]
+  ["" {:controllers [{:start (fn [_]
+                               (tap> [:start _]))
+                      :stop (fn [_]
+                              (tap> [:stop _]))}]}
+   ["/index.html" {:component home}]
    ["/home.html" {:component home}]
    ["/" {:component home}]
    ["/template.html" {:component home}]
@@ -92,12 +103,24 @@
    ["/about"]])
 
 (defui app [{:keys [initial-route]}]
-  (let [[show-header? set-header!] (use-state false)]
+  (let [[show-header? set-header!] (use-state #?(:cljs false
+                                                 :clj (contains? ["/" "/home.html" "/template.html"
+                                                                  "/index.html"]
+                                                                 initial-route)))]
     (context-binding [*header-context* [show-header? set-header!]]
       ($ :div.app.h-full.w-full
          ($ :div.w-screen.h-screen.fixed.-z-50.bg-cyan-50.fixed)
-         ($ :div.w-screen.h-20.z-50.fixed {:class (if show-header? "" "hidden")}
+         ($ :div.w-screen.h-20.z-50.fixed.transition-all {:class
+                                                          (if show-header? "top-0" "-top-20")}
             ($ header))
          ($ router/router {:routes routes :initial-route initial-route}
-            ($ router/router-outlet))))))
+            (let [{:keys [component] :as ctx} (use-context router/*router*)]
+              ($ router/router-outlet
+                 {:hook #?(:cljs (fn []
+                                   (let [{:keys [component] :as router} (use-context router/*router*)]
+                                     (use-effect
+                                      (fn []
+                                        (set-header! (not (= component home))))
+                                      [component])))
+                           :clj nil)})))))))
 

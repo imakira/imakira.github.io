@@ -121,22 +121,30 @@
                  item#))
              (uix.core/$ ~@body)))))
 
+
 #?(:cljs (defn obj->clj
-           [obj]
+           [obj & {:keys [keywordize-keys]}]
            (-> (fn [result key]
                  (let [v (goog.object/get obj key)]
                    (if (= "function" (goog/typeOf v))
                      result
-                     (assoc result key v))))
+                     (assoc result (if keywordize-keys
+                                     (keyword key)
+                                     key)
+                            v))))
                (reduce {} (goog.object/getKeys obj)))))
 
 #?(:cljs (defn recur-obj->clj
-           [obj]
+           [obj & {:keys [keywordize-keys]}]
            (if (goog.isObject obj)
              (-> (fn [result key]
                    (let [v (goog.object/get obj key)]
                      (if (= "function" (goog/typeOf v))
                        result
-                       (assoc result key (obj->clj v)))))
+                       (assoc result
+                              (if keywordize-keys
+                                (keyword key)
+                                key)
+                              (obj->clj v)))))
                  (reduce {} (goog.object/getKeys obj)))
              obj)))
