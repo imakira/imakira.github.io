@@ -1,5 +1,7 @@
 #+title: Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
-* Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
+#+OPTIONS: tex:dvisvgm
+
+* Make Tailwindcss Lsp work with Clojure and lsp-mode
 
 ** Prerequisite
 
@@ -106,3 +108,41 @@ It still has some little issues here and these, but I'm satisfied with current s
 
 #+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:23:10
 [[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-23-10_showcase2.png]]
+
+** Demos
+
+src_python[:exports code]{inline_code_test()}
+
+- Inline Latex \(\sum_{i=1}^{10}{i^2}\)
+
+- Latex Block
+\begin{equation}
+x=\sqrt{b}
+\end{equation}
+
+** H2 Sample Text Sample Text
+
+*** H3 Sample Text Sample Text
+
+**** H4 Sample Text Sample Text
+
+***** h5 Sample Text Sample Text
+
+
+* H1 Sample Text
+
+** H2 Sample Text Sample Text
+
+Some text in between
+
+*** H3 Sample Text Sample Text
+
+Some text in between
+
+**** H4 Sample Text Sample Text
+
+Some text in between
+
+***** h5 Sample Text Sample Text
+
+Some text in between

@@ -1,3 +1,5 @@
+@import "highlight.js/styles/github.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +8,6 @@ html, body, #root {
     height: 100%;
     width: 100%;
 }
-
 
 .cr-landscape {
   background-image: linear-gradient(
@@ -27,3 +28,35 @@ html, body, #root {
   );
 }
 
+
+.cr-document {
+    /**
+       We don't know why it works, but it works
+       for offseting the anchor (#id) for fixed header
+    */
+    h1::before, h2::before, h3::before, h4::before, h5::before {
+          content: '';
+          display: block;
+          height:      5.5rem;
+          margin-top: -5.5rem;
+          visibility: hidden;
+    }
+    h1 {
+        @apply text-5xl my-5 font-semibold;
+    }
+    h2 {
+        @apply text-4xl my-4 font-medium;
+    }
+    h3 {
+        @apply text-3xl my-3 font-medium;
+    }
+    h4 {
+        @apply text-2xl my-2 font-medium;
+    }
+    h5 {
+        @apply text-[1.35rem] my-2 font-medium;
+    }
+    p,ul,li {
+        @apply text-[1.35rem] leading-7;
+    }
+}

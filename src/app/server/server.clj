@@ -1,4 +1,4 @@
-(ns app.server
+(ns app.server.server
   (:require [clojure.string :as str]
             [uix.core :refer [defui $]]
             [uix.dom.server :as dom.server]
@@ -14,7 +14,7 @@
             [cheshire.core :as json]
             [reitit.core :as r]
             [reitit.ring :as ring]
-            [app.assets :as assets]
+            [app.server.assets :as assets]
             [app.pages :as pages]
             [app.utils :as utils]
             [app.router :as router]

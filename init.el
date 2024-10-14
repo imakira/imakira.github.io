@@ -10,13 +10,18 @@
       org-html-postamble nil
       org-html-use-infojs nil
       org-export-body-only t
-      org-export-with-toc nil)
+      org-export-with-toc nil
+      org-export-with-latex t
+      org-html-html5-fancy t
+      org-html-toplevel-hlevel 1
+      org-export-with-section-numbers nil
+      org-export-headline-levels 6)
 
 (defun org->html-to-stdout (file)
   (save-window-excursion
     (find-file file)
     (let ((keywords (org-collect-keywords '("title"))))
-      (princ (json-encode `((title . ,(alist-get keywords "title"))
+      (princ (json-encode `((title . ,(alist-get "title" keywords))
                             (content .
                                      ,(progn
                                         (org-html-export-as-html nil nil nil t)

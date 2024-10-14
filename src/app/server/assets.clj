@@ -1,12 +1,14 @@
-(ns app.assets
+(ns app.server.assets
   (:require [malli.generator :as mg]
             [app.models :as models]
+            [app.server.blog-gen :as blog-gen]
             [ring.util.http-response :as resp]))
 
 (def _mocked-blogs (mg/generate [:vector models/Blog]))
 (def _mocked-blogs
   (->> [{:id "1"
-         :title "Thoughts on the True Estimation of Living Forces"}
+         :title "Thoughts on the True Estimation of Living Forces"
+         :content (:content (blog-gen/org-file->html "blogs/demo.org"))}
         {:id "2"
          :title "Universal Natural History and Theory of the Heavens"}
         {:id "3"

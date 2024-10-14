@@ -7,9 +7,10 @@
             #?@(:cljs [["axios" :as axios]
                        [uix.core :refer [use-state use-effect]]
                        [goog.object :as goog.object]])
-            #?@(:clj [[app.assets :as assets]
+            #?@(:clj [[app.server.assets :as assets]
                       [reitit.core :as r]]))
   #?(:cljs (:require-macros [app.utils :refer [use-context context-binding defcontext if-cljs]])))
+
 
 (def SERVER_PATH "http://localhost:3001/")
 

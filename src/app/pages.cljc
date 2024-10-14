@@ -16,8 +16,10 @@
 (defui blog [{{{:keys [id]} :path-params}
               :routing-data :as routing-data}]
   (let [blog-asset (use-asset (str "blog/" id))]
-    ($ :div
-       (:body blog-asset))))
+
+    ($ :div.flex.justify-center ($ :div.cr-document.mt-20.pt-4
+                                   {:dangerouslySetInnerHTML {:__html (:content blog-asset)}
+                                    :class "w-7/12"}))))
 
 (defui blog-item [{:keys [preview onclick]}]
   (let [{:keys [title id tags submmit-date modified-date author]} preview]
@@ -103,10 +105,16 @@
    ["/about"]])
 
 (defui app [{:keys [initial-route]}]
-  (let [[show-header? set-header!] (use-state #?(:cljs false
-                                                 :clj (contains? ["/" "/home.html" "/template.html"
-                                                                  "/index.html"]
-                                                                 initial-route)))]
+  (let [[show-header? set-header!]
+        (use-state
+         #?(:clj (not
+                  ;; praise the contains?
+
+                  (.contains ["/" "/home.html" "/template.html"
+                              "/index.html"]
+                             initial-route))
+
+            :cljs false))]
     (context-binding [*header-context* [show-header? set-header!]]
       ($ :div.app.h-full.w-full
          ($ :div.w-screen.h-screen.fixed.-z-50.bg-cyan-50.fixed)
