@@ -18,8 +18,10 @@
             [app.pages :as pages]
             [app.utils :as utils]
             [app.router :as router]
+            [app.config :as config]
             [hiccup.util :as ht]
-            [stylefy.core :as stylefy]))
+            [stylefy.core :as stylefy]
+            [app.server.check :as check]))
 
 (defn template [inner serialized-assets]
   (str
@@ -59,38 +61,9 @@
                  (dom.server/render-to-string)
                  (template @*serialized-assets*)))))))
 
-(defn derive-routes [routes]
-  (let [router (r/router routes)
-        routes (r/routes router)]
-    (loop [routes routes
-           res []]
-      (if (empty? routes)
-        (into [] res)
-        (recur
-         (rest routes)
-         (let [[path arguments] (first routes)
-               {name :name {depend-route :route
-                            params-list-fn :gen-params-list} :depends} arguments]
-           (if (nil? depend-route)
-             (conj res (first routes))
-             (let [params-list (params-list-fn
-                                ((-> (r/match-by-name router depend-route)
-                                     :data
-                                     :handler)
-                                 nil))]
-               (concat res (map (fn [params]
-                                  [(-> (r/match-by-name router
-                                                        name
-                                                        params)
-                                       :path)
-                                   (-> arguments
-                                       (dissoc :route :params-list)
-                                       (assoc :path-params params))])
-                                params-list))))))))))
-
 (defn wrap-restful-response [handler]
-(fn [request]
-  (resp/ok (handler request))))
+  (fn [request]
+    (resp/ok (handler request))))
 
 (def router
 (ring/ring-handler
@@ -112,5 +85,7 @@
              wrap-json-response
              wrap-json-params))
 
+(check/environment-check)
+(assets/refresh-blogs)
 (stylefy/init)
 (jetty/run-jetty #'app {:port 3001 :join? false})

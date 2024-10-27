@@ -9,16 +9,26 @@
             [hickory.zip :as hz]
             [clojure.string :as str]))
 
-(defn html-title [hickory-tree]
-  (let [h1s (hs/select (hs/tag :h1) hickory-tree)]
-    (and (= (count h1s) 1)
-         (first (:content (first h1s))))))
+(defn extract-string [hickory-elements & {:keys [spacer]
+                                          :or {spacer " "}}]
+  (letfn [(inner [hickory-elements]
+            (->> (cond
+                   (string? hickory-elements) hickory-elements
+                   (map? hickory-elements) (inner (:content hickory-elements))
+                   true    (map inner hickory-elements))))]
+    (->> (inner hickory-elements)
+         (conj [])
+         flatten
+         (remove #(= "" (str/trim %)))
+         (str/join spacer)
+         str/trim)))
 
 (defn org->html-process [html-string]
   (->> html-string
        hk/parse
        hk/as-hickory
-       (hs/select (hs/tag :h1))))
+       (hs/select (hs/tag :h1))
+       extract-string))
 
 (defn get-code-code [hickory-tree]
   (let [class (as-> hickory-tree %
@@ -45,7 +55,7 @@
   (let [select-fn (hs/and (hs/tag :pre)
                           (hs/not (hs/class :cr-highlighted)))]
     (if-let [loc (hs/select-next-loc select-fn
-                                     (hickory.zip/hickory-zip hickory-tree))]
+                                     (hz/hickory-zip hickory-tree))]
       (loop [loc loc]
         (let [lang (get-code-code (first loc))
               result (zip/replace loc
@@ -65,8 +75,31 @@
             (zip/root result))))
       hickory-tree)))
 
+(defn wrap-in-self-reference [element]
+  {:type :element,
+   :attrs {:href (str "#" (-> element
+                              :attrs
+                              :id))}
+   :tag :a,
+   :content
+   [(update-in element [:attrs :class] (fn [classes] (str "cr-self-reference " classes)))]})
+
+(defn html-header-self-reference [hickory-tree]
+  (let [select-fn (hs/and (apply hs/or (map hs/tag [:h1 :h2 :h3 :h4 :h5]))
+                          (hs/not (hs/class :cr-self-reference)))]
+    (if-let [loc (hs/select-next-loc select-fn
+                                     (hz/hickory-zip hickory-tree))]
+      (loop [loc loc]
+        (let [result (zip/replace loc (wrap-in-self-reference (first loc)))]
+          (if-let [new-loc (hs/select-next-loc select-fn
+                                               result)]
+	    (recur new-loc)
+            (zip/root result))))
+      hickory-tree)))
+
+
 (defn org-file->html [path]
-  (let [{:keys [content title] :as result}
+  (let [{:keys [content title category tags email language author] :as result}
         (-> (sh "emacs" "--batch" "-q" "-l" "init.el"
                 "--eval" (str "(org->html-to-stdout \"" path "\")")
                 :dir (System/getProperty "user.dir"))
@@ -76,8 +109,15 @@
         hickory-tree (->> content
                           hk/parse
                           hk/as-hickory
-                          html-code-highlight)]
-    {:content (hr/hickory-to-html hickory-tree)
-     :title title}))
+                          html-code-highlight
+                          html-header-self-reference)]
+    {:id (str/lower-case (str/replace title #"[^\p{IsAlphabetic}]" "-"))
+     :content (hr/hickory-to-html hickory-tree)
+     :title title
+     :category category
+     :tags (if tags (str/split tags #" ") [])
+     :email email
+     :language language
+     :author author}))
 
-
+;; (def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))

@@ -15,14 +15,15 @@
 
 (defui blog [{{{:keys [id]} :path-params}
               :routing-data :as routing-data}]
-  (let [blog-asset (use-asset (str "blog/" id))]
+  (let [{:keys [content title] :as blog-asset} (use-asset (str "blog/" id))]
 
-    ($ :div.flex.justify-center ($ :div.cr-document.mt-20.pt-4
-                                   {:dangerouslySetInnerHTML {:__html (:content blog-asset)}
-                                    :class "w-7/12"}))))
+    ($ :div.mt-20.pt-4.flex.flex-col.items-center
+       ($ :h1.text-5xl {:class "w-7/12"} title )
+       ($ :div.cr-document {:class "w-7/12"
+                            :dangerouslySetInnerHTML {:__html (:content blog-asset)}}))))
 
 (defui blog-item [{:keys [preview onclick]}]
-  (let [{:keys [title id tags submmit-date modified-date author]} preview]
+  (let [{:keys [title id tags published-date modified-date author]} preview]
     ($ :div.blog-item {:class ""}
        ($ :div.relative.group
           ($ btn-wrapper
@@ -34,14 +35,15 @@
                    ($ router/link {:href (str "blogs/" id)
                                    :class "text-3xl text-sky-950"} ($ :h1 title)))))))))
 
-(def temp-links [{:href "home" :text "HOME"}
-                 {:href "about" :text "ABOUT"}
-                 {:href "projects" :text "PROJECTS"}])
+(def temp-links [{:href "/" :text "HOME"}
+                 {:href "/about" :text "ABOUT"}
+                 {:href "/projects" :text "PROJECTS"}])
 
 (defui header []
   ($ :div.w-full.h-full.bg-opacity-100.flex.justify-between.items-center.px-4 {:class "bg-[#0260B3]"}
-     ($ :div.text-5xl.text-cyan-50.opacity-80
-        "Coruscation")
+     ($ router/link {:href "/"}
+        ($ :div.text-5xl.text-cyan-50.opacity-80.relative.-top-1
+           "Coruscation"))
      ($ :div.flex.items-end.flex-col
         ($ :div.navigator-bar.flex.gap-3.text-xl.text-slate-50.opacity-80
            (for [{:keys [href text]} temp-links]

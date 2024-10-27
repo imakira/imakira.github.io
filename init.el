@@ -13,18 +13,25 @@
       org-export-with-toc nil
       org-export-with-latex t
       org-html-html5-fancy t
-      org-html-toplevel-hlevel 1
+      org-html-toplevel-hlevel 2
       org-export-with-section-numbers nil
       org-export-headline-levels 6)
 
 (defun org->html-to-stdout (file)
   (save-window-excursion
     (find-file file)
-    (let ((keywords (org-collect-keywords '("title"))))
-      (princ (json-encode `((title . ,(alist-get "title" keywords))
-                            (content .
-                                     ,(progn
-                                        (org-html-export-as-html nil nil nil t)
-                                        (buffer-string)))))))))
+    (let* ((keywords '("title" "category" "tags" "email" "language" "author"))
+           (kvs (org-collect-keywords keywords)))
+      (princ (json-encode (append
+                           (mapcar (lambda (kv)
+                                     (cons (downcase (car kv))
+                                           (cadr kv)))
+                                   kvs)
+                           `((content .
+                                      ,(progn
+                                         (org-html-export-as-html nil nil nil t)
+                                         (buffer-string))))))))))
 
 
+
+(org->html-to-stdout "./blogs/demo.org")

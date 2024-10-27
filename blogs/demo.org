@@ -1,16 +1,16 @@
 #+title: Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
 #+OPTIONS: tex:dvisvgm
+#+TAGS: clojure lsp tailwindcss
 
-* Make Tailwindcss Lsp work with Clojure and lsp-mode
-
-** Prerequisite
+* Prerequisite
 
 - Emacs Configured with Lsp-mode
 - Emacs package [[https://github.com/merrickluo/lsp-tailwindcss][lsp-tailwindcss]] installed
 
-** Basic Configure
+* Basic Configure
 
 - Reference https://github.com/tailwindlabs/tailwindcss-intellisense/issues/400
+
 
 We will have to leverage one Tailwindcss server's experimental feature letting you telling the lsp server how to find classes in your source files using Regex. We can configure it in Emacs using ~lsp-tailwindcss-experimental-class-regex~ variable.
 
@@ -46,7 +46,7 @@ With this, we can have completions in strings, but it doesn't work or work relia
 TODO
 I'm using uix, whose syntax differs from hiccup a little bit.
 
-** More Hacky Solution
+* More Hacky Solution
 
 The problem lays in that, in Clojure mode, Emacs (and thus lsp client) treat something like ~:div.class~ as one symbol, while to the tailwindcss server, the ~.class~ should be a separate symbol. I have a hacky solution for this, and it works for me using ~cider~ along with ~lsp-mode~. I believe it won't work with clojure-lsp.
 
@@ -100,7 +100,7 @@ With this knowledge, the concept of the code above is very simple. We do two thi
 
 It still has some little issues here and these, but I'm satisfied with current solution.
 
-** Showcase
+* Showcase
 
 
 #+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:22:43
@@ -109,7 +109,7 @@ It still has some little issues here and these, but I'm satisfied with current s
 #+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:23:10
 [[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-23-10_showcase2.png]]
 
-** Demos
+* Demos
 
 src_python[:exports code]{inline_code_test()}
 
@@ -120,29 +120,79 @@ src_python[:exports code]{inline_code_test()}
 x=\sqrt{b}
 \end{equation}
 
-** H2 Sample Text Sample Text
+* H2 Sample Text Sample Text
 
-*** H3 Sample Text Sample Text
+** H3 Sample Text Sample Text
 
-**** H4 Sample Text Sample Text
+*** H4 Sample Text Sample Text
 
-***** h5 Sample Text Sample Text
+**** h5 Sample Text Sample Text
 
 
-* H1 Sample Text
+* H2 Sample Text
 
-** H2 Sample Text Sample Text
-
-Some text in between
-
-*** H3 Sample Text Sample Text
+** H3 Sample Text Sample Text
 
 Some text in between
 
-**** H4 Sample Text Sample Text
+*** H4 Sample Text Sample Text
 
 Some text in between
 
-***** h5 Sample Text Sample Text
+**** H5 Sample Text Sample Text
 
 Some text in between
+
+
+* Common elements
+
++ /italic/
++ *bold*
++ _underline_
++ =verbatim=
++ ~code~
++ +strike-through+
+
+  Horizontal Rule
+-----
+
+* Other Element
+
+**** Table
+
+| Name  | Phone | Age |
+|-------+-------+-----|
+| Peter |  1234 |  17 |
+| Anna  |  4321 |  25 |
+
+**** Reference
+
+ #+BEGIN_QUOTE
+ Everything should be made as simple as possible,
+ but not any simpler -- Albert Einstein
+ #+END_QUOTE
+
+**** Unordered List
+
++ Item 1
++ Item 2
+  * Level 2
+    - Level 3
+      - Level 4
+    - Another Mark
++ Item 3
+  
+**** Ordered List
+
+1. Item 1
+2. Item 2
+3. Item 3
+4. Item 4
+
+**** Description List
+
++ Name :: Description
+  - Nested :: Nested Description
++ Name :: Description
+
+

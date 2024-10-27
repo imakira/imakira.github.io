@@ -7,6 +7,7 @@
 html, body, #root {
     height: 100%;
     width: 100%;
+    scroll-behavior: smooth;
 }
 
 .cr-landscape {
@@ -56,7 +57,28 @@ html, body, #root {
     h5 {
         @apply text-[1.35rem] my-2 font-medium;
     }
-    p,ul,li {
-        @apply text-[1.35rem] leading-7;
+    p {
+        @apply text-[1.35rem] leading-7 my-2;
+    }
+    pre {
+        @apply my-5 overflow-auto;
+    }
+    ul {
+        @apply list-disc;
+    }
+    ol {
+        @apply list-decimal;
+    }
+    ul ul, ol ol, ul ol, ol ul {
+        @apply  ml-8;
+    }
+    ul, ol {
+        @apply text-xl list-inside
+    }
+    blockquote {
+        @apply italic
+    }
+    hr {
+        @apply border-cyan-600 my-6 border-t-2;
     }
 }
