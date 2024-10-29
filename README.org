@@ -2,20 +2,14 @@
 
 * Project Goals
 
-** Full static generation with client-side rehydration (when Javascript is enabled)
+1. Full static generation with client-side rehydration (when Javascript is enabled)
 
-** Optional JavaScript-Free
+2. Optional JavaScript-Free
 
-** Misc
-
-*** Ergonomic TOC
-
-*** Footnode and Reference integrated with org-mode's features
-
-*** Multilingual
-
-**** Select CJK font correctly depending on a page's language
-
-Check https://heistak.github.io/your-code-displays-japanese-wrong/
-
-**** Filter articles by language? Multiple versions with different langauge for the same article?
+3. Misc
+  + Ergonomic TOC
+  + Footnode and Reference integrated with org-mode's features
+  + Multilingual
+    - Select CJK font correctly depending on a page's language
+      Check https://heistak.github.io/your-code-displays-japanese-wrong/
+    - Filter articles by language? Multiple versions with different langauge for the same article?
