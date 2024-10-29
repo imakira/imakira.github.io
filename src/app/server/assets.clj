@@ -56,7 +56,8 @@
 (defn- get-blog-from-path [path]
   (let [temp (blog-gen/org-file->html path)]
     (merge temp
-           {:language (or (:language temp)
+           {:id (str (:id temp) ".html")
+            :language (or (:language temp)
                           "en_US")
             :published-date (or (:published-date
                                  temp)
@@ -74,13 +75,13 @@
   (first (filter #(= id (:id %))
                  @*blogs*)))
 
-(defn fetch-blogs [_]
-  (map #(dissoc % :body) @*blogs*))
+(defn fetch-blogs [& rest]
+  (map #(dissoc % :content) @*blogs*))
 
-(defn- extract-ids [blogs]
+(defn fetch-blog-ids [& rest]
   (map (fn [item]
          {:id (:id item)})
-       blogs))
+       (fetch-blogs nil)))
 
 (def assets-route
   ["/assets"
@@ -90,9 +91,6 @@
                   :handler #'fetch-blog
                   :depends
                   {:route ::blogs
-                   ;; TODO, make depends/:route only check if is modified
-                   ;; let gen-params-list do all the heavy lifting
-                   ;; and give it a better name
-                   :gen-params-list
-                   extract-ids}}]])
+                   :params-list-fn
+                   fetch-blog-ids}}]])
 

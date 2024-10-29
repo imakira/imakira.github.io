@@ -1,4 +1,4 @@
-(ns app.pages
+(ns app.common.pages
   (:require
    [clojure.core.async :as a]
    [uix.core :as uix :refer
@@ -8,6 +8,7 @@
    [reitit.core :as r]
    [stylefy.core :as stylefy :refer [use-style]]
    [app.components :refer [btn-wrapper]]
+   #?@(:clj [[app.server.assets :as assets]])
    #?@(:cljs [[uix.core :refer [create-context]]
               [app.utils :refer [obj->clj]]])))
 
@@ -103,15 +104,20 @@
    ["/home.html" {:component home}]
    ["/" {:component home}]
    ["/template.html" {:component home}]
-   ["/blogs/:id" {:component blog}]
-   ["/about"]])
+   ["/blogs/:id" {:component blog
+                  :name ::blog
+                  :depends #?(:clj {:route :assets/blogs
+                                    :params-list-fn
+                                    assets/fetch-blog-ids}
+                              :cljs nil)}]
+   ;; ["/about"]
+   ])
 
 (defui app [{:keys [initial-route]}]
   (let [[show-header? set-header!]
         (use-state
          #?(:clj (not
-                  ;; praise the contains?
-
+                  ;; praise the "contains?"
                   (.contains ["/" "/home.html" "/template.html"
                               "/index.html"]
                              initial-route))

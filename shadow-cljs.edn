@@ -2,7 +2,7 @@
  :dev-http {8080 "public"}
  :builds {:app
           {:target :browser
-           :modules {:main {:entries [app.pages app.client app.utils]
+           :modules {:main {:entries [app.common.pages app.client app.utils]
                             :init-fn app.client/init}}
            :devtools {:preloads [preload devtools.preload]}}}
  :dependencies [[cider/cider-nrepl "0.47.0"] ;; mandatory (unless it's inherited from deps.edn or otherwise present in the classpath of shadow-cljs's JVM process)

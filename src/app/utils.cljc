@@ -45,7 +45,7 @@
      :clj
      (let [asset (a/<!! (fetch-asset path))]
 
-       (swap! (var-get (resolve 'app.server/*serialized-assets*) ) conj
+       (swap! (var-get (resolve 'app.server.render/*serialized-assets*) ) conj
               [path asset])
        asset)))
 
