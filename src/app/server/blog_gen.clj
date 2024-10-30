@@ -7,28 +7,15 @@
             [hickory.render :as hr]
             [hickory.select :as hs]
             [hickory.zip :as hz]
-            [clojure.string :as str]))
-
-(defn extract-string [hickory-elements & {:keys [spacer]
-                                          :or {spacer " "}}]
-  (letfn [(inner [hickory-elements]
-            (->> (cond
-                   (string? hickory-elements) hickory-elements
-                   (map? hickory-elements) (inner (:content hickory-elements))
-                   true    (map inner hickory-elements))))]
-    (->> (inner hickory-elements)
-         (conj [])
-         flatten
-         (remove #(= "" (str/trim %)))
-         (str/join spacer)
-         str/trim)))
+            [clojure.string :as str]
+            [app.server.utils :as su]))
 
 (defn org->html-process [html-string]
   (->> html-string
        hk/parse
        hk/as-hickory
        (hs/select (hs/tag :h1))
-       extract-string))
+       su/extract-string))
 
 (defn get-code-code [hickory-tree]
   (let [class (as-> hickory-tree %

@@ -1,27 +1,82 @@
 (ns app.common.pages
   (:require
    [clojure.core.async :as a]
+   [clojure.string :as str]
    [uix.core :as uix :refer
-    [defui use-state use-effect $ use-ref]]
+    [defui use-state use-effect $ use-ref use-memo]]
    [app.router :as router]
    [app.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
    [reitit.core :as r]
    [stylefy.core :as stylefy :refer [use-style]]
    [app.components :refer [btn-wrapper]]
-   #?@(:clj [[app.server.assets :as assets]])
+   #?@(:clj [[app.server.assets :as assets]
+             [hickory.core :as hc]
+             [hickory.select :as hs]
+             [app.server.utils :as su]
+             [cheshire.core :as json]])
    #?@(:cljs [[uix.core :refer [create-context]]
               [app.utils :refer [obj->clj]]])))
 
 (defcontext *header-context* nil)
 
+
+
+(defn- header-to-level [tag]
+  (case tag
+    :h2 1
+    :h3 2
+    :h4 3
+    :h5 4
+    (throw (ex-info (str "tag " tag " isn't suported")
+                    {}))))
+
+#?(:clj (defn- generate-toc-from-html-string [raw-html]
+          (let [headers (->> raw-html
+                             hc/parse
+                             hc/as-hickory
+                             (hs/select (hs/or (hs/tag :h2)
+                                               (hs/tag :h3)
+                                               (hs/tag :h4)
+                                               (hs/tag :h5))))]
+            (into [] (for [header headers]
+                       {:level (header-to-level (:tag header))
+                        :content (su/extract-string header)
+                        :id (:id (:attrs header))})))))
+
+#?(:cljs (defn- generate-toc-from-element [element]
+           (let [headers (array-seq (.querySelectorAll element "h2,h3,h4,h5"))]
+             (into [] (for [header headers]
+                        {:level (header-to-level (keyword
+                                                  (str/lower-case (.-tagName header))))
+                         :content (.-innerText header)
+                         :id (.-id header)})))))
+
+(defui toc [{:keys [toc-content]}]
+  ($ :div
+     (for [toc-item toc-content]
+       ($ :div {:key (:id toc-item)}
+          ($ :a {:href (str "#" (:id toc-item))}
+             (:content toc-item))))))
+
 (defui blog [{{{:keys [id]} :path-params}
               :routing-data :as routing-data}]
-  (let [{:keys [content title] :as blog-asset} (use-asset (str "blog/" id))]
+  (let [{:keys [content title] :as blog-asset} (use-asset (str "blog/" id))
+        toc-content (use-memo (fn []
+                                #?(:cljs (let [dummy (.createElement js/document "html")]
+                                           (set! (.-innerHTML dummy)
+                                                 content)
+                                           (generate-toc-from-element dummy))
+                                   :clj (generate-toc-from-html-string content)))
 
-    ($ :div.mt-20.pt-4.flex.flex-col.items-center
-       ($ :h1.text-5xl {:class "w-7/12"} title )
-       ($ :div.cr-document {:class "w-7/12"
-                            :dangerouslySetInnerHTML {:__html (:content blog-asset)}}))))
+                              [content])]
+    ($ :div.mt-20.pt-4.flex.flex-col.items-center.justify-center
+       ($ :div.mt-4
+          ($ :h1.text-5xl title)
+          ($ :hr.border-t-1.border-slate-500.w-full.my-4))
+       ($ :div.flex
+          ($ :div.cr-document {:dangerouslySetInnerHTML {:__html content}})
+          ($ :div {}
+             ($ toc {:toc-content toc-content}))))))
 
 (defui blog-item [{:keys [preview onclick]}]
   (let [{:keys [title id tags published-date modified-date author]} preview]
@@ -116,13 +171,9 @@
 (defui app [{:keys [initial-route]}]
   (let [[show-header? set-header!]
         (use-state
-         #?(:clj (not
-                  ;; praise the "contains?"
-                  (.contains ["/" "/home.html" "/template.html"
-                              "/index.html"]
-                             initial-route))
-
-            :cljs false))]
+         (some #(= % initial-route)
+               ["/" "/home.html" "/template.html"
+                "/index.html"]))]
     (context-binding [*header-context* [show-header? set-header!]]
       ($ :div.app.h-full.w-full
          ($ :div.w-screen.h-screen.fixed.-z-50.bg-cyan-50.fixed)
@@ -139,4 +190,3 @@
                                         (set-header! (not (= component home))))
                                       [component])))
                            :clj nil)})))))))
-

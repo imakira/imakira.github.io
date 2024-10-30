@@ -1,4 +1,4 @@
-#+title: Trying to Make Tailwindcss Lsp work with Clojure and lsp-mode
+#+title: Make Tailwindcss Lsp work with Clojure and lsp-mode
 #+OPTIONS: tex:dvisvgm
 #+TAGS: clojure lsp tailwindcss
 
