@@ -14,3 +14,12 @@
          (remove #(= "" (str/trim %)))
          (str/join spacer)
          str/trim)))
+
+
+(defn take-until
+  [pred coll]
+  (lazy-seq
+   (when-let [[f & r] (seq coll)]
+     (if (pred f)
+       (cons f (take-until pred r))
+       [f]))))

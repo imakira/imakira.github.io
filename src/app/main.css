@@ -42,8 +42,14 @@ html, body, #root {
           margin-top: -5.5rem;
           visibility: hidden;
     }
+    h1,h2,h3,h4,h5{
+        @apply text-neutral-700;
+    }
+    p,ul,ol,blockquote,li {
+        @apply text-[#424242];
+    }
     h1 {
-        @apply text-5xl my-5 font-semibold;
+        @apply text-5xl my-5 font-semibold ;
     }
     h2 {
         @apply text-4xl my-4 font-medium;

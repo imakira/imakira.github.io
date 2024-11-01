@@ -19,8 +19,6 @@
 
 (defcontext *header-context* nil)
 
-
-
 (defn- header-to-level [tag]
   (case tag
     :h2 1
@@ -51,32 +49,69 @@
                          :content (.-innerText header)
                          :id (.-id header)})))))
 
-(defui toc [{:keys [toc-content]}]
-  ($ :div
-     (for [toc-item toc-content]
-       ($ :div {:key (:id toc-item)}
-          ($ :a {:href (str "#" (:id toc-item))}
-             (:content toc-item))))))
+(defui toc [{:keys [toc-content class current-header-id]}]
+  (let [toc-item-active-classes "text-[#0260B3]"]
+    ($ :div.text-lg.border-l.border-neutral-400 {:class class}
+       ($ :ul
+          (for [{:keys [content id level] :as toc-item} toc-content]
+            ($ :li.my-1.list-inside.text-neutral-600  {:key id}
+               ;; "pl-0 pl-4 pl-8 pl-12 pl-16 pl-20"
+               ;; make tailwindcss-cli happy, I wonder if there's a better method
+               ($ btn-wrapper
+                  ($ :div.group.w-full.h-full
+                     ($ :a.h-12.transition-all.w-full.h-full.inline-block.flex.flex-col.justify-center
+                        {:class (str "group-hover:text-[#0260B3] "
+                                     (str "pl-" (* 4 level))
+                                     (if (= current-header-id id)
+                                       (str " " toc-item-active-classes)
+                                       ""))
+                         :href (str "#" id)}
+                        ($ :span content))))))))))
 
 (defui blog [{{{:keys [id]} :path-params}
               :routing-data :as routing-data}]
   (let [{:keys [content title] :as blog-asset} (use-asset (str "blog/" id))
-        toc-content (use-memo (fn []
-                                #?(:cljs (let [dummy (.createElement js/document "html")]
-                                           (set! (.-innerHTML dummy)
-                                                 content)
-                                           (generate-toc-from-element dummy))
-                                   :clj (generate-toc-from-html-string content)))
-
-                              [content])]
-    ($ :div.mt-20.pt-4.flex.flex-col.items-center.justify-center
-       ($ :div.mt-4
-          ($ :h1.text-5xl title)
-          ($ :hr.border-t-1.border-slate-500.w-full.my-4))
-       ($ :div.flex
-          ($ :div.cr-document {:dangerouslySetInnerHTML {:__html content}})
-          ($ :div {}
-             ($ toc {:toc-content toc-content}))))))
+        toc-content (use-memo
+                     (fn []
+                       #?(:cljs (let [dummy (.createElement js/document "html")]
+                                  (set! (.-innerHTML dummy)
+                                        content)
+                                  (generate-toc-from-element dummy))
+                          :clj (generate-toc-from-html-string content)))
+                     [content])
+        doc-ref (use-ref nil)
+        [current-header-id set-current-header-id!] (use-state nil)]
+    #?(:cljs
+       (use-effect (fn []
+                     (let [scroll-event
+                           (fn [_]
+                             (let [headers (.querySelectorAll @doc-ref "h1,h2,h3,h4,h5")
+                                   current-header (or (some->> headers
+                                                               (take-while
+                                                                (fn [header]
+                                                                  (< (.-top (.getBoundingClientRect header))
+                                                                     10)))
+                                                               last)
+                                                      (first headers))]
+                               (when current-header
+                                 (set-current-header-id! (.-id current-header)))))]
+                       (js/addEventListener "scroll" scroll-event)
+                       (fn []
+                         (js/removeEventListener "scroll" scroll-event))))
+                   []))
+    ($ :div
+       ($ :div.mt-20.pt-4.flex.flex-col.items-center.justify-center
+          ($ :div.flex.gap-12
+             ($ :div.px-12
+                ($ :div.mt-4
+                   ($ :h1.font-medium.text-neutral-700 {:class "text-[2.75rem]"} title)
+                   ($ :hr.border-t-1.border-slate-500.w-full.my-1))
+                ($ :div.cr-document {:ref doc-ref
+                                     :dangerouslySetInnerHTML {:__html content}}))
+             ($ :div.mt-4.min-w-96)))
+       ($ toc {:class "w-96 fixed right-0 top-36 z-200 max-h-[80vh] overflow-y-auto select-none"
+               :toc-content toc-content
+               :current-header-id current-header-id}))))
 
 (defui blog-item [{:keys [preview onclick]}]
   (let [{:keys [title id tags published-date modified-date author]} preview]
@@ -121,7 +156,7 @@
                   (let [{:keys [bottom] :as rect}
                         (obj->clj (.getBoundingClientRect @landscape-ref)
                                   :keywordize-keys true)]
-                    (if (>(* 4 16) bottom)
+                    (if (> (* 4 16) bottom)
                       (set-header! true)
                       (set-header! false))))]
             (js/addEventListener "scroll" scroll-listener)
