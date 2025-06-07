@@ -16,6 +16,7 @@
 (def Blog
   (->> [[:content :string]
         [:email :string]
-        [:language :string]]
+        [:language :string]
+        [:show-toc? :boolean]]
        (concat BlogPreview)
        (into [])))

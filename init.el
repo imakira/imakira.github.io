@@ -34,4 +34,4 @@
 
 
 
-(org->html-to-stdout "./blogs/demo.org")
+(org->html-to-stdout (concat default-directory "blogs/demo.org"))

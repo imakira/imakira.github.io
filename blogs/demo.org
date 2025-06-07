@@ -1,6 +1,7 @@
 #+title: Make Tailwindcss Lsp work with Clojure and lsp-mode
 #+OPTIONS: tex:dvisvgm
 #+TAGS: clojure lsp tailwindcss
+#+CATEGORY: Coding
 
 * Prerequisite
 
@@ -112,13 +113,6 @@ It still has some little issues here and these, but I'm satisfied with current s
 * Demos
 
 src_python[:exports code]{inline_code_test()}
-
-- Inline Latex \(\sum_{i=1}^{10}{i^2}\)
-
-- Latex Block
-\begin{equation}
-x=\sqrt{b}
-\end{equation}
 
 * H2 Sample Text Sample Text
 

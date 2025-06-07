@@ -21,3 +21,5 @@ node_modules/
 .idea
 *.iml
 out
+note.org
+.clj-kondo

@@ -6,7 +6,7 @@
    [app.router :as router]
    [app.utils :refer [use-asset] :as utils]
    [reitit.core :as r]
-   [stylefy.core :as stylefy :refer [use-style]]
+   ;; [stylefy.core :as stylefy :refer [use-style]]
    #?@(:cljs [[uix.core :refer [create-context]]])))
 
 (defui btn-wrapper [{:keys [children class bg-class]}]

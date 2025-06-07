@@ -1,0 +1,22 @@
+* Running the Project
+
+In shell:
+
+#+BEGIN_SRC bash
+npm run tailwindcss
+#+END_SRC
+
+In Emacs:
+
+~cider-jack-in-clj&cljs~ -> ~shadow~ -> ~:app~
+
+Then execute the code in ~server.clj~ to launch the server
+
+
+* Update Dependencies
+
+#+BEGIN_SRC bash
+neil dep upgrade
+#+END_SRC
+
+

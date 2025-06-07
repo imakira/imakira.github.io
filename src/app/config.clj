@@ -6,3 +6,5 @@
 
 (def ^:dynamic *output* (str (System/getProperty "user.dir")
                              "/out"))
+
+

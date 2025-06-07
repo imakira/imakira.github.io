@@ -5,8 +5,7 @@
    [reitit.core :as r]
    [app.utils :as utils :refer [use-context]]
    #?@(:cljs [[reitit.frontend.easy :as rfe]
-              [reitit.frontend.controllers :as rfc]
-              [app.utils :refer [obj->clj recur-obj->clj]]])))
+              [reitit.frontend.controllers :as rfc]])))
 
 
 (utils/defcontext *router* nil)
@@ -18,6 +17,7 @@
 
         [route set-route!] (use-state #?(:clj (or initial-route "/index.html")
                                          :cljs (or initial-route js/location.pathname)))
+        [routing-state set-routing-state!] (use-state {})
         old-routers (use-ref nil)
 
         {{:keys [component ]} :data :as routing-data}
@@ -37,31 +37,43 @@
 
     (use-effect (fn []
                   #?(:cljs
-                     (reset! old-routers (rfc/apply-controllers
-                                          @old-routers routing-data))))
-                [routing-data])
+                     (reset! old-routers
+                             (rfc/apply-controllers
+                              @old-routers
+                              (update-in routing-data [:data]
+                                         (fn [data]
+                                           (merge data {:routing-state routing-state
+                                                        :set-routing-state! set-routing-state!})))))))
+                [routing-data routing-state ])
 
     (utils/context-binding
         [*router* {:route route
                    :set-route! set-route!
                    :reitit-router reitit-router
                    :routing-data routing-data
-                   :component component}]
+                   :component component
+                   :routing-state routing-state
+                   :set-routing-state! set-routing-state!}]
       ($ :<>
          children))))
 
 
 (defui router-outlet [{:keys [hook]}]
   (let [{:keys [component routing-data] :as router-data} (utils/use-context *router*)]
-    (print "hook: " hook)
     (when hook
       (hook))
-    ($ component {:routing-data routing-data})))
+    ($ component (merge-with into
+                             (-> routing-data :data :extra-data)
+                             routing-data))))
 
 (defn navigate-to! [href]
   #?(:clj (throw (UnsupportedOperationException. "Operation navigate-to! isn't supported in CLJ."))
-     :cljs (do (js/history.pushState js/undefined js/undefined href)
-               (js/dispatchEvent (js/PopStateEvent. "popstate", js/undefined)))))
+     :cljs (do
+             (if (re-matches #"^https?://.*$" href)
+               (set! (.. js/window -location -href) 
+                     href)
+               (do (js/history.pushState js/undefined js/undefined href)
+                   (js/dispatchEvent (js/PopStateEvent. "popstate", js/undefined)))))))
 
 (defui link [{:keys [href children style class]}]
   (let [onclick (fn [e]

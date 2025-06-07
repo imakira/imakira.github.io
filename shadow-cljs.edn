@@ -4,7 +4,8 @@
           {:target :browser
            :modules {:main {:entries [app.common.pages app.client app.utils]
                             :init-fn app.client/init}}
-           :devtools {:preloads [preload devtools.preload]}}}
+           :devtools {:preloads [preload devtools.preload]}
+           :compiler-options {:source-map true}}}
  :dependencies [[cider/cider-nrepl "0.47.0"] ;; mandatory (unless it's inherited from deps.edn or otherwise present in the classpath of shadow-cljs's JVM process)
                 [refactor-nrepl/refactor-nrepl "3.9.0"]] ;; refactor-nrepl is optional
 

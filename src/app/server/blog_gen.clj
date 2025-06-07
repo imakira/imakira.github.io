@@ -8,7 +8,8 @@
             [hickory.select :as hs]
             [hickory.zip :as hz]
             [clojure.string :as str]
-            [app.server.utils :as su]))
+            [app.server.utils :as su])
+  (:import (com.google.common.io Files)))
 
 (defn org->html-process [html-string]
   (->> html-string
@@ -84,6 +85,20 @@
             (zip/root result))))
       hickory-tree)))
 
+(defn remove-org-id [element]
+  )
+
+(defn remove-org-classes [element]
+  )
+
+(defn html-remove-org-fluff [hickory-tree]
+  (let [zipper (hz/hickory-zip hickory-tree)]
+    (loop [loc zipper]
+      (if (zip/end? loc)
+        (zip/root loc)
+        (-> loc
+            (zip/replace (zip/node loc))
+            zip/next)))))
 
 (defn org-file->html [path]
   (let [{:keys [content title category tags email language author] :as result}
@@ -98,7 +113,9 @@
                           hk/as-hickory
                           html-code-highlight
                           html-header-self-reference)]
-    {:id (str/lower-case (str/replace title #"[^\p{IsAlphabetic}]" "-"))
+    {:id (if title
+           (str/lower-case (str/replace title #"[^\p{IsAlphabetic}]" "-"))
+           (Files/getNameWithoutExtension path))
      :content (hr/hickory-to-html hickory-tree)
      :title title
      :category category
@@ -107,4 +124,4 @@
      :language language
      :author author}))
 
-;; (def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))
+#_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))

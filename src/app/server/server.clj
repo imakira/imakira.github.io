@@ -22,7 +22,10 @@
 
 (defn wrap-restful-response [handler]
   (fn [request]
-    (resp/ok (handler request))))
+    (let [result (handler request)]
+      (if result
+        (resp/ok (handler request))
+        (resp/not-found)))))
 
 (defn client-render-wrapper [{uri :uri :as request}]
   (resp/ok (render/render uri)))
@@ -36,9 +39,9 @@
       assets/assets-route]])))
 
 (defn handler [request]
-{:status 200
- :headers {"Content-Type" "text/html"}
- :body "Hello World"})
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body "Hello World"})
 
 (def app (-> #'router
              (wrap-file "./public")

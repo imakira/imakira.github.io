@@ -3,22 +3,26 @@
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
     "release": "shadow-cljs -A:dev release app && yarn styles-release",
-    "tailwindcss": "npx tailwindcss -i ./src/app/main.css -o ./public/main.css --watch",
-    "styles-dev": "onchange -o '> public/main.css && lightningcss --bundle public/main.css -o public/main.css' -i 'src/**/*.css' -- bash -c 'cat src/**/*.css'",
-    "styles-release": "cat src/**/*.css > public/main.css && lightningcss --minify --bundle public/main.css -o public/main.css"
+    "styles-dev": "npx @tailwindcss/cli -i ./src/app/main.css -o ./public/main.css --watch"
   },
   "devDependencies": {
-    "lightningcss-cli": "^1.19.0",
+    "@tailwindcss/postcss": "^4.1.7",
     "onchange": "^7.1.0",
+    "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-refresh": "^0.14.0",
     "shadow-cljs": "2.22.9",
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^4.1.7"
   },
   "dependencies": {
+    "@js-joda/core": "3.2.0",
+    "@js-joda/locale_en-us": "3.1.1",
+    "@tailwindcss/cli": "^4.1.7",
+    "autoprefixer": "^10.4.21",
     "axios": "^1.7.7",
-    "highlight.js": "^11.10.0"
+    "highlight.js": "^11.10.0",
+    "postcss-cli": "^11.0.1"
   }
 }

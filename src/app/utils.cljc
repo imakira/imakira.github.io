@@ -9,7 +9,8 @@
                        [goog.object :as goog.object]])
             #?@(:clj [[app.server.assets :as assets]
                       [reitit.core :as r]]))
-  #?(:cljs (:require-macros [app.utils :refer [use-context context-binding defcontext if-cljs]])))
+  #?(:cljs (:require-macros [app.utils :refer [use-context context-binding defcontext if-cljs]]))
+  #?(:cljs (:import [goog.async Throttle Debouncer])))
 
 
 (def SERVER_PATH "http://localhost:3001/")
@@ -112,40 +113,67 @@
             `(uix.core/use-context ~context)
             `~context)))
 
-#?(:clj
-   (defmacro $ [& body]
-     (if (cljs-env? &env)
-       `(uix.core/$ ~@body)
-       `(map (fn [item#]
-               (if (fn? item#)
-                 (bound-fn* item#)
-                 item#))
-             (uix.core/$ ~@body)))))
+#?(:cljs (defn disposable->function [disposable listener interval]
+           (let [disposable-instance (disposable. listener interval)]
+             (fn [& args]
+               (.apply (.-fire disposable-instance) disposable-instance (to-array args))))))
 
+#?(:cljs (defn throttle [listener interval]
+           (disposable->function Throttle listener interval)))
 
-#?(:cljs (defn obj->clj
-           [obj & {:keys [keywordize-keys]}]
-           (-> (fn [result key]
-                 (let [v (goog.object/get obj key)]
-                   (if (= "function" (goog/typeOf v))
-                     result
-                     (assoc result (if keywordize-keys
-                                     (keyword key)
-                                     key)
-                            v))))
-               (reduce {} (goog.object/getKeys obj)))))
+#?(:cljs (defn debounce [listener interval]
+           (disposable->function Debouncer listener interval)))
+
 
 #?(:cljs (defn recur-obj->clj
-           [obj & {:keys [keywordize-keys]}]
-           (if (goog.isObject obj)
-             (-> (fn [result key]
-                   (let [v (goog.object/get obj key)]
-                     (if (= "function" (goog/typeOf v))
-                       result
-                       (assoc result
-                              (if keywordize-keys
-                                (keyword key)
-                                key)
-                              (obj->clj v)))))
-                 (reduce {} (goog.object/getKeys obj)))
+           [obj & {:keys [keywordize-keys max-level]
+                   :or {keywordize-keys true}}]
+           (cond
+             (and (not (nil? max-level))
+                  (= max-level 0))
+             obj
+
+             (js/Array.isArray obj)
+             (into [] (map (fn [item]
+                             (recur-obj->clj item
+                                             :keywordize-keys keywordize-keys
+                                             :max-level (if max-level
+                                                          (- max-level 1)
+                                                          nil)))
+                           obj))
+
+             (goog.isObject obj)
+             (into {} (-> (fn [result key]
+                            (let [v (goog.object/get obj key)]
+                              (cond (= "function" (goog/typeOf v))
+                                    result
+
+                                    :else
+                                    (assoc result
+                                           (if keywordize-keys
+                                             (keyword key)
+                                             key)
+                                           (recur-obj->clj v
+                                                           :keywordize-keys keywordize-keys
+                                                           :max-level (if max-level
+                                                                        (- max-level 1)
+                                                                        nil))))))
+                          (reduce {} (goog.object/getKeys obj))))
+             :else
              obj)))
+
+#?(:cljs (defn obj->clj [obj & {:keys [keywordize-keys]
+                                :or {keywordize-keys true}}]
+           (recur-obj->clj obj :max-level 1)))
+
+(defn index-by
+  [f coll]
+  (first (first (filter (fn [[index item]]
+                          (f item))
+                        (map-indexed vector coll)))))
+
+#?(:cljs (defn set-css-variable! [var value & [element]]
+           (-> (or element js/document)
+               (.-documentElement)
+               (.-style)
+               (.setProperty var value))))
