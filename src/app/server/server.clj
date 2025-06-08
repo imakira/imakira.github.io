@@ -35,8 +35,12 @@
    (ring/router
     [["" {:handler #'client-render-wrapper}
       pages/routes]
+     ["" {:middleware [wrap-json-response
+                       wrap-json-params
+                       wrap-restful-response]}
+      assets/json-assets-route]
      ["" {:middleware [wrap-restful-response]}
-      assets/assets-route]])))
+      assets/resource-route]])))
 
 (defn handler [request]
   {:status 200
@@ -47,9 +51,13 @@
              (wrap-file "./public")
              (cors/wrap-cors :access-control-allow-origin [#"http://localhost:8080" #"http://localhost:8000"]
                              :access-control-allow-methods [:get :put :post :delete])
-             wrap-json-response
              wrap-json-params))
 
 (check/environment-check)
 (assets/refresh-blogs)
 (def ^:dynamic *jetty* (jetty/run-jetty #'app {:port 3001 :join? false}))
+
+#_(do
+    (.stop *jetty*)
+    (.start *jetty*))
+

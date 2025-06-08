@@ -7,13 +7,17 @@
             [ring.util.http-response :as resp]
             [app.config :as config]
             [taoensso.timbre :as timbre]
-            [app.common.constants :as constants])
+            [app.common.constants :as constants]
+            [app.common.commons :as commons]
+            [cljc.java-time.zoned-date-time :as zoned-date-time]
+            [clojure.data.xml :as xml]
+            [app.user-config :as user-config])
   (:import (com.google.common.io Files)
            (java.time Instant ZonedDateTime ZoneId)
            (java.time.temporal ChronoUnit)
            (java.time.format DateTimeFormatter)))
 
-(def ^:dynamic *blogs* (atom []))
+(defonce ^:dynamic *blogs* (atom []))
 
 (defn- special-page? [blog]
   (some (fn [name]
@@ -70,7 +74,7 @@
   (let [temp (blog-gen/org-file->html path)]
     (as-> temp blog
       (merge blog {:file-path path
-                   :id (str (:id temp) ".html")
+                   :id (:id temp)
                    :language (or (:language temp)
                                  "en_US")
                    :published-date (or (:published-date
@@ -120,7 +124,7 @@
                         (:category item)))
                    (fetch-blogs))))
 
-(def assets-route
+(def json-assets-route
   ["/assets"
    ["/blogs"  {:name ::blogs
                :handler #'fetch-blogs}]
@@ -137,3 +141,37 @@
                            :depends
                            {:route ::categories
                             :params-list-fn #'fetch-categories}}]])
+
+(defn generate-rss [& _]
+  (xml/indent-str (xml/element :feed  {:xmlns "http://www.w3.org/2005/Atom"}
+                               (xml/element :title {} user-config/title)
+                               (xml/element :link {:href user-config/root-url})
+                               (xml/element :updated {}
+                                            (->> (fetch-all-blogs)
+                                                 (map :modified-date)
+                                                 (map commons/parse-iso8601)
+                                                 (sort (fn [a b]
+                                                         (zoned-date-time/compare-to a b)))
+                                                 reverse
+                                                 first
+                                                 (#(.toString %))))
+                               (xml/element :author {} user-config/author)
+                               (xml/element :id {} user-config/root-url)
+
+                               (for [blog (fetch-blogs)]
+                                 (let [href (str user-config/root-url "/blogs/" (:id blog) ".html")]
+                                   (xml/element :entry {}
+                                                (xml/element :title {:type "html"}
+                                                             (:title blog))
+                                                (xml/element :link {:href href})
+                                                (xml/element :updated {}
+                                                             (:modified-date blog))
+                                                (xml/element :id {}
+                                                             href)
+                                                (xml/element :content {:type "html"}
+                                                             (:content (fetch-blog {:path-params {:id (:id blog)}})))))))))
+
+(def resource-route
+  ["/res"
+   ["/atom.xml" {:name :rss
+                 :handler #'generate-rss}]])

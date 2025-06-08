@@ -99,8 +99,6 @@
        (fn []
          (do ~@body))))))
 
-(def ^:dynamic *a* 1)
-
 
 #?(:clj (defmacro context-binding [bindings & body]
           (if (cljs-env? &env)
@@ -166,14 +164,12 @@
                                 :or {keywordize-keys true}}]
            (recur-obj->clj obj :max-level 1)))
 
-(defn index-by
-  [f coll]
-  (first (first (filter (fn [[index item]]
-                          (f item))
-                        (map-indexed vector coll)))))
 
 #?(:cljs (defn set-css-variable! [var value & [element]]
            (-> (or element js/document)
                (.-documentElement)
                (.-style)
                (.setProperty var value))))
+
+
+

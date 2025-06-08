@@ -5,10 +5,11 @@
    [uix.core :as uix :refer
     [defui use-state use-effect $ use-ref use-memo]]
    [app.router :as router]
+   [app.user-config :as user-config]
    [app.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
    [reitit.core :as r]
    [app.components :refer [btn-wrapper]]
-   [app.common.constants :as constants]
+   [app.common.commons :as commons]
    [cljc.java-time.format.date-time-formatter :as date-time-formatter]
    [cljc.java-time.zoned-date-time :as zoned-date-time]
    [cljc.java-time.zone-id :as zone-id]
@@ -26,8 +27,6 @@
 
 (defcontext *header-context* nil)
 
-(defn parse-iso8601 [timestr]
-  (zoned-date-time/parse timestr date-time-formatter/iso-offset-date-time))
 
 (defn date-time-to-readable-string [zoned-date-time]
   (.format zoned-date-time (-> "LLL dd, yyyy"
@@ -75,116 +74,116 @@
                          :id (.-id header)})))))
 
 (defui toc-mobile [{:keys [toc-content current-header-id]}]
-       (let [toc-item-active-classes "text-[#0260B3]"
-             toc-header-ref (use-ref nil)
-             toc-mobile-control (use-ref nil)
-             toc-mobile-content (use-ref nil)
-             toc-mobile-label (use-ref nil)
-             [toc-stuck? set-toc-stuck!] (use-state false)
-             current-header-index (if (and current-header-id
-                                           toc-content)
-                                    (utils/index-by (fn [item]
-                                                      (= current-header-id
-                                                         (:id item)))
-                                                    toc-content))
-             escape-string (fn [s]
-                             (str "\""
-                                  (-> s
-                                      (str/replace "\\" "\\\\")
-                                      (str/replace "\"" "\\\""))
-                                  "\""))
-             [toc-open? set-toc-open!] (use-state false)]
+  (let [toc-item-active-classes "text-[#0260B3]"
+        toc-header-ref (use-ref nil)
+        toc-mobile-control (use-ref nil)
+        toc-mobile-content (use-ref nil)
+        toc-mobile-label (use-ref nil)
+        [toc-stuck? set-toc-stuck!] (use-state false)
+        current-header-index (if (and current-header-id
+                                      toc-content)
+                               (commons/index-by (fn [item]
+                                                   (= current-header-id
+                                                      (:id item)))
+                                                 toc-content))
+        escape-string (fn [s]
+                        (str "\""
+                             (-> s
+                                 (str/replace "\\" "\\\\")
+                                 (str/replace "\"" "\\\""))
+                             "\""))
+        [toc-open? set-toc-open!] (use-state false)]
 
-         #?(:cljs (use-effect (fn []
-                                (let [callback (fn [[e]]
-                                                 (set-toc-stuck! (not (.-isIntersecting e))))
-                                      observer (js/IntersectionObserver. callback
-                                                                         #js {:rootMargin "-1px 0px 0px 0px"
-                                                                              :threshold #js [1]})]
-                                  (if @toc-header-ref (.observe observer @toc-header-ref)) 
-                                  (fn []
-                                    (if @toc-header-ref (.unobserve observer @toc-header-ref)))))
-                              []))
-         #?(:cljs (use-effect (fn []
-                                (if toc-stuck?
-                                  (utils/set-css-variable! "--toc-mobile-offset"
-                                                           (str "-"
-                                                                (* 2 (+ 1 current-header-index))
-                                                                "rem")))
-                                (fn []
-                                  (utils/set-css-variable! "--toc-mobile-offset" "initial")))
-                              [current-header-index toc-stuck?]))
+    #?(:cljs (use-effect (fn []
+                           (let [callback (fn [[e]]
+                                            (set-toc-stuck! (not (.-isIntersecting e))))
+                                 observer (js/IntersectionObserver. callback
+                                                                    #js {:rootMargin "-1px 0px 0px 0px"
+                                                                         :threshold #js [1]})]
+                             (if @toc-header-ref (.observe observer @toc-header-ref)) 
+                             (fn []
+                               (if @toc-header-ref (.unobserve observer @toc-header-ref)))))
+                         []))
+    #?(:cljs (use-effect (fn []
+                           (if toc-stuck?
+                             (utils/set-css-variable! "--toc-mobile-offset"
+                                                      (str "-"
+                                                           (* 2 (+ 1 current-header-index))
+                                                           "rem")))
+                           (fn []
+                             (utils/set-css-variable! "--toc-mobile-offset" "initial")))
+                         [current-header-index toc-stuck?]))
 
-         #?(:cljs (use-effect (fn []
-                                (if @toc-mobile-control
-                                  (set! (.-checked @toc-mobile-control)
-                                        toc-open?))
-                                (fn []))
-                              [toc-open?]))
+    #?(:cljs (use-effect (fn []
+                           (if @toc-mobile-control
+                             (set! (.-checked @toc-mobile-control)
+                                   toc-open?))
+                           (fn []))
+                         [toc-open?]))
 
-         #?(:cljs
-            (use-effect (fn []
-                          (let [callback
-                                (fn [e]
-                                  (if (and toc-open?
-                                           @toc-mobile-content
-                                           @toc-mobile-label
-                                           (not (.contains @toc-mobile-label
-                                                           (.-srcElement e)))
-                                           (not (.contains @toc-mobile-content
-                                                           (.-srcElement e))))
-                                    (set-toc-open! false)))]
-                            (js/addEventListener "click" callback)
-                            (fn []
-                              (js/removeEventListener "click" callback))))
-                        [toc-open?]))
+    #?(:cljs
+       (use-effect (fn []
+                     (let [callback
+                           (fn [e]
+                             (if (and toc-open?
+                                      @toc-mobile-content
+                                      @toc-mobile-label
+                                      (not (.contains @toc-mobile-label
+                                                      (.-srcElement e)))
+                                      (not (.contains @toc-mobile-content
+                                                      (.-srcElement e))))
+                               (set-toc-open! false)))]
+                       (js/addEventListener "click" callback)
+                       (fn []
+                         (js/removeEventListener "click" callback))))
+                   [toc-open?]))
 
 
-         ($ :<>
-            ($ :div {:ref toc-header-ref})
-            ($ :input.hidden {:type "checkbox"
-                              :id "toc-mobile-control"
-                              :ref toc-mobile-control})
-            ($ :label
-               {:for "toc-mobile-control"
-                :class (str " toc-header cursor-pointer select-none block text-sky-700 border-1 pl-2 "
-                            " flex justify-between items-center mt-3 bg-white sticky top-0 h-8 pr-1 "
-           	            " md:hidden ml-[1px] relative ")
-                :on-click (fn [e]
-                            (.preventDefault e)
-                            (set-toc-open! (not toc-open?)))
-                :ref toc-mobile-label}
-               ($ :div.relative.h-full.w-full.overflow-hidden
-                  ($ :div.text-lg.toc-header-text.relative
-                     {:class (str " w-full transition-all ")}
-                     (concat [($ :div.h-8.w-96 {:key "TOC"} "Table Of Content")]
-                             (for [toc-item toc-content]
-                               ($ :div.h-8.w-96 {:key (:id toc-item)}
-                                  (:content toc-item))))))
-               ($ :span.material-symbols-outlined.checked:rotate-180.transition-all.dropdown-icon
-                  "keyboard_arrow_down"))
-            ($ :div.toc-mobile-wrapper2.h-1.sticky.top-8
-               ($ :div.grid.toc-mobile-wrapper.transition-all.border-neutral-400.border-l-1.bg-white
-                  {:class  "md:hidden ml-[1px] "}
-                  ($ :ul.toc-mobile-content
-                     {:class "text-[1.05rem] 2xl:text-lg "
-                      :ref toc-mobile-content}
-                     (for [{:keys [content id level] :as toc-item} toc-content]
-                       ($ :li.my-1.list-inside.text-neutral-600
-                          {:key id}
-                          ;; to make tailwindcss-cli happy
-                          ;; "pl-0 pl-4 pl-8 pl-12 pl-16 pl-20"
-                          ($ btn-wrapper
-                             ($ :div.group.w-full.h-full
-                                ($ :a.h-12.transition-all.w-full.h-full.inline-block.flex.flex-col.justify-center
-                                   {:class (str "group-hover:text-[#0260B3] "
-                                                (str "pl-" (* 4 level))
-                                                (if (= current-header-id id)
-                                                  (str " " toc-item-active-classes)
-                                                  ""))
-                                    :href (str "#" id)
-                                    :on-click (fn [_] (set-toc-open! false))}
-                                   ($ :span content))))))))))))
+    ($ :<>
+       ($ :div {:ref toc-header-ref})
+       ($ :input.hidden {:type "checkbox"
+                         :id "toc-mobile-control"
+                         :ref toc-mobile-control})
+       ($ :label
+          {:for "toc-mobile-control"
+           :class (str " toc-header cursor-pointer select-none block text-sky-700 border-1 pl-2 "
+                       " flex justify-between items-center mt-3 bg-white sticky top-0 h-8 pr-1 "
+           	       " md:hidden ml-[1px] relative ")
+           :on-click (fn [e]
+                       (.preventDefault e)
+                       (set-toc-open! (not toc-open?)))
+           :ref toc-mobile-label}
+          ($ :div.relative.h-full.w-full.overflow-hidden
+             ($ :div.text-lg.toc-header-text.relative
+                {:class (str " w-full transition-all ")}
+                ($ :div.h-8.w-96 {:key "TOC"} "Table Of Content")
+                (for [toc-item toc-content]
+                  ($ :div.h-8.w-96 {:key (:id toc-item)}
+                     (:content toc-item)))))
+          ($ :span.material-symbols-outlined.checked:rotate-180.transition-all.dropdown-icon
+             "keyboard_arrow_down"))
+       ($ :div.toc-mobile-wrapper2.h-1.sticky.top-8
+          ($ :div.grid.toc-mobile-wrapper.transition-all.border-neutral-400.border-l-1.bg-white
+             {:class  "md:hidden ml-[1px] "}
+             ($ :ul.toc-mobile-content
+                {:class "text-[1.05rem] 2xl:text-lg "
+                 :ref toc-mobile-content}
+                (for [{:keys [content id level] :as toc-item} toc-content]
+                  ($ :li.my-1.list-inside.text-neutral-600
+                     {:key id}
+                     ;; to make tailwindcss-cli happy
+                     ;; "pl-0 pl-4 pl-8 pl-12 pl-16 pl-20"
+                     ($ btn-wrapper
+                        ($ :div.group.w-full.h-full
+                           ($ :a.h-12.transition-all.w-full.h-full.inline-block.flex.flex-col.justify-center
+                              {:class (str "group-hover:text-[#0260B3] "
+                                           (str "pl-" (* 4 level))
+                                           (if (= current-header-id id)
+                                             (str " " toc-item-active-classes)
+                                             ""))
+                               :href (str "#" id)
+                               :on-click (fn [_] (set-toc-open! false))}
+                              ($ :span content))))))))))))
 
 (defui toc [{:keys [toc-content class current-header-id]}]
   (let [toc-item-active-classes "text-[#0260B3]"]
@@ -246,7 +245,7 @@
                ($ :div.text-sky-700.border-l-2.pl-2.text-lg
                   (str category))
                ($ :div.text-base
-                  (date-time-to-readable-string (parse-iso8601 modified-date)))))
+                  (date-time-to-readable-string (commons/parse-iso8601 modified-date)))))
          (when show-toc?
            ($ toc-mobile {:class ""
                           :toc-content toc-content
@@ -267,19 +266,19 @@
 
 
 (defui blog-item [{:keys [preview onclick class]}]
-       (let [{:keys [title id tags published-date modified-date author category]} preview]
-         ($ :div.blog-item {:class class}
-            ($ :div.relative.group
-               ($ :div
-                  ($ :div
-                     ($ :span.text-lg.text-slate-600
-                        (date-time-to-readable-string (parse-iso8601 published-date)))
-                     ($ :span " / ")
-                     ($ :span.text-lg.text-slate-600
-                        category))
-                  ($ :div {:class ""}
-                     ($ router/link {:href (str "blogs/" id)
-                                     :class "text-3xl text-sky-950 hover:text-[#0260B3] transition-all duration-300"} ($ :h1 title))))))))
+  (let [{:keys [title id tags published-date modified-date author category]} preview]
+    ($ :div.blog-item {:class class}
+       ($ :div.relative.group
+          ($ :div
+             ($ :div
+                ($ :span.text-lg.text-slate-600
+                   (date-time-to-readable-string (commons/parse-iso8601 published-date)))
+                ($ :span " / ")
+                ($ :span.text-lg.text-slate-600
+                   category))
+             ($ :div {:class ""}
+                ($ router/link {:href (str "blogs/" id ".html")
+                                :class "text-2xl xl:text-3xl text-sky-950 hover:text-[#0260B3] transition-all duration-300"} ($ :h1 title))))))))
 
 
 (def temp-links [{:href "/" :text "HOME"}
@@ -336,7 +335,7 @@
                                "xl:sideways-lr xl:text-6xl xl:pb-8"))}
                 "Coruscation.net"))
 
-          ($ :div.flex.justify-end
+          ($ :div.flex.justify-center
              ($ :div.flex.flex-col.items-center.justify-end.py-1.relative
                 {:class (str "left-[0.275rem] sm:items-end "
                              (if home-page?
@@ -356,9 +355,13 @@
                    {:class  (if home-page?
                               "md:flex"
                               "xl:flex")}
-                   ($ :div.flex.relative.right-2
-                      (for [[key value] constants/*links*]
-                        ($ router/link {:href value :key key} ($ (key icons) )))))))))))
+                   ($ :div.flex.relative
+                      (for [[key value] user-config/links]
+                        ($ router/link {:href (if (= :rss key)
+                                                "/res/atom.xml"
+                                                value)
+                                        :key key}
+                           ($ (key icons))))))))))))
 
 (def routes
   ["" {:controllers [{:identity identity
@@ -374,12 +377,12 @@
                         :stop (fn [{{:keys [routing-state set-routing-state!]} :data}]
                                 (set-routing-state! (assoc-in routing-state [:home-page?] false)))}]}]
    ["/template.html" {:component home}]
-   ["/blogs/:id" {:component blog
-                  :name ::blog
-                  :depends #?(:clj {:route :assets/blogs
-                                    :params-list-fn
-                                    assets/fetch-blog-ids}
-                              :cljs nil)}]
+   ["/blogs/{id}.html" {:component blog
+                        :name ::blog
+                        :depends #?(:clj {:route :assets/blogs
+                                          :params-list-fn
+                                          assets/fetch-blog-ids}
+                                    :cljs nil)}]
    ["/about.html" {:component blog
                    :extra-data {:path-params {:id "about.html"}}}]
    ])
@@ -395,7 +398,7 @@
        ($ :<>
           ($ :div.transition-all
              ($ header))
-          ($ :div.pt-5.px-1 {:class "xl:pt-7 xl:px-8"}
+          ($ :div.pt-5.px-2 {:class "sm:px-4 xl:pt-7 xl:px-8"}
              ($ router/router-outlet))))))
 
 (defui app [{:keys [initial-route]}]
