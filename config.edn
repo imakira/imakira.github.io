@@ -2,7 +2,7 @@
  :root-url "https://coruscation.net"
  :author "imakira"
  :links {:rss true
-         :github "https://github.com/imakira/espoir"}
+         :github "https://github.com/imakira"}
  :navigation {:home {:text "HOME"
                      :href "/"}
               :about {:text "ABOUT"
