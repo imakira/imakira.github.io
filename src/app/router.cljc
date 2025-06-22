@@ -47,15 +47,15 @@
                 [routing-data routing-state ])
 
     (utils/context-binding
-        [*router* {:route route
-                   :set-route! set-route!
-                   :reitit-router reitit-router
-                   :routing-data routing-data
-                   :component component
-                   :routing-state routing-state
-                   :set-routing-state! set-routing-state!}]
-      ($ :<>
-         children))))
+     [*router* {:route route
+                :set-route! set-route!
+                :reitit-router reitit-router
+                :routing-data routing-data
+                :component component
+                :routing-state routing-state
+                :set-routing-state! set-routing-state!}]
+     ($ :<>
+        children))))
 
 
 (defui router-outlet [{:keys [hook]}]

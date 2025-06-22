@@ -1,12 +1,20 @@
-(ns app.user-config)
+(ns app.user-config
+  (:require #?@(:clj [[clojure.edn :as edn]]))
+  #?(:cljs (:require-macros [app.user-config :refer [read-config]])))
 
-(def title "Coruscation.net")
-(def root-url "https://coruscation.net")
-(def author "imakira")
+#?(:clj (defmacro read-config []
+          (edn/read-string (slurp "./config.edn"))))
 
-(def links
-  {:rss true
-   :github "https://github.com/imakira/espoir"})
+(def config (read-config))
 
-(def special-pages
-  ["about"])
+(def title (:title config))
+(def root-url (:root-url config))
+(def author (:author config))
+
+(def links (:links config))
+
+(def navigation (:navigation config))
+
+(def special-pages (:special-pages config))
+
+

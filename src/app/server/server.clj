@@ -1,24 +1,16 @@
 (ns app.server.server
-  (:require [clojure.string :as str]
-            [uix.dom.server :as dom.server]
-            [ring.adapter.jetty :as jetty]
-            [ring.middleware.cors :as cors]
-            [ring.util.http-response :as resp]
-            [ring.middleware.json :refer
-             [wrap-json-params wrap-json-response]]
-            [ring.middleware.resource :refer [wrap-resource]]
-            [ring.middleware.file :refer [wrap-file]]
-            [cheshire.core :as json]
-            [reitit.core :as r]
-            [reitit.ring :as ring]
-            [app.server.assets :as assets]
-            [app.utils :as utils]
-            [app.router :as router]
-            [app.config :as config]
-            [app.common.pages :as pages]
-            [hiccup.util :as ht]
-            [app.server.check :as check]
-            [app.server.render :as render]))
+  (:require
+   [app.common.pages :as pages]
+   [app.server.assets :as assets]
+   [app.server.check :as check]
+   [app.server.render :as render]
+   [reitit.ring :as ring]
+   [ring.adapter.jetty :as jetty]
+   [ring.middleware.cors :as cors]
+   [ring.middleware.file :refer [wrap-file]]
+   [ring.middleware.json :refer
+    [wrap-json-params wrap-json-response]]
+   [ring.util.http-response :as resp]))
 
 (defn wrap-restful-response [handler]
   (fn [request]

@@ -25,8 +25,6 @@
               [app.utils :refer [obj->clj]]
               ["@js-joda/locale_en-us" :as js-joda-locale]])))
 
-(defcontext *header-context* nil)
-
 
 (defn date-time-to-readable-string [zoned-date-time]
   (.format zoned-date-time (-> "LLL dd, yyyy"
@@ -49,6 +47,7 @@
     :h5 4
     (throw (ex-info (str "tag " tag " isn't suported")
                     {}))))
+
 
 
 #?(:clj
@@ -281,15 +280,9 @@
                                 :class "text-2xl xl:text-3xl text-sky-950 hover:text-[#0260B3] transition-all duration-300"} ($ :h1 title))))))))
 
 
-(def temp-links [{:href "/" :text "HOME"}
-                 {:href "/about.html" :text "ABOUT"}
-                 {:href "/projects.html" :text "PROJECTS"}])
-
-
 
 (defui home [_]
   (let [blogs  (use-asset "blogs")
-        [show-header? set-header!] (use-context *header-context*)
 
         landscape-ref (use-ref nil)]
     (use-effect
@@ -299,14 +292,11 @@
                 (fn [_]
                   (let [{:keys [bottom] :as rect}
                         (obj->clj (.getBoundingClientRect @landscape-ref)
-                                  :keywordize-keys true)]
-                    (if (> (* 4 16) bottom)
-                      (set-header! true)
-                      (set-header! false))))]
+                                  :keywordize-keys true)]))]
             (js/addEventListener "scroll" scroll-listener)
             (fn []
               (js/removeEventListener "scroll" scroll-listener)))))
-     [set-header!])
+     [])
     ($ :div.flex.flex-col
        ($ :div.flex.flex-col.justify-center.items-center {:class "xl:w-[1100px]"}
           ($ :div.w-full
@@ -333,7 +323,7 @@
                              (if home-page?
                                "md:sideways-lr md:text-6xl md:pb-8"
                                "xl:sideways-lr xl:text-6xl xl:pb-8"))}
-                "Coruscation.net"))
+                user-config/title))
 
           ($ :div.flex.justify-center
              ($ :div.flex.flex-col.items-center.justify-end.py-1.relative
@@ -345,8 +335,8 @@
                    {:class (if home-page?
                              "md:text-2xl md:flex-col md:pt-6"
                              "xl:text-2xl xl:flex-col xl:pt-6")}
-                   (for [{:keys [href text]} temp-links]
-                     ($ btn-wrapper {:key href :bg-class "group-hover:bg-yellow-400"}
+                   (for [[key {:keys [text href]}] user-config/navigation]
+                     ($ btn-wrapper {:key key :bg-class "group-hover:bg-yellow-400"}
                         ($ :div.px-1.group-hover:text-cyan-50 {:key href :class "text-lg"}
                            ($ router/link {:href href}
                               text)))))
@@ -358,7 +348,7 @@
                    ($ :div.flex.relative
                       (for [[key value] user-config/links]
                         ($ router/link {:href (if (= :rss key)
-                                                "/res/atom.xml"
+                                                "/atom.xml"
                                                 value)
                                         :key key}
                            ($ (key icons))))))))))))
@@ -376,7 +366,6 @@
                                  (tap> "called"))
                         :stop (fn [{{:keys [routing-state set-routing-state!]} :data}]
                                 (set-routing-state! (assoc-in routing-state [:home-page?] false)))}]}]
-   ["/template.html" {:component home}]
    ["/blogs/{id}.html" {:component blog
                         :name ::blog
                         :depends #?(:clj {:route :assets/blogs
@@ -402,11 +391,5 @@
              ($ router/router-outlet))))))
 
 (defui app [{:keys [initial-route]}]
-  (let [[show-header? set-header!]
-        (use-state
-         (some #(= % initial-route)
-               ["/" "/home.html" "/template.html"
-                "/index.html"]))]
-    (context-binding [*header-context* [show-header? set-header!]]
-      ($ router/router {:routes routes :initial-route initial-route}
-         ($ main {})))))
+  ($ router/router {:routes routes :initial-route initial-route}
+     ($ main {})))

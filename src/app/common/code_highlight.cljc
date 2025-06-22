@@ -17,9 +17,9 @@
 #?(:clj
    (def ^:dynamic *module* (.eval *js-context* "js" "require('../wrapper')")))
 
-(defn add-language-alias! [alias code]
-  (.execute (.getMember *module* "language_alias_wrapper")
-            (into-array Object [alias code])))
+#?(:clj (defn add-language-alias! [alias code]
+          (.execute (.getMember *module* "language_alias_wrapper")
+                    (into-array Object [alias code]))))
 
 #?(:clj
    (defn highlight [code lang]

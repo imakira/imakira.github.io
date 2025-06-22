@@ -15,7 +15,9 @@
       org-html-html5-fancy t
       org-html-toplevel-hlevel 2
       org-export-with-section-numbers nil
-      org-export-headline-levels 6)
+      org-export-headline-levels 6
+      org-latex-compiler "xelatex"
+      org-preview-latex-default-process 'dvisvgm)
 
 (defun org->html-to-stdout (file)
   (save-window-excursion
@@ -32,6 +34,4 @@
                                          (org-html-export-as-html nil nil nil t)
                                          (buffer-string))))))))))
 
-
-
-(org->html-to-stdout (concat default-directory "blogs/demo.org"))
+;; (org->html-to-stdout (concat default-directory "blogs/demo.org"))

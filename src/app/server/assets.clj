@@ -1,21 +1,18 @@
 (ns app.server.assets
-  (:require [malli.generator :as mg]
-            [clojure.java.shell :refer [sh]]
-            [clojure.string :as str]
-            [app.models :as models]
-            [app.server.blog-gen :as blog-gen]
-            [ring.util.http-response :as resp]
-            [app.config :as config]
-            [taoensso.timbre :as timbre]
-            [app.common.constants :as constants]
-            [app.common.commons :as commons]
-            [cljc.java-time.zoned-date-time :as zoned-date-time]
-            [clojure.data.xml :as xml]
-            [app.user-config :as user-config])
-  (:import (com.google.common.io Files)
-           (java.time Instant ZonedDateTime ZoneId)
-           (java.time.temporal ChronoUnit)
-           (java.time.format DateTimeFormatter)))
+  (:require
+   [app.common.commons :as commons]
+   [app.config :as config]
+   [app.server.blog-gen :as blog-gen]
+   [app.user-config :as user-config]
+   [cljc.java-time.zoned-date-time :as zoned-date-time]
+   [clojure.data.xml :as xml]
+   [clojure.java.shell :refer [sh]]
+   [clojure.string :as str])
+  (:import
+   (com.google.common.io Files)
+   (java.time Instant ZoneId ZonedDateTime)
+   (java.time.format DateTimeFormatter)
+   (java.time.temporal ChronoUnit)))
 
 (defonce ^:dynamic *blogs* (atom []))
 
@@ -23,7 +20,7 @@
   (some (fn [name]
           (= name (Files/getNameWithoutExtension
                    (or (:file-path blog) (:id blog)))))
-        constants/special-pages))
+        user-config/special-pages))
 
 (defn assert-file-exist [path]
   (assert (.exists (clojure.java.io/file path)) (str "File " path " doesn't exist"))
@@ -142,19 +139,22 @@
                            {:route ::categories
                             :params-list-fn #'fetch-categories}}]])
 
+(defn- site-last-modified []
+  (->> (fetch-all-blogs)
+       (map :modified-date)
+       (map commons/parse-iso8601)
+       (sort (fn [a b]
+               (zoned-date-time/compare-to a b)))
+       reverse
+       first
+       (#(.toString %))))
+
 (defn generate-rss [& _]
   (xml/indent-str (xml/element :feed  {:xmlns "http://www.w3.org/2005/Atom"}
                                (xml/element :title {} user-config/title)
                                (xml/element :link {:href user-config/root-url})
                                (xml/element :updated {}
-                                            (->> (fetch-all-blogs)
-                                                 (map :modified-date)
-                                                 (map commons/parse-iso8601)
-                                                 (sort (fn [a b]
-                                                         (zoned-date-time/compare-to a b)))
-                                                 reverse
-                                                 first
-                                                 (#(.toString %))))
+                                            (site-last-modified))
                                (xml/element :author {} user-config/author)
                                (xml/element :id {} user-config/root-url)
 
@@ -171,7 +171,23 @@
                                                 (xml/element :content {:type "html"}
                                                              (:content (fetch-blog {:path-params {:id (:id blog)}})))))))))
 
+(defn generate-sitemap [& _]
+  (xml/indent-str (xml/element :urlset {:xmlns "http://www.sitemaps.org/schemas/sitemap/0.9"}
+                               (xml/element :url {}
+                                            (xml/element :loc {}
+                                                         user-config/root-url)
+                                            (xml/element :lastmod {}
+                                                         (site-last-modified)))
+                               (for [blog (fetch-all-blogs)]
+                                 (xml/element :url {}
+                                              (xml/element :loc {}
+                                                           (str user-config/root-url "/blogs/" (:id blog) ".html"))
+                                              (xml/element :lastmod {}
+                                                           (:modified-date blog)))))))
+
 (def resource-route
-  ["/res"
+  [""
    ["/atom.xml" {:name :rss
-                 :handler #'generate-rss}]])
+                 :handler #'generate-rss}]
+   ["/sitemap.xml" {:name :sitemap
+                    :handler #'generate-sitemap}]])

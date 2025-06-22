@@ -1,12 +1,15 @@
 (ns app.server.static-generator
-  (:require [app.server.assets :as assets]
-            [app.common.pages :as pages]
-            [reitit.core :as r]
-            [app.server.render :as render]
-            [app.config :as config]
-            [clojure.java.io :as io]
-            [cheshire.core :as json]
-            [babashka.fs :as fs]))
+  (:require
+   [app.common.pages :as pages]
+   [app.config :as config]
+   [app.server.assets :as assets]
+   [app.server.check :as check]
+   [app.server.render :as render]
+   [babashka.fs :as fs]
+   [cheshire.core :as json]
+   [clojure.java.io :as io]
+   [reitit.core :as r]
+   [shadow.cljs.devtools.api :as shadow]))
 
 (defn- derive-routes [routes]
   (let [router (r/router routes)
@@ -26,7 +29,7 @@
                                  [1 :match]
                                  (r/match-by-path router (first (first routes)))))
              (do
-               (assert name (str "This route " path " must have a name."))
+               (assert name (str "This route  " path " must have a name."))
                (let [params-list (params-list-fn)]
                  (concat res
                          (for [params params-list]
@@ -43,10 +46,11 @@
 
 (defn- get-all-routes []
   (derive-routes [""
-                  assets/assets-route
+                  assets/json-assets-route
+                  assets/resource-route
                   ["" {:handler render-wrapper} pages/routes]]))
 
-(defn generate []
+(defn generate [& _]
   (let [out-dir (io/file config/*output*)]
     (when (.exists out-dir)
       (fs/delete-tree out-dir)
@@ -54,11 +58,15 @@
     (when (and (.exists out-dir)
                (.isFile out-dir))
       (throw (AssertionError. (str out-dir "shouldn't be a file")))))
+  (shadow/compile :app)
+  (check/environment-check)
+  (assets/refresh-blogs)
+  (fs/copy-tree config/*blog-dir*
+                (str config/*output* "/" "blogs"))
   (fs/copy-tree (str (System/getProperty "user.dir")
                      "/public")
-                (str (System/getProperty "user.dir")
-                     "/out/"))
-  (for [[path {handler :handler match :match}] (get-all-routes)]
+                config/*output*)
+  (doseq [[path {handler :handler match :match}] (get-all-routes)]
     (let [file (io/file (str config/*output*  (if (= path "/")
                                                 "/index.html"
                                                 path)))]

@@ -27,8 +27,14 @@
         com.google.guava/guava {:mvn/version "33.4.8-jre"}
         com.widdindustries/cljc.java-time {:mvn/version "0.1.21"}
         imakira/uix-fontawesome {:local/root "/home/void/Projects/uix-fontawesome"}
-        org.clojure/data.xml {:mvn/version "0.0.8"}}
+        org.clojure/data.xml {:mvn/version "0.0.8"}
+        org.apache.commons/commons-imaging {:mvn/version "1.0.0-alpha6"}
+        com.twelvemonkeys.imageio/imageio-jpeg {:mvn/version "3.12.0"}
+        com.twelvemonkeys.imageio/imageio-webp {:mvn/version "3.12.0"}
+        com.potetm/fusebox {:mvn/version "1.0.11"}
+        }
  :paths ["src" "dev"]
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps
-                 {}}}}
+                 {}}
+           :generate {:exec-fn app.server.static-generator/generate}}}

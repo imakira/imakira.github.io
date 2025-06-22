@@ -1,0 +1,12 @@
+{:title "Coruscation.net"
+ :root-url "https://coruscation.net"
+ :author "imakira"
+ :links {:rss true
+         :github "https://github.com/imakira/espoir"}
+ :navigation {:home {:text "HOME"
+                     :href "/"}
+              :about {:text "ABOUT"
+                      :href "https://github.com/imakira"}
+              :projects {:text "PROJECTS"
+                         :href "https://github.com/imakira"}}
+ :special-pages ["about"]}

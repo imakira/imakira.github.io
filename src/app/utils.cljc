@@ -8,18 +8,20 @@
                        [uix.core :refer [use-state use-effect]]
                        [goog.object :as goog.object]])
             #?@(:clj [[app.server.assets :as assets]
-                      [reitit.core :as r]]))
+                      [reitit.core :as r]
+                      [hickory.zip :as hzip]])
+            [clojure.zip :as zip])
   #?(:cljs (:require-macros [app.utils :refer [use-context context-binding defcontext if-cljs]]))
   #?(:cljs (:import [goog.async Throttle Debouncer])))
 
 
-(def SERVER_PATH "http://localhost:3001/")
+#?(:cljs (def SERVER_PATH js/window.__server_path))
 
 (defn fetch-asset [path]
   (let [chan (a/chan 1)]
     (a/go #?(:clj (->>
                    (let [routing (r/match-by-path
-                                  (r/router assets/assets-route)
+                                  (r/router assets/json-assets-route)
                                   (str "/assets/" path))]
                      ((-> routing
                           :data
@@ -90,16 +92,23 @@
   `(letfn [(wrap-fn# [f#]
              (fn [& args#]
                (binding ~bindings
-                 (walk/postwalk (fn [item#]
-                                  (if (fn? item#)
-                                    (wrap-fn# item#)
-                                    item#))
-                                (apply f# args#)))))]
+                 (loop [node# (hzip/hiccup-zip (apply f# args#))]
+                   (if (zip/end? node#)
+                     (zip/root node#)
+                     (if (fn? (first (zip/node node#)))
+                       (recur (zip/next (zip/replace node# (assoc (zip/node node#) 0 (wrap-fn# (first (zip/node node#)))))))
+                       (recur (zip/next node#)))))
+                 #_(walk/postwalk (fn [item#]
+                                    (if (fn? item#)
+                                      (wrap-fn# item#)
+                                      item#))
+                                  ))))]
      ((wrap-fn#
        (fn []
          (do ~@body))))))
 
 
+;; TODO: limitation: it could only have one child
 #?(:clj (defmacro context-binding [bindings & body]
           (if (cljs-env? &env)
             (do-cljs-bindings (partition 2 bindings) body)

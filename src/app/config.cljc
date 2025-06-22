@@ -5,5 +5,8 @@
                "/blogs")))
 
 #?(:clj (def ^:dynamic *output* (str (System/getProperty "user.dir")
-                                     "/out")))
+                                     "/docs")))
+
+#?(:clj (def ^:dynamic *cache* (str (System/getProperty "user.dir")
+                                    "/.cache")))
 

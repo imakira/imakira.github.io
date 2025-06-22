@@ -1,126 +1,57 @@
-#+title: Make Tailwindcss Lsp work with Clojure and lsp-mode
-#+OPTIONS: tex:dvisvgm
+#+title: Demonstration
 #+TAGS: clojure lsp tailwindcss
 #+CATEGORY: Coding
+#+OPTIONS: tex:dvisvgm
+#+LATEX_HEADER: \usepackage{pgfplots}
+#+LATEX_HEADER: \usepackage{svg}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{IEEEtrantools}
+#+LATEX_HEADER: \usepackage{mathtools}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{siunitx}
 
-* Prerequisite
+* Code Blocks
 
-- Emacs Configured with Lsp-mode
-- Emacs package [[https://github.com/merrickluo/lsp-tailwindcss][lsp-tailwindcss]] installed
+** Inline Code Block
 
-* Basic Configure
+Text around src_clojure[:exports code]{(uix.dom/create-root (js/document.getElementById "root"))} the inline code block.
 
-- Reference https://github.com/tailwindlabs/tailwindcss-intellisense/issues/400
+** Code Blocks
 
+- Java
 
-We will have to leverage one Tailwindcss server's experimental feature letting you telling the lsp server how to find classes in your source files using Regex. We can configure it in Emacs using ~lsp-tailwindcss-experimental-class-regex~ variable.
-
-#+BEGIN_SRC emacs-lisp
-  ;; from the issue above
-  ;; TODO
-  (setq lsp-tailwindcss-experimental-class-regex
-          (vector
-           (vector "\\[:[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\]]" "\\.([^.]*)")
-           (vector "\\(\\$ :?[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\)]" "\\.([^.]*)")
-           (vector "\\[:[^.\\s]*((?:\\.[^.\\s\\]]*)+)[\\s\\]]" "\\.([^.]*)")
-           (vector "\\:class\\s+(\\:[^\\s\\}]*)[\\s\\}]" "[\\:.]([^.]*)")
-           (vector "\\s+(\"[^\\}\"]*)\"" "[\"\\s]([^\\s\"]*)")
-           (vector "\\:class\\s+\\[(.*)\\]" "[\"\\:]([^\\s\"]*)[\"]?")))
+#+BEGIN_SRC java
+public static int fib(int n) { 
+    if (n <= 1) {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
 #+END_SRC
 
-Then we need to tell [[https://github.com/merrickluo/lsp-tailwindcss][lsp-tailwindcss]], tailwindcss lsp should be actived in ~clojure-mode~ and its derivatives modes.
+- Clojure
 
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'lsp-tailwindcss-major-modes 'clojure-mode)
-(add-to-list 'lsp-tailwindcss-major-modes 'clojurec-mode)
-(add-to-list 'lsp-tailwindcss-major-modes 'clojurescript-mode)
+#+BEGIN_SRC clojure
+(defui app [{:keys [initial-route]}]
+  (let [[show-header? set-header!]
+        (use-state
+         (some #(= % initial-route)
+               ["/" "/home.html" "/template.html"
+                "/index.html"]))]
+    (context-binding [*header-context* [show-header? set-header!]]
+      ($ router/router {:routes routes :initial-route initial-route}
+         ($ main {})))))
 #+END_SRC
 
-If you are using clojure-lsp, you may also need to set
+- Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
-(setq lsp-tailwindcss-add-on-mode t)
+  (save-excursion                 
+      (goto-char (point-min))    
 #+END_SRC
-
-With this, we can have completions in strings, but it doesn't work or work reliably in hiccup shorthand.
-
-TODO
-I'm using uix, whose syntax differs from hiccup a little bit.
-
-* More Hacky Solution
-
-The problem lays in that, in Clojure mode, Emacs (and thus lsp client) treat something like ~:div.class~ as one symbol, while to the tailwindcss server, the ~.class~ should be a separate symbol. I have a hacky solution for this, and it works for me using ~cider~ along with ~lsp-mode~. I believe it won't work with clojure-lsp.
-
-#+BEGIN_SRC emacs-lisp
-  (defun akira/cape-wrap-hiccup-class (capf)
-    (lambda ()
-      (and (< (save-excursion
-                (re-search-backward "[[:space:]\n]")
-                (point))
-              (save-excursion
-                (re-search-backward "\\.")
-                (point)))
-           (funcall capf))))
-  (defun akira/set-super-capf-cider-lsp ()
-    (when (and cider-mode lsp-mode)
-      (setq-local completion-at-point-functions
-                  (list (cape-capf-inside-string #'lsp-completion-at-point)
-                        (akira/cape-wrap-hiccup-class #'lsp-completion-at-point)
-                        #'cider-complete-at-point))))
-
-  (defun akira/clojure-tailwindcss-boundary ()
-    (cons (save-excursion
-            ;;(rxt-pcre-to-elisp "[^\\w-_:]")
-            (re-search-backward "[^:_[:alnum:]-]")
-            (forward-char)
-            (point))
-          (point)))
-  (defun akira/lsp-tailwindcss-wrapper (oldfun &rest args)
-    (if (and cider-mode lsp-mode)
-        (let ((bounds-of-thing-at-point-provider-alist
-               (list
-                (cons 'symbol #'akira/clojure-tailwindcss-boundary))))
-          (apply oldfun args))
-      (apply oldfun args)))
-
-  (defun akira/tailwindcss-set-symbol-boundary ()
-    (when (and cider-mode lsp-mode)
-      (advice-add 'lsp-completion-at-point :around #'akira/lsp-tailwindcss-wrapper)))
-  (add-hook 'lsp-mode-hook #'akira/set-super-capf-cider-lsp 100)
-  (add-hook 'lsp-mode-hook #'akira/tailwindcss-set-symbol-boundary 100)
-  (with-eval-after-load 'cider
-    (add-hook 'cider-mode-hook #'akira/set-super-capf-cider-lsp 100)
-    (add-hook 'cider-mode-hook #'akira/tailwindcss-set-symbol-boundary 100)))
-#+END_SRC
-
-Emacs's completion framework works by looking at ~completion-at-point-functions~, and it will try functions in it one by one until one provides a result other than ~nil~.
-With this knowledge, the concept of the code above is very simple. We do two things:
-
-1. We only enable ~lsp-completion-at-point~ only when the cursor is in a string or there's a dot in current symbol, otherwise we use cider by fallback.
-2. We hack the ~lsp-completion-at-point~ by temporarily bind ~bounds-of-thing-at-point-provider-alist~, provide our own symbol extract function.
-
-It still has some little issues here and these, but I'm satisfied with current solution.
-
-* Showcase
-
-
-#+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:22:43
-[[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-22-43_showcase2.png]]
-
-#+DOWNLOADED: file:///home/void/Projects/cerulean/src/app/showcase2.png @ 2024-10-11 11:23:10
-[[file:../../../../orgorg-downloads/Trying_to_Make_Tailwindcss_Lsp_work_with_Clojure_and_lsp-mode/2024-10-11_11-23-10_showcase2.png]]
-
-* Demos
-
-src_python[:exports code]{inline_code_test()}
-
-* H2 Sample Text Sample Text
-
-** H3 Sample Text Sample Text
-
-*** H4 Sample Text Sample Text
-
-**** h5 Sample Text Sample Text
 
 
 * H2 Sample Text
@@ -138,7 +69,7 @@ Some text in between
 Some text in between
 
 
-* Common elements
+* Common Elements
 
 + /italic/
 + *bold*
@@ -146,27 +77,27 @@ Some text in between
 + =verbatim=
 + ~code~
 + +strike-through+
-
-  Horizontal Rule
++ Horizontal Rule
++ ~code~
 -----
 
-* Other Element
+* Other Elements
 
-**** Table
+** Table
 
 | Name  | Phone | Age |
 |-------+-------+-----|
 | Peter |  1234 |  17 |
 | Anna  |  4321 |  25 |
 
-**** Reference
+** Reference
 
  #+BEGIN_QUOTE
  Everything should be made as simple as possible,
  but not any simpler -- Albert Einstein
  #+END_QUOTE
 
-**** Unordered List
+** Unordered List
 
 + Item 1
 + Item 2
@@ -183,10 +114,40 @@ Some text in between
 3. Item 3
 4. Item 4
 
-**** Description List
+** Description List
 
 + Name :: Description
   - Nested :: Nested Description
 + Name :: Description
 
+
+** Sample Image
+
+#+CAPTION: This is an image
+[[file:imgs/1.jpg]]
+
+[[file:imgs/1.webp]]
+
+#+CAPTION: sample high resolution vertical image
+[[https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=natalia-grela-sFINbLpdfqw-unsplash.jpg]]
+
+#+CAPTION: sample high resolution horizontal iamge
+[[https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg]]
+
+* Latex Test
+
+** Inline LaTeX
+
+The magnitude \(v\) is given by \(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\) . Another way of writing this is \(d = \sqrt{x^2 + y^2 + z^2}\) where \(x = v_x, y=v_y, z=v_z\).
+
+** Block LaTeX
+
+\begin{block}
+\mathrm{Fib}(n) =
+\begin{cases}
+    \ 0 & \akif \ n=0, \\
+    \ 1 & \akif \  n=1, \\
+    \ \mathrm{Fib}(n-1) + \mathrm{Fib}(n-2)  & \mathrm{otherwise}.
+\end{cases}
+\end{block}
 
