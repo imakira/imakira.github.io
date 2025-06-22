@@ -372,6 +372,7 @@
                                           :params-list-fn
                                           assets/fetch-blog-ids}
                                     :cljs nil)}]
+   ;; TODO: make this configurable
    ["/about.html" {:component blog
                    :extra-data {:path-params {:id "about.html"}}}]
    ])
