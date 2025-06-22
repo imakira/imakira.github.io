@@ -51,15 +51,12 @@
                   ["" {:handler render-wrapper} pages/routes]]))
 
 (defn generate [& _]
-  (let [out-dir (io/file config/*output*)]
-    (when (.exists out-dir)
-      (fs/delete-tree out-dir)
-      (.mkdirs out-dir))
-    (when (and (.exists out-dir)
-               (.isFile out-dir))
-      (throw (AssertionError. (str out-dir "shouldn't be a file")))))
-  (shadow/compile :app)
   (check/environment-check)
+
+  (fs/delete-tree config/*output*)
+  (fs/create-dirs config/*output*)
+  (shadow/release :app)
+  (fs/delete-tree "./public/js/cljs-runtime")
   (assets/refresh-blogs)
   (fs/copy-tree config/*blog-dir*
                 (str config/*output* "/" "blogs"))
