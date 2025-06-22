@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
     "release": "shadow-cljs -A:dev release app && yarn styles-release",
-    "styles-dev": "npx @tailwindcss/cli -i ./src/app/main.css -o ./public/main.css --watch"
+    "styles-dev": "npx @tailwindcss/cli -i ./src/app/main.css -o ./public/main.css --watch",
+    "styles-release": "npx @tailwindcss/cli -m -i ./src/app/main.css -o ./public/main.css"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.10",
