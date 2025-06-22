@@ -58,7 +58,7 @@
     (when (and (.exists out-dir)
                (.isFile out-dir))
       (throw (AssertionError. (str out-dir "shouldn't be a file")))))
-  (shadow/compile :app)
+  (shadow/release :app)
   (check/environment-check)
   (assets/refresh-blogs)
   (fs/copy-tree config/*blog-dir*

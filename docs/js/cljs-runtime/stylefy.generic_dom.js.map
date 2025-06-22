@@ -1,0 +1,1 @@
+{"version":3,"sources":["stylefy/generic_dom.cljs"],"mappings":";AAGA,2BAAA,3BAAMA;AAAN,AACE,OAACC","names":["stylefy.generic-dom/init","stylefy.generic-dom.dom/->GenericDom"],"sourcesContent":["(ns stylefy.generic-dom\n  (:require [stylefy.generic-dom.dom :as stylefy-generic-dom]))\n\n(defn init []\n  (stylefy-generic-dom/->GenericDom))"],"x_google_ignoreList":[0]}
