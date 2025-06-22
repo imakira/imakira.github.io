@@ -11,3 +11,4 @@
               :projects {:text "PROJECTS"
                          :href "https://github.com/imakira"}}
  :special-pages ["about"]}
+
