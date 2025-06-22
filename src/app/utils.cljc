@@ -18,11 +18,6 @@
 
 #?(:cljs (def SERVER_PATH js/window.__server_path))
 
-(defn remove-tailing-slash [str]
-  (if (str/ends-with? str "/")
-    (subs str 0 (- (count str) 1))
-    str))
-
 (defn fetch-asset [path]
   (let [chan (a/chan 1)]
     (a/go #?(:clj (->>

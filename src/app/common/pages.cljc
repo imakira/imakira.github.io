@@ -346,11 +346,10 @@
                               "md:flex"
                               "xl:flex")}
                    ($ :div.flex.relative
-                      (for [[key value] user-config/links]
-                        ($ router/link {:href (if (= :rss key)
-                                                "/atom.xml"
-                                                value)
-                                        :key key}
+                      (for [[key {:keys [href external?]}] user-config/links]
+                        ($ router/link {:href href
+                                        :key key
+                                        :external? external?}
                            ($ (key icons))))))))))))
 
 (def routes
