@@ -35,8 +35,8 @@
          [:link
           {:rel "alternate",
            :type "application/rss+xml",
-           :title "Example Feed",
-           :href "https://example.com/res/atom.xml"}]]
+           :title user-config/title,
+           :href (str user-config/root-url "/atom.xml")}]]
         [:body
          [:div#root (raw-string inner)]
          [:script (raw-string (str "window.__server_path = \"" server-url \"))]

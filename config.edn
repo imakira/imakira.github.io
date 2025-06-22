@@ -1,8 +1,9 @@
 {:title "Coruscation.net"
  :root-url "https://coruscation.net"
  :author "imakira"
- :links {:rss true
-         :github "https://github.com/imakira"}
+ :links {:rss {:href "/atom.xml"
+               :external? true}
+         :github {:href "https://github.com/imakira/cerulean"}}
  :navigation {:home {:text "HOME"
                      :href "/"}
               :about {:text "ABOUT"

@@ -75,12 +75,15 @@
                (do (js/history.pushState js/undefined js/undefined href)
                    (js/dispatchEvent (js/PopStateEvent. "popstate", js/undefined)))))))
 
-(defui link [{:keys [href children style class]}]
+(defui link [{:keys [href children style class external?]}]
   (let [onclick (fn [e]
                   #?(:clj :default
                      :cljs
                      (do
-                       (.preventDefault e)
-                       (navigate-to! href))))]
+                       (if (not external?)
+                         (do (.preventDefault e)
+                             (navigate-to! href))
+                         (set! (.. js/window -location -href)
+                               href)))))]
     ($ :a {:on-click onclick :style style :href href :class class}
        children)))
