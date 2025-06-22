@@ -1,5 +1,7 @@
 (ns app.user-config
-  (:require #?@(:clj [[clojure.edn :as edn]]))
+  (:require
+   #?@(:clj [[clojure.edn :as edn]])
+   [app.utils :as utils])
   #?(:cljs (:require-macros [app.user-config :refer [read-config]])))
 
 #?(:clj (defmacro read-config []
@@ -8,7 +10,7 @@
 (def config (read-config))
 
 (def title (:title config))
-(def root-url (:root-url config))
+(def root-url (utils/remove-tailing-slash (:root-url config)))
 (def author (:author config))
 
 (def links (:links config))
