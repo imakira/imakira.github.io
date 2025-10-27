@@ -33,7 +33,8 @@
                      :out
                      (str/split #"\n")
                      first
-                     str/trim)]
+                     str/trim
+                     not-empty)]
     date-str 
     nil))
 
@@ -44,7 +45,8 @@
                      :out
                      (str/split #"\n")
                      first
-                     str/trim)]
+                     str/trim
+                     not-empty)]
     date-str
     nil))
 
