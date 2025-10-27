@@ -1,29 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>Coruscation.net</title>
   <link href="https://coruscation.net"/>
-  <updated>2025-06-22T15:22:31+08:00</updated>
+  <updated>2025-10-27T17:31:20+08:00</updated>
   <author>imakira</author>
   <id>https://coruscation.net</id>
   <entry>
+    <title type="html">Develop and Build a Common Lisp Project using Nix</title>
+    <link href="https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html"/>
+    <updated>2025-10-27T17:31:20+08:00</updated>
+    <id>https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html</id>
+    <content type="html">&lt;p&gt;
+I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
+&lt;/p&gt;
+&lt;div id="outline-container-orge9a52a5" class="outline-2"&gt;
+&lt;a href="#orge9a52a5"&gt;&lt;h2 id="orge9a52a5" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orge9a52a5"&gt;
+&lt;p&gt;
+On the Nix we will have something like this:
+&lt;/p&gt;
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-nix"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-comment"&gt;# flake.nix&lt;/span&gt;
+{
+  &lt;span class="hljs-attr"&gt;description&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;&amp;quot;&lt;/span&gt;;
+  &lt;span class="hljs-attr"&gt;inputs.flake-utils.url&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;github:numtide/flake-utils&amp;quot;&lt;/span&gt;;
+  &lt;span class="hljs-attr"&gt;inputs.nixpkgs.url&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;github:NixOS/nixpkgs/nixos-unstable&amp;quot;&lt;/span&gt;;
+  &lt;span class="hljs-attr"&gt;outputs&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; { self, flake-utils, nixpkgs }:
+    flake-utils.lib.eachDefaultSystem (&lt;span class="hljs-params"&gt;system:&lt;/span&gt;
+      &lt;span class="hljs-keyword"&gt;let&lt;/span&gt; pkgs &lt;span class="hljs-operator"&gt;=&lt;/span&gt; nixpkgs.legacyPackages.${system};
+      &lt;span class="hljs-keyword"&gt;in&lt;/span&gt; &lt;span class="hljs-keyword"&gt;rec&lt;/span&gt; {
+        &lt;span class="hljs-attr"&gt;packages.default&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; pkgs.sbcl.buildASDFSystem {
+          &lt;span class="hljs-attr"&gt;pname&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;proj-name&amp;quot;&lt;/span&gt;;
+          &lt;span class="hljs-attr"&gt;version&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;0.1&amp;quot;&lt;/span&gt;;
+          &lt;span class="hljs-attr"&gt;src&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; self;
+          &lt;span class="hljs-attr"&gt;lispLibs&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-keyword"&gt;with&lt;/span&gt; pkgs.sbclPackages; [
+            alexandria
+            &lt;span class="hljs-comment"&gt;# lisp packages in nixpkgs go here&lt;/span&gt;
+          ];
+          &lt;span class="hljs-attr"&gt;nativeLibs&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; [
+            &lt;span class="hljs-comment"&gt;# native libs go here&lt;/span&gt;
+          ];
+        };
+      }
+    );
+}
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+On the Lisp side we will have an &lt;code&gt;asd&lt;/code&gt; file
+&lt;/p&gt;
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-comment"&gt;;; proj-name.asd&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;require&lt;/span&gt; 'asdf)
+(&lt;span class="hljs-name"&gt;asdf&lt;/span&gt;&lt;span class="hljs-symbol"&gt;:defsystem&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;proj-name&amp;quot;&lt;/span&gt;
+  &lt;span class="hljs-symbol"&gt;:depends-on&lt;/span&gt; (&lt;span class="hljs-name"&gt;#&lt;/span&gt;&lt;span class="hljs-symbol"&gt;:alexandria&lt;/span&gt;)
+  &lt;span class="hljs-symbol"&gt;:components&lt;/span&gt; ((&lt;span class="hljs-symbol"&gt;:file&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;main&amp;quot;&lt;/span&gt;))) &lt;span class="hljs-comment"&gt;;; we will have a main.lisp file&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+With these two files we can then start developing the project with the following steps
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;Enter nix develop environment by executing &lt;code&gt;nix develop .&lt;/code&gt; in the directory the project.&lt;/li&gt;
+&lt;li&gt;Launch Emacs inside the developing environment.&lt;/li&gt;
+&lt;li&gt;Launch &lt;code&gt;sly&lt;/code&gt; (or &lt;code&gt;slime&lt;/code&gt;) in Emacs, and load the &lt;code&gt;asd&lt;/code&gt; file by &lt;code&gt;sly-compile-and-load-file&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Execute &lt;code&gt;(asdf:load-system &amp;quot;proj-name&amp;quot;)&lt;/code&gt; in the &lt;code&gt;sly&lt;/code&gt; repl.&lt;/li&gt;
+&lt;li&gt;Enjoy!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org6c47602" class="outline-2"&gt;
+&lt;a href="#org6c47602"&gt;&lt;h2 id="org6c47602" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org6c47602"&gt;
+&lt;p&gt;
+To build an executable we need a few more snippets on the Nix side
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-nix"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-comment"&gt;#...&lt;/span&gt;
+
+&lt;span class="hljs-attr"&gt;packages.default&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; pkgs.sbcl.buildASDFSystem {
+  &lt;span class="hljs-comment"&gt;# ...&lt;/span&gt;
+  &lt;span class="hljs-comment"&gt;# other code is omitted here&lt;/span&gt;
+  &lt;span class="hljs-attr"&gt;lispLibs&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; &lt;span class="hljs-keyword"&gt;with&lt;/span&gt; pkgs.sbclPackages; [
+    alexandria
+    &lt;span class="hljs-comment"&gt;# lisp packages in nixpkgs go here&lt;/span&gt;
+  ];
+
+  &lt;span class="hljs-attr"&gt;nativeBuildInputs&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; [
+    pkgs.makeWrapper
+  ];
+
+  &lt;span class="hljs-attr"&gt;buildScript&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt; pkgs.writeText &lt;span class="hljs-string"&gt;&amp;quot;build-awesomes&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;''
+    (require 'asdf)
+    (asdf:load-system &amp;quot;proj-name&amp;quot;)
+    (sb-ext:save-lisp-and-die
+                &amp;quot;proj-name&amp;quot;
+                :executable t
+                #+sb-core-compression :compression
+                #+sb-core-compression t
+                ;; assume we have the `main' function defined and exported in the main.lisp file
+                :toplevel #'main:main) 
+  ''&lt;/span&gt;;
+
+  &lt;span class="hljs-attr"&gt;installPhase&lt;/span&gt; &lt;span class="hljs-operator"&gt;=&lt;/span&gt;   &lt;span class="hljs-string"&gt;''
+    runHook preInstall
+    mkdir -p $out/bin
+    cp proj-name $out/bin
+
+    # make sure the executable can find dynamically linked libraries
+    wrapProgram $out/bin/proj-name \
+                --prefix LD_LIBRARY_PATH : $LD_LIBRARY_PATH
+    runHook postInstall
+  ''&lt;/span&gt;;
+};
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+When we execute &lt;code&gt;nix build .&lt;/code&gt; in the project directory, lisp scripts in &lt;code&gt;buildScript&lt;/code&gt; will be executed and generates a binary file &lt;code&gt;proj-name&lt;/code&gt;. The binary file will then be copied into &lt;code&gt;$out/bin&lt;/code&gt; directory by the scripts inside &lt;code&gt;installPhase&lt;/code&gt;. After the &lt;code&gt;nix build .&lt;/code&gt; finished, we can find the executable in the &lt;code&gt;result/bin/&lt;/code&gt; directory
+&lt;/p&gt;
+
+&lt;p&gt;
+We can also use &lt;code&gt;nix run .&lt;/code&gt; to run the result executable directly.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org390dad4" class="outline-2"&gt;
+&lt;a href="#org390dad4"&gt;&lt;h2 id="org390dad4" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org390dad4"&gt;
+&lt;p&gt;
+The biggest limitation of this solution may be you need to restart the REPL (or even the Emacs launched inside the develop environment) every time you add a package into the &lt;code&gt;flake.nix&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+You can find the lisp section of the nixpkgs documentation &lt;a href="https://nixos.org/manual/nixpkgs/stable/#lisp-overview"&gt;here&lt;/a&gt;. &lt;a href="https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/development/lisp-modules/packages.nix"&gt;packages.nix&lt;/a&gt; in the nixpkgs also has plenty lisp project definitions we can take references from.
+&lt;/p&gt;
+
+&lt;p&gt;
+I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/a&gt; built this way and it runs on github actions simply by using &lt;code&gt;nix run .&lt;/code&gt;, you can also check that.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
     <title type="html">Demonstration</title>
     <link href="https://coruscation.net/blogs/demonstration.html"/>
-    <updated>2025-06-22T13:44:28+08:00</updated>
+    <updated>2025-10-27T15:43:05+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-org139157b" class="outline-2"&gt;
-&lt;a href="#org139157b"&gt;&lt;h2 id="org139157b" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org139157b"&gt;
+    <content type="html">&lt;div id="outline-container-org90a41be" class="outline-2"&gt;
+&lt;a href="#org90a41be"&gt;&lt;h2 id="org90a41be" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org90a41be"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orga9fedeb" class="outline-3"&gt;
-&lt;a href="#orga9fedeb"&gt;&lt;h3 id="orga9fedeb" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orga9fedeb"&gt;
+&lt;div id="outline-container-orgc4ccf21" class="outline-3"&gt;
+&lt;a href="#orgc4ccf21"&gt;&lt;h3 id="orgc4ccf21" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgc4ccf21"&gt;
 &lt;p&gt;
 Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org46d43b7" class="outline-3"&gt;
-&lt;a href="#org46d43b7"&gt;&lt;h3 id="org46d43b7" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org46d43b7"&gt;
+&lt;div id="outline-container-org4c3480a" class="outline-3"&gt;
+&lt;a href="#org4c3480a"&gt;&lt;h3 id="org4c3480a" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4c3480a"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Java&lt;/li&gt;
 &lt;/ul&gt;
@@ -67,27 +209,27 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orga28ad41" class="outline-2"&gt;
-&lt;a href="#orga28ad41"&gt;&lt;h2 id="orga28ad41" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orga28ad41"&gt;
+&lt;div id="outline-container-org75a6b7d" class="outline-2"&gt;
+&lt;a href="#org75a6b7d"&gt;&lt;h2 id="org75a6b7d" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org75a6b7d"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org2831637" class="outline-3"&gt;
-&lt;a href="#org2831637"&gt;&lt;h3 id="org2831637" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org2831637"&gt;
+&lt;div id="outline-container-orgb040f90" class="outline-3"&gt;
+&lt;a href="#orgb040f90"&gt;&lt;h3 id="orgb040f90" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgb040f90"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfb0fd60" class="outline-4"&gt;
-&lt;a href="#orgfb0fd60"&gt;&lt;h4 id="orgfb0fd60" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-orgfb0fd60"&gt;
+&lt;div id="outline-container-org3351eff" class="outline-4"&gt;
+&lt;a href="#org3351eff"&gt;&lt;h4 id="org3351eff" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-org3351eff"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orge0f4761" class="outline-5"&gt;
-&lt;a href="#orge0f4761"&gt;&lt;h5 id="orge0f4761" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orge0f4761"&gt;
+&lt;div id="outline-container-org45b107e" class="outline-5"&gt;
+&lt;a href="#org45b107e"&gt;&lt;h5 id="org45b107e" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-org45b107e"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
@@ -96,9 +238,9 @@ Some text in between
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org93fded2" class="outline-2"&gt;
-&lt;a href="#org93fded2"&gt;&lt;h2 id="org93fded2" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org93fded2"&gt;
+&lt;div id="outline-container-orgcbbc87e" class="outline-2"&gt;
+&lt;a href="#orgcbbc87e"&gt;&lt;h2 id="orgcbbc87e" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgcbbc87e"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
@@ -112,13 +254,13 @@ Some text in between
 &lt;hr&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org5d2569f" class="outline-2"&gt;
-&lt;a href="#org5d2569f"&gt;&lt;h2 id="org5d2569f" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org5d2569f"&gt;
+&lt;div id="outline-container-org24e5562" class="outline-2"&gt;
+&lt;a href="#org24e5562"&gt;&lt;h2 id="org24e5562" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org24e5562"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc04aa2b" class="outline-3"&gt;
-&lt;a href="#orgc04aa2b"&gt;&lt;h3 id="orgc04aa2b" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgc04aa2b"&gt;
+&lt;div id="outline-container-org387aaa6" class="outline-3"&gt;
+&lt;a href="#org387aaa6"&gt;&lt;h3 id="org387aaa6" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org387aaa6"&gt;
 &lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
 
 
@@ -152,9 +294,9 @@ Some text in between
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org03fe132" class="outline-3"&gt;
-&lt;a href="#org03fe132"&gt;&lt;h3 id="org03fe132" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org03fe132"&gt;
+&lt;div id="outline-container-org2b6f880" class="outline-3"&gt;
+&lt;a href="#org2b6f880"&gt;&lt;h3 id="org2b6f880" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org2b6f880"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 Everything should be made as simple as possible,
@@ -163,9 +305,9 @@ but not any simpler – Albert Einstein
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd82eef2" class="outline-3"&gt;
-&lt;a href="#orgd82eef2"&gt;&lt;h3 id="orgd82eef2" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgd82eef2"&gt;
+&lt;div id="outline-container-orga13baf5" class="outline-3"&gt;
+&lt;a href="#orga13baf5"&gt;&lt;h3 id="orga13baf5" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orga13baf5"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2
@@ -182,9 +324,9 @@ but not any simpler – Albert Einstein
 &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc685ea0" class="outline-5"&gt;
-&lt;a href="#orgc685ea0"&gt;&lt;h5 id="orgc685ea0" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orgc685ea0"&gt;
+&lt;div id="outline-container-org6919ce6" class="outline-5"&gt;
+&lt;a href="#org6919ce6"&gt;&lt;h5 id="org6919ce6" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-org6919ce6"&gt;
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2&lt;/li&gt;
@@ -194,9 +336,9 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb2f6261" class="outline-3"&gt;
-&lt;a href="#orgb2f6261"&gt;&lt;h3 id="orgb2f6261" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgb2f6261"&gt;
+&lt;div id="outline-container-org4d22b70" class="outline-3"&gt;
+&lt;a href="#org4d22b70"&gt;&lt;h3 id="org4d22b70" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4d22b70"&gt;
 &lt;dl class="org-dl"&gt;
 &lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
 &lt;dl class="org-dl"&gt;
@@ -206,31 +348,31 @@ but not any simpler – Albert Einstein
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orge130528" class="outline-3"&gt;
-&lt;a href="#orge130528"&gt;&lt;h3 id="orge130528" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orge130528"&gt;
+&lt;div id="outline-container-orgc95196b" class="outline-3"&gt;
+&lt;a href="#orgc95196b"&gt;&lt;h3 id="orgc95196b" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgc95196b"&gt;
 
-&lt;div id="orgcecc506" class="figure"&gt;
+&lt;div id="org5240689" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org90ff368" class="figure"&gt;
+&lt;div id="org8105d18" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org01f5c1b" class="figure"&gt;
+&lt;div id="org83b2ef0" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgd888572" class="figure"&gt;
+&lt;div id="org1e87091" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
@@ -238,21 +380,21 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org0894e06" class="outline-2"&gt;
-&lt;a href="#org0894e06"&gt;&lt;h2 id="org0894e06" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org0894e06"&gt;
+&lt;div id="outline-container-org7c5d6b0" class="outline-2"&gt;
+&lt;a href="#org7c5d6b0"&gt;&lt;h2 id="org7c5d6b0" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org7c5d6b0"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org0b0ffd7" class="outline-3"&gt;
-&lt;a href="#org0b0ffd7"&gt;&lt;h3 id="org0b0ffd7" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org0b0ffd7"&gt;
+&lt;div id="outline-container-orgf9a3306" class="outline-3"&gt;
+&lt;a href="#orgf9a3306"&gt;&lt;h3 id="orgf9a3306" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgf9a3306"&gt;
 &lt;p&gt;
 The magnitude &lt;img src="ltximg/demo_c309f6a7f999fb7c61cc3e705f2a9f768bc2c3ce.svg" alt="\(v\)" class="org-svg"&gt; is given by &lt;img src="ltximg/demo_18b830f2fdb20e199f786bc0b9fd93882fc68f16.svg" alt="\(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\)" class="org-svg"&gt; . Another way of writing this is &lt;img src="ltximg/demo_5789433fe00766ac710ddf86fc85054ba0dc5f86.svg" alt="\(d = \sqrt{x^2 + y^2 + z^2}\)" class="org-svg"&gt; where &lt;img src="ltximg/demo_ab3c489517742cf17ddaaf4a050e58455c76f327.svg" alt="\(x = v_x, y=v_y, z=v_z\)" class="org-svg"&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org2c4e268" class="outline-3"&gt;
-&lt;a href="#org2c4e268"&gt;&lt;h3 id="org2c4e268" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org2c4e268"&gt;
+&lt;div id="outline-container-orgf94d271" class="outline-3"&gt;
+&lt;a href="#orgf94d271"&gt;&lt;h3 id="orgf94d271" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgf94d271"&gt;
 
 &lt;div class="equation-container"&gt;
 &lt;span class="equation"&gt;

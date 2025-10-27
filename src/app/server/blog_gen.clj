@@ -202,4 +202,4 @@
      :language language
      :author author}))
 
-#_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))
+#_(def ^:dynamic *demo* (org-file->html "./blogs/build-a-commonlisp-project-with-nix.org"))
