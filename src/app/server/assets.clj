@@ -114,7 +114,9 @@
 (defn fetch-categories [& _]
   (->> (fetch-blogs)
        (map (fn [item] {:category (:category item)}))
-       sort
+       (sort (fn [a b]
+               (compare (:category a)
+                        (:category b))))
        dedupe))
 
 (defn fetch-blog-by-category [{{category :category} :path-params}]
