@@ -9,7 +9,8 @@
    [cheshire.core :as json]
    [clojure.java.io :as io]
    [reitit.core :as r]
-   [shadow.cljs.devtools.api :as shadow]))
+   [shadow.cljs.devtools.api :as shadow]
+   [app.user-config :as user-config]))
 
 (defn- derive-routes [routes]
   (let [router (r/router routes)
@@ -63,6 +64,9 @@
   (fs/copy-tree (str (System/getProperty "user.dir")
                      "/public")
                 config/*output*)
+  (when user-config/cname
+    (spit (str config/*output* "/CNAME")
+          user-config/cname))
   (doseq [[path {handler :handler match :match}] (get-all-routes)]
     (let [file (io/file (str config/*output*  (if (= path "/")
                                                 "/index.html"
