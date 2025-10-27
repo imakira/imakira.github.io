@@ -25,4 +25,4 @@
 
 (def special-pages (:special-pages config))
 
-
+(def cname (:cname config))

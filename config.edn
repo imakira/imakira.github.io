@@ -1,4 +1,5 @@
 {:title "Coruscation.net"
+ :cname "coruscation.net"
  :root-url "https://coruscation.net"
  :author "imakira"
  :links {:rss {:href "/atom.xml"
