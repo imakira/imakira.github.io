@@ -112,6 +112,9 @@ html, body, #root {
     hr {
         @apply border-cyan-600 my-6 border-t-2;
     }
+    a {
+        @apply text-sky-700;
+    }
     .org-svg {
         display: inline-block;
     }
@@ -127,8 +130,9 @@ html, body, #root {
         }
     }
     .equation-container {
-        @apply flex justify-center my-2;
+        color: var(--color-primary);
     }
+
 }
 
 .toc-mobile-wrapper {

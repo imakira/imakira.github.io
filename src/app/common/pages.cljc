@@ -277,7 +277,7 @@
                    category))
              ($ :div {:class ""}
                 ($ router/link {:href (str "blogs/" id ".html")
-                                :class "text-2xl xl:text-3xl text-sky-950 hover:text-[#0260B3] transition-all duration-300"} ($ :h1 title))))))))
+                                :class "text-2xl text-sky-950 hover:text-[#0260B3] transition-all duration-300"} ($ :h1 title))))))))
 
 
 
@@ -300,7 +300,7 @@
     ($ :div.flex.flex-col
        ($ :div.flex.flex-col.justify-center.items-center {:class "xl:w-[1100px]"}
           ($ :div.w-full
-             ($ :div.flex.justify-center.flex-col.gap-2.bg-opacity-100.w-full
+             ($ :div.flex.justify-center.flex-col.gap-6.bg-opacity-100.w-full
                 (for [blog blogs]
                   ($ :div.w-full {:key (:id blog)}
                      ($ blog-item {:preview blog
