@@ -12,9 +12,9 @@
     <content type="html">&lt;p&gt;
 I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
 &lt;/p&gt;
-&lt;div id="outline-container-orge9a52a5" class="outline-2"&gt;
-&lt;a href="#orge9a52a5"&gt;&lt;h2 id="orge9a52a5" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orge9a52a5"&gt;
+&lt;div id="outline-container-org9a884be" class="outline-2"&gt;
+&lt;a href="#org9a884be"&gt;&lt;h2 id="org9a884be" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org9a884be"&gt;
 &lt;p&gt;
 On the Nix we will have something like this:
 &lt;/p&gt;
@@ -71,9 +71,9 @@ With these two files we can then start developing the project with the following
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org6c47602" class="outline-2"&gt;
-&lt;a href="#org6c47602"&gt;&lt;h2 id="org6c47602" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org6c47602"&gt;
+&lt;div id="outline-container-org2dd4eed" class="outline-2"&gt;
+&lt;a href="#org2dd4eed"&gt;&lt;h2 id="org2dd4eed" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org2dd4eed"&gt;
 &lt;p&gt;
 To build an executable we need a few more snippets on the Nix side
 &lt;/p&gt;
@@ -128,9 +128,9 @@ We can also use &lt;code&gt;nix run .&lt;/code&gt; to run the result executable 
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org390dad4" class="outline-2"&gt;
-&lt;a href="#org390dad4"&gt;&lt;h2 id="org390dad4" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org390dad4"&gt;
+&lt;div id="outline-container-orga386a80" class="outline-2"&gt;
+&lt;a href="#orga386a80"&gt;&lt;h2 id="orga386a80" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orga386a80"&gt;
 &lt;p&gt;
 The biggest limitation of this solution may be you need to restart the REPL (or even the Emacs launched inside the develop environment) every time you add a package into the &lt;code&gt;flake.nix&lt;/code&gt;.
 &lt;/p&gt;
@@ -151,21 +151,21 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
     <link href="https://coruscation.net/blogs/demonstration.html"/>
     <updated>2025-10-27T15:43:05+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-org90a41be" class="outline-2"&gt;
-&lt;a href="#org90a41be"&gt;&lt;h2 id="org90a41be" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org90a41be"&gt;
+    <content type="html">&lt;div id="outline-container-org3a125cb" class="outline-2"&gt;
+&lt;a href="#org3a125cb"&gt;&lt;h2 id="org3a125cb" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org3a125cb"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc4ccf21" class="outline-3"&gt;
-&lt;a href="#orgc4ccf21"&gt;&lt;h3 id="orgc4ccf21" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgc4ccf21"&gt;
+&lt;div id="outline-container-orga86514b" class="outline-3"&gt;
+&lt;a href="#orga86514b"&gt;&lt;h3 id="orga86514b" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orga86514b"&gt;
 &lt;p&gt;
 Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org4c3480a" class="outline-3"&gt;
-&lt;a href="#org4c3480a"&gt;&lt;h3 id="org4c3480a" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org4c3480a"&gt;
+&lt;div id="outline-container-org77467a7" class="outline-3"&gt;
+&lt;a href="#org77467a7"&gt;&lt;h3 id="org77467a7" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org77467a7"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Java&lt;/li&gt;
 &lt;/ul&gt;
@@ -209,27 +209,27 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org75a6b7d" class="outline-2"&gt;
-&lt;a href="#org75a6b7d"&gt;&lt;h2 id="org75a6b7d" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org75a6b7d"&gt;
+&lt;div id="outline-container-org2f83e6a" class="outline-2"&gt;
+&lt;a href="#org2f83e6a"&gt;&lt;h2 id="org2f83e6a" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org2f83e6a"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb040f90" class="outline-3"&gt;
-&lt;a href="#orgb040f90"&gt;&lt;h3 id="orgb040f90" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgb040f90"&gt;
+&lt;div id="outline-container-orgb2f7976" class="outline-3"&gt;
+&lt;a href="#orgb2f7976"&gt;&lt;h3 id="orgb2f7976" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgb2f7976"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org3351eff" class="outline-4"&gt;
-&lt;a href="#org3351eff"&gt;&lt;h4 id="org3351eff" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-org3351eff"&gt;
+&lt;div id="outline-container-orgba83be4" class="outline-4"&gt;
+&lt;a href="#orgba83be4"&gt;&lt;h4 id="orgba83be4" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-orgba83be4"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org45b107e" class="outline-5"&gt;
-&lt;a href="#org45b107e"&gt;&lt;h5 id="org45b107e" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-org45b107e"&gt;
+&lt;div id="outline-container-orgbaf7906" class="outline-5"&gt;
+&lt;a href="#orgbaf7906"&gt;&lt;h5 id="orgbaf7906" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-orgbaf7906"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
@@ -238,9 +238,9 @@ Some text in between
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgcbbc87e" class="outline-2"&gt;
-&lt;a href="#orgcbbc87e"&gt;&lt;h2 id="orgcbbc87e" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgcbbc87e"&gt;
+&lt;div id="outline-container-org1fcde16" class="outline-2"&gt;
+&lt;a href="#org1fcde16"&gt;&lt;h2 id="org1fcde16" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org1fcde16"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
@@ -254,13 +254,13 @@ Some text in between
 &lt;hr&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org24e5562" class="outline-2"&gt;
-&lt;a href="#org24e5562"&gt;&lt;h2 id="org24e5562" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org24e5562"&gt;
+&lt;div id="outline-container-org4d1cf26" class="outline-2"&gt;
+&lt;a href="#org4d1cf26"&gt;&lt;h2 id="org4d1cf26" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org4d1cf26"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org387aaa6" class="outline-3"&gt;
-&lt;a href="#org387aaa6"&gt;&lt;h3 id="org387aaa6" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org387aaa6"&gt;
+&lt;div id="outline-container-org3c3a50a" class="outline-3"&gt;
+&lt;a href="#org3c3a50a"&gt;&lt;h3 id="org3c3a50a" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org3c3a50a"&gt;
 &lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
 
 
@@ -294,9 +294,9 @@ Some text in between
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org2b6f880" class="outline-3"&gt;
-&lt;a href="#org2b6f880"&gt;&lt;h3 id="org2b6f880" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org2b6f880"&gt;
+&lt;div id="outline-container-orga43789f" class="outline-3"&gt;
+&lt;a href="#orga43789f"&gt;&lt;h3 id="orga43789f" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orga43789f"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 Everything should be made as simple as possible,
@@ -305,9 +305,9 @@ but not any simpler – Albert Einstein
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orga13baf5" class="outline-3"&gt;
-&lt;a href="#orga13baf5"&gt;&lt;h3 id="orga13baf5" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orga13baf5"&gt;
+&lt;div id="outline-container-org00c4ddf" class="outline-3"&gt;
+&lt;a href="#org00c4ddf"&gt;&lt;h3 id="org00c4ddf" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org00c4ddf"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2
@@ -324,9 +324,9 @@ but not any simpler – Albert Einstein
 &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org6919ce6" class="outline-5"&gt;
-&lt;a href="#org6919ce6"&gt;&lt;h5 id="org6919ce6" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-org6919ce6"&gt;
+&lt;div id="outline-container-org8fc845e" class="outline-5"&gt;
+&lt;a href="#org8fc845e"&gt;&lt;h5 id="org8fc845e" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-org8fc845e"&gt;
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2&lt;/li&gt;
@@ -336,9 +336,9 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org4d22b70" class="outline-3"&gt;
-&lt;a href="#org4d22b70"&gt;&lt;h3 id="org4d22b70" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org4d22b70"&gt;
+&lt;div id="outline-container-org0cc7dd0" class="outline-3"&gt;
+&lt;a href="#org0cc7dd0"&gt;&lt;h3 id="org0cc7dd0" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org0cc7dd0"&gt;
 &lt;dl class="org-dl"&gt;
 &lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
 &lt;dl class="org-dl"&gt;
@@ -348,31 +348,31 @@ but not any simpler – Albert Einstein
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc95196b" class="outline-3"&gt;
-&lt;a href="#orgc95196b"&gt;&lt;h3 id="orgc95196b" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgc95196b"&gt;
+&lt;div id="outline-container-org15c3a2c" class="outline-3"&gt;
+&lt;a href="#org15c3a2c"&gt;&lt;h3 id="org15c3a2c" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org15c3a2c"&gt;
 
-&lt;div id="org5240689" class="figure"&gt;
+&lt;div id="org89cf1dc" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org8105d18" class="figure"&gt;
+&lt;div id="org87e014c" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org83b2ef0" class="figure"&gt;
+&lt;div id="org5a7e1f5" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org1e87091" class="figure"&gt;
+&lt;div id="org02f0319" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
@@ -380,21 +380,21 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org7c5d6b0" class="outline-2"&gt;
-&lt;a href="#org7c5d6b0"&gt;&lt;h2 id="org7c5d6b0" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org7c5d6b0"&gt;
+&lt;div id="outline-container-orgf0dff63" class="outline-2"&gt;
+&lt;a href="#orgf0dff63"&gt;&lt;h2 id="orgf0dff63" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgf0dff63"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf9a3306" class="outline-3"&gt;
-&lt;a href="#orgf9a3306"&gt;&lt;h3 id="orgf9a3306" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgf9a3306"&gt;
+&lt;div id="outline-container-org7759c19" class="outline-3"&gt;
+&lt;a href="#org7759c19"&gt;&lt;h3 id="org7759c19" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org7759c19"&gt;
 &lt;p&gt;
 The magnitude &lt;img src="ltximg/demo_c309f6a7f999fb7c61cc3e705f2a9f768bc2c3ce.svg" alt="\(v\)" class="org-svg"&gt; is given by &lt;img src="ltximg/demo_18b830f2fdb20e199f786bc0b9fd93882fc68f16.svg" alt="\(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\)" class="org-svg"&gt; . Another way of writing this is &lt;img src="ltximg/demo_5789433fe00766ac710ddf86fc85054ba0dc5f86.svg" alt="\(d = \sqrt{x^2 + y^2 + z^2}\)" class="org-svg"&gt; where &lt;img src="ltximg/demo_ab3c489517742cf17ddaaf4a050e58455c76f327.svg" alt="\(x = v_x, y=v_y, z=v_z\)" class="org-svg"&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf94d271" class="outline-3"&gt;
-&lt;a href="#orgf94d271"&gt;&lt;h3 id="orgf94d271" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgf94d271"&gt;
+&lt;div id="outline-container-org367645e" class="outline-3"&gt;
+&lt;a href="#org367645e"&gt;&lt;h3 id="org367645e" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org367645e"&gt;
 
 &lt;div class="equation-container"&gt;
 &lt;span class="equation"&gt;
