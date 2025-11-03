@@ -27,7 +27,7 @@
         com.google.guava/guava {:mvn/version "33.4.8-jre"}
         com.widdindustries/cljc.java-time {:mvn/version "0.1.21"}
         babashka/process {:mvn/version "0.6.23"}
-        imakira/uix-fontawesome {:local/root "/home/void/Projects/uix-fontawesome"}
+        net.coruscation/uix-fontawesome {:mvn/version "1.2.0"}
         org.clojure/data.xml {:mvn/version "0.0.8"}
         org.apache.commons/commons-imaging {:mvn/version "1.0.0-alpha6"}
         com.twelvemonkeys.imageio/imageio-jpeg {:mvn/version "3.12.0"}
