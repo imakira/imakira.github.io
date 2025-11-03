@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://coruscation.net</loc>
-    <lastmod>2025-10-27T17:31:20+08:00</lastmod>
+    <lastmod>2025-11-03T17:23:59+08:00</lastmod>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/about.html.html</loc>
     <lastmod>2025-10-27T15:43:05+08:00</lastmod>
+  </url>
+  <url>
+    <loc>https://coruscation.net/blogs/build-a-clojurescript-application-running-on-node-using-nix.html</loc>
+    <lastmod>2025-11-03T17:23:59+08:00</lastmod>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html</loc>
