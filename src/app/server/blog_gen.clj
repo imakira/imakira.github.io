@@ -2,6 +2,7 @@
   (:require
    [app.common.code-highlight :as code-highlight]
    [app.config :as config]
+   [app.server.utils :refer [extract-string]]
    [app.server.utils :as su]
    [cheshire.core :refer [parse-string]]
    [clojure.java.io :as io]
@@ -201,6 +202,14 @@
      :email email
      :language language
      :author author
-     :description description}))
+     :description (if (seq description)
+                    description
+                    (let [text (->> hickory-blocks
+                             	    (map extract-string)
+                                    (str/join ""))]
+                      (if (> (count text)
+                             155)
+                        (str (subs text 0 155) "...")
+                        (subs text 0 (min (count text) 153)))))}))
 
 #_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))
