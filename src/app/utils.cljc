@@ -53,6 +53,17 @@
               [path asset])
        asset)))
 
+(defn set-title! [title]
+  #?(:cljs (use-effect (fn [] (set! js/document.title title) (fn []))
+                       [title])
+     :clj (swap! (var-get (resolve 'app.server.render/*serialized-assets*))
+                 conj [:title title])))
+
+#_{:clj-kondo/ignore [:unused-binding]}
+(defn set-description! [description]
+  #?(:clj (swap! (var-get (resolve 'app.server.render/*serialized-assets*))
+                 conj [:description description])))
+
 ;; (defmacro case [& {:keys [cljd cljs clj]}]
 ;;   (cond
 ;;     (contains? &env '&env)

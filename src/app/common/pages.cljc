@@ -204,7 +204,7 @@
                         ($ :span content))))))))))
 
 (defui blog [{{:keys [id]} :path-params :as data}]
-  (let [{:keys [content title show-toc? category tags modified-date published-date] :as blog-asset} (use-asset (str "blog/" id))
+  (let [{:keys [content title show-toc? category tags modified-date published-date description] :as blog-asset} (use-asset (str "blog/" id))
         toc-content (use-memo
                      (fn []
                        #?(:cljs (if show-toc? (let [dummy (.createElement js/document "html")]
@@ -216,6 +216,8 @@
                      [content show-toc?])
         doc-ref (use-ref nil)
         [current-header-id set-current-header-id!] (use-state nil)]
+    (utils/set-title! (str title " | " user-config/title))
+    (utils/set-description! description)
     #?(:cljs
        (use-effect (fn []
                      (let [scroll-event
@@ -251,7 +253,7 @@
                           :current-header-id current-header-id}))
 
          ($ :div.gap-8.w-full.h-full {:class
-	                              (str "md:grid md:grid-cols-[minmax(0px,7fr)_minmax(17rem,17rem)] "
+	                                  (str "md:grid md:grid-cols-[minmax(0px,7fr)_minmax(17rem,17rem)] "
                                            "2xl:grid-cols-[minmax(0px,7fr)_minmax(20rem,20rem)]")}
             ($ :div.cr-document {:ref doc-ref
                                  :dangerouslySetInnerHTML {:__html content}})
@@ -297,6 +299,8 @@
             (fn []
               (js/removeEventListener "scroll" scroll-listener)))))
      [])
+    (utils/set-title! (str "HOME | " user-config/title))
+    (utils/set-description! "")
     ($ :div.flex.flex-col
        ($ :div.flex.flex-col.justify-center.items-center {:class "xl:w-[1100px]"}
           ($ :div.w-full
