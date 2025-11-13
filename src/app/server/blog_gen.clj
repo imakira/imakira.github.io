@@ -173,7 +173,7 @@
 
 (defn org-file->html [path]
   ;; TODO escape path
-  (let [{:keys [content title category tags email language author] :as result}
+  (let [{:keys [content title category tags email language author description] :as result}
         (-> (sh "emacs" "--batch" "-q" "-l" "init.el"
                 "--eval" (str "(org->html-to-stdout \"" path "\")")
                 :dir (System/getProperty "user.dir"))
@@ -200,6 +200,7 @@
      :tags (if tags (str/split tags #" ") [])
      :email email
      :language language
-     :author author}))
+     :author author
+     :description description}))
 
 #_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))

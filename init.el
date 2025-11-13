@@ -22,7 +22,7 @@
 (defun org->html-to-stdout (file)
   (save-window-excursion
     (find-file file)
-    (let* ((keywords '("title" "category" "tags" "email" "language" "author"))
+    (let* ((keywords '("title" "category" "tags" "email" "language" "author" "description"))
            (kvs (org-collect-keywords keywords)))
       (princ (json-encode (append
                            (mapcar (lambda (kv)

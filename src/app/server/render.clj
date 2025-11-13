@@ -8,8 +8,9 @@
             [app.common.pages :as pages]
             [app.user-config :as user-config]))
 
-(defn template [inner serialized-assets & {:keys [ssr? server-url] :or {ssr? false
-                                                                        server-url "http://localhost:3001/"}}]
+(defn template [inner serialized-assets & {:keys [ssr? server-url description title]
+                                           :or {ssr? false
+                                                server-url "http://localhost:3001/"}}]
   (str
    "<!DOCTYPE html>"
    (h/html
@@ -17,9 +18,9 @@
         [:head
          [:meta {:charset "utf-8"}]
          [:meta {:http-equiv "x-ua-compatible" :content "ie=edge"}]
-         [:meta {:name "description" :content ""}]
+         [:meta {:name "description" :content (if (seq description) description title)}]
          [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-         [:title user-config/title]
+         [:title (or title user-config/title)]
          [:link {:rel "preconnect", :href "https://fonts.googleapis.com"}]
          [:link
           {:rel "preconnect",
@@ -50,17 +51,21 @@
                                                    serialized-assets)))]))
          [:script {:src "/js/main.js"}]]])))
 
-(def ^:dynamic *serialized-assets* (atom []))
+(def ^:dynamic *serialized-assets* (atom {}))
 
 (defn spa-template []
   (template nil nil))
 
 (defn render [path]
-  (binding [*serialized-assets* (atom [])]
-    (->
-     ($ pages/app {:initial-route path})
-     (dom.server/render-to-string)
-     (template @*serialized-assets* :ssr? true :server-url "/"))))
+  (binding [*serialized-assets* (atom {})]
+    (let [inner (->
+                 ($ pages/app {:initial-route path})
+                 (dom.server/render-to-string))
+          {:keys [description title]} @*serialized-assets*]
+      (template inner @*serialized-assets*
+                :ssr? true :server-url "/"
+                :description description
+                :title title))))
 
 (defn dev-template [{:keys [uri http-roots http-config] :as req}]
   {:status 200
