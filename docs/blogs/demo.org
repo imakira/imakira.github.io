@@ -2,6 +2,7 @@
 #+TAGS: clojure lsp tailwindcss
 #+CATEGORY: Coding
 #+OPTIONS: tex:dvisvgm
+#+DESCRIPTION: This is a demonstration of this static blog generator
 #+LATEX_HEADER: \usepackage{pgfplots}
 #+LATEX_HEADER: \usepackage{svg}
 #+LATEX_HEADER: \usepackage{tikz}

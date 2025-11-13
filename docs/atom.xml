@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>Coruscation.net</title>
   <link href="https://coruscation.net"/>
-  <updated>2025-11-03T17:23:59+08:00</updated>
+  <updated>2025-11-13T23:45:16+08:00</updated>
   <author>imakira</author>
   <id>https://coruscation.net</id>
   <entry>
@@ -12,9 +12,9 @@
     <content type="html">&lt;p&gt;
 To build a ClojureScript application, we need to pull dependencies from two package managers. That is, JavaScript packages from &lt;code&gt;npm&lt;/code&gt; and Clojure packages from &lt;code&gt;deps.edn&lt;/code&gt;. After pulling the dependencies, we can then let &lt;code&gt;shadow-cljs&lt;/code&gt; compiles the ClojureScript files into a single javascript and make the result a npm package. In this post, we rely on &lt;code&gt;nixpkgs&lt;/code&gt;'s builtin &lt;code&gt;fetchNpmDeps&lt;/code&gt; and &lt;code&gt;buildNpmPackage&lt;/code&gt; for the npm side, and &lt;a href="https://github.com/jlesquembre/clj-nix"&gt;clj-nix&lt;/a&gt; for the nix side.
 &lt;/p&gt;
-&lt;div id="outline-container-orga8fc909" class="outline-2"&gt;
-&lt;a href="#orga8fc909"&gt;&lt;h2 id="orga8fc909" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orga8fc909"&gt;
+&lt;div id="outline-container-org77f35cd" class="outline-2"&gt;
+&lt;a href="#org77f35cd"&gt;&lt;h2 id="org77f35cd" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org77f35cd"&gt;
 &lt;p&gt;
 I will skip the details that are not unique to Nix. The following contents assume we already have a working shadow-cljs project that can produce a node.js target when running &lt;code&gt;npm run release&lt;/code&gt;. Which is basically:
 &lt;/p&gt;
@@ -26,9 +26,9 @@ I will skip the details that are not unique to Nix. The following contents assum
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org02a848d" class="outline-2"&gt;
-&lt;a href="#org02a848d"&gt;&lt;h2 id="org02a848d" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org02a848d"&gt;
+&lt;div id="outline-container-orgdd1c4c0" class="outline-2"&gt;
+&lt;a href="#orgdd1c4c0"&gt;&lt;h2 id="orgdd1c4c0" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgdd1c4c0"&gt;
 &lt;p&gt;
 During the &lt;i&gt;build&lt;/i&gt; phase of nix package, the process cannot perform any network request, as that will defeat the whole point of &lt;i&gt;determinism&lt;/i&gt;. The common practice is to use a &lt;i&gt;lock file&lt;/i&gt;. Which is essentially a recipe of all the necessary resources (and their checksums) for the building process. We can then prefetch all the resources into the nix store and tell the building process where to find the necessary resources during the actual building.
 &lt;/p&gt;
@@ -52,9 +52,9 @@ On the Clojure side, we execute the following command. It will generate a &lt;co
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org5a90764" class="outline-2"&gt;
-&lt;a href="#org5a90764"&gt;&lt;h2 id="org5a90764" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org5a90764"&gt;
+&lt;div id="outline-container-org15eb63c" class="outline-2"&gt;
+&lt;a href="#org15eb63c"&gt;&lt;h2 id="org15eb63c" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org15eb63c"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 The following nix script takes heavy inspiration from &lt;a href="https://github.com/jlesquembre/clj-nix/issues/14#issuecomment-2661208232"&gt;this github issue comment&lt;/a&gt;.
@@ -114,9 +114,9 @@ You can check &lt;a href="https://github.com/imakira/espoir"&gt;this little proj
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org0fcbf0f" class="outline-2"&gt;
-&lt;a href="#org0fcbf0f"&gt;&lt;h2 id="org0fcbf0f" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org0fcbf0f"&gt;
+&lt;div id="outline-container-org211721d" class="outline-2"&gt;
+&lt;a href="#org211721d"&gt;&lt;h2 id="org211721d" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org211721d"&gt;
 &lt;p&gt;
 The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulled from maven repos. Git dependencies aren't probably handled.
 &lt;/p&gt;
@@ -132,9 +132,9 @@ The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulle
     <content type="html">&lt;p&gt;
 I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
 &lt;/p&gt;
-&lt;div id="outline-container-org7daceda" class="outline-2"&gt;
-&lt;a href="#org7daceda"&gt;&lt;h2 id="org7daceda" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org7daceda"&gt;
+&lt;div id="outline-container-org94aadb4" class="outline-2"&gt;
+&lt;a href="#org94aadb4"&gt;&lt;h2 id="org94aadb4" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org94aadb4"&gt;
 &lt;p&gt;
 On the Nix we will have something like this:
 &lt;/p&gt;
@@ -191,9 +191,9 @@ With these two files we can then start developing the project with the following
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org73bfb1b" class="outline-2"&gt;
-&lt;a href="#org73bfb1b"&gt;&lt;h2 id="org73bfb1b" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org73bfb1b"&gt;
+&lt;div id="outline-container-org00e1810" class="outline-2"&gt;
+&lt;a href="#org00e1810"&gt;&lt;h2 id="org00e1810" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org00e1810"&gt;
 &lt;p&gt;
 To build an executable we need a few more snippets on the Nix side
 &lt;/p&gt;
@@ -248,9 +248,9 @@ We can also use &lt;code&gt;nix run .&lt;/code&gt; to run the result executable 
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org2f337f4" class="outline-2"&gt;
-&lt;a href="#org2f337f4"&gt;&lt;h2 id="org2f337f4" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org2f337f4"&gt;
+&lt;div id="outline-container-org08153ba" class="outline-2"&gt;
+&lt;a href="#org08153ba"&gt;&lt;h2 id="org08153ba" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org08153ba"&gt;
 &lt;p&gt;
 The biggest limitation of this solution may be you need to restart the REPL (or even the Emacs launched inside the develop environment) every time you add a package into the &lt;code&gt;flake.nix&lt;/code&gt;.
 &lt;/p&gt;
@@ -269,23 +269,23 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
   <entry>
     <title type="html">Demonstration</title>
     <link href="https://coruscation.net/blogs/demonstration.html"/>
-    <updated>2025-10-27T15:43:05+08:00</updated>
+    <updated>2025-11-13T23:45:16+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-orgcd1c615" class="outline-2"&gt;
-&lt;a href="#orgcd1c615"&gt;&lt;h2 id="orgcd1c615" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgcd1c615"&gt;
+    <content type="html">&lt;div id="outline-container-orgf30af9f" class="outline-2"&gt;
+&lt;a href="#orgf30af9f"&gt;&lt;h2 id="orgf30af9f" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgf30af9f"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org318ea0c" class="outline-3"&gt;
-&lt;a href="#org318ea0c"&gt;&lt;h3 id="org318ea0c" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org318ea0c"&gt;
+&lt;div id="outline-container-org8721fd6" class="outline-3"&gt;
+&lt;a href="#org8721fd6"&gt;&lt;h3 id="org8721fd6" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org8721fd6"&gt;
 &lt;p&gt;
 Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org07b71fe" class="outline-3"&gt;
-&lt;a href="#org07b71fe"&gt;&lt;h3 id="org07b71fe" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org07b71fe"&gt;
+&lt;div id="outline-container-orgb81ee9c" class="outline-3"&gt;
+&lt;a href="#orgb81ee9c"&gt;&lt;h3 id="orgb81ee9c" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgb81ee9c"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Java&lt;/li&gt;
 &lt;/ul&gt;
@@ -329,27 +329,27 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgcaf5c80" class="outline-2"&gt;
-&lt;a href="#orgcaf5c80"&gt;&lt;h2 id="orgcaf5c80" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgcaf5c80"&gt;
+&lt;div id="outline-container-org61cecc6" class="outline-2"&gt;
+&lt;a href="#org61cecc6"&gt;&lt;h2 id="org61cecc6" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org61cecc6"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org8046358" class="outline-3"&gt;
-&lt;a href="#org8046358"&gt;&lt;h3 id="org8046358" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org8046358"&gt;
+&lt;div id="outline-container-org71c606d" class="outline-3"&gt;
+&lt;a href="#org71c606d"&gt;&lt;h3 id="org71c606d" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org71c606d"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgbbb8530" class="outline-4"&gt;
-&lt;a href="#orgbbb8530"&gt;&lt;h4 id="orgbbb8530" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-orgbbb8530"&gt;
+&lt;div id="outline-container-org00de1e2" class="outline-4"&gt;
+&lt;a href="#org00de1e2"&gt;&lt;h4 id="org00de1e2" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-org00de1e2"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd44d37f" class="outline-5"&gt;
-&lt;a href="#orgd44d37f"&gt;&lt;h5 id="orgd44d37f" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orgd44d37f"&gt;
+&lt;div id="outline-container-orge2f919d" class="outline-5"&gt;
+&lt;a href="#orge2f919d"&gt;&lt;h5 id="orge2f919d" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-orge2f919d"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
@@ -358,9 +358,9 @@ Some text in between
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org77c06c7" class="outline-2"&gt;
-&lt;a href="#org77c06c7"&gt;&lt;h2 id="org77c06c7" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org77c06c7"&gt;
+&lt;div id="outline-container-orgf842907" class="outline-2"&gt;
+&lt;a href="#orgf842907"&gt;&lt;h2 id="orgf842907" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgf842907"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
@@ -374,13 +374,13 @@ Some text in between
 &lt;hr&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org139abc3" class="outline-2"&gt;
-&lt;a href="#org139abc3"&gt;&lt;h2 id="org139abc3" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org139abc3"&gt;
+&lt;div id="outline-container-orgf94bf46" class="outline-2"&gt;
+&lt;a href="#orgf94bf46"&gt;&lt;h2 id="orgf94bf46" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgf94bf46"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org9dbcf58" class="outline-3"&gt;
-&lt;a href="#org9dbcf58"&gt;&lt;h3 id="org9dbcf58" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org9dbcf58"&gt;
+&lt;div id="outline-container-org53c9f24" class="outline-3"&gt;
+&lt;a href="#org53c9f24"&gt;&lt;h3 id="org53c9f24" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org53c9f24"&gt;
 &lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
 
 
@@ -414,9 +414,9 @@ Some text in between
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgecfa848" class="outline-3"&gt;
-&lt;a href="#orgecfa848"&gt;&lt;h3 id="orgecfa848" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgecfa848"&gt;
+&lt;div id="outline-container-orgae2a172" class="outline-3"&gt;
+&lt;a href="#orgae2a172"&gt;&lt;h3 id="orgae2a172" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgae2a172"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 Everything should be made as simple as possible,
@@ -425,9 +425,9 @@ but not any simpler – Albert Einstein
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf13b081" class="outline-3"&gt;
-&lt;a href="#orgf13b081"&gt;&lt;h3 id="orgf13b081" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgf13b081"&gt;
+&lt;div id="outline-container-org08de742" class="outline-3"&gt;
+&lt;a href="#org08de742"&gt;&lt;h3 id="org08de742" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org08de742"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2
@@ -444,9 +444,9 @@ but not any simpler – Albert Einstein
 &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfd4a873" class="outline-5"&gt;
-&lt;a href="#orgfd4a873"&gt;&lt;h5 id="orgfd4a873" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orgfd4a873"&gt;
+&lt;div id="outline-container-org35745a0" class="outline-5"&gt;
+&lt;a href="#org35745a0"&gt;&lt;h5 id="org35745a0" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-org35745a0"&gt;
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2&lt;/li&gt;
@@ -456,9 +456,9 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf77cd90" class="outline-3"&gt;
-&lt;a href="#orgf77cd90"&gt;&lt;h3 id="orgf77cd90" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgf77cd90"&gt;
+&lt;div id="outline-container-org16e3276" class="outline-3"&gt;
+&lt;a href="#org16e3276"&gt;&lt;h3 id="org16e3276" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org16e3276"&gt;
 &lt;dl class="org-dl"&gt;
 &lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
 &lt;dl class="org-dl"&gt;
@@ -468,31 +468,31 @@ but not any simpler – Albert Einstein
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd1db550" class="outline-3"&gt;
-&lt;a href="#orgd1db550"&gt;&lt;h3 id="orgd1db550" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgd1db550"&gt;
+&lt;div id="outline-container-org93b87e2" class="outline-3"&gt;
+&lt;a href="#org93b87e2"&gt;&lt;h3 id="org93b87e2" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org93b87e2"&gt;
 
-&lt;div id="org5a107cc" class="figure"&gt;
+&lt;div id="org83c619c" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgd46d811" class="figure"&gt;
+&lt;div id="org998147a" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgcc1329e" class="figure"&gt;
+&lt;div id="org6396288" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org4223b1f" class="figure"&gt;
+&lt;div id="orgb2ab09e" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
@@ -500,21 +500,21 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org1d55593" class="outline-2"&gt;
-&lt;a href="#org1d55593"&gt;&lt;h2 id="org1d55593" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org1d55593"&gt;
+&lt;div id="outline-container-org9aeeb97" class="outline-2"&gt;
+&lt;a href="#org9aeeb97"&gt;&lt;h2 id="org9aeeb97" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org9aeeb97"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org14eb656" class="outline-3"&gt;
-&lt;a href="#org14eb656"&gt;&lt;h3 id="org14eb656" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org14eb656"&gt;
+&lt;div id="outline-container-orgab3c00a" class="outline-3"&gt;
+&lt;a href="#orgab3c00a"&gt;&lt;h3 id="orgab3c00a" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgab3c00a"&gt;
 &lt;p&gt;
 The magnitude &lt;img src="ltximg/demo_c309f6a7f999fb7c61cc3e705f2a9f768bc2c3ce.svg" alt="\(v\)" class="org-svg"&gt; is given by &lt;img src="ltximg/demo_18b830f2fdb20e199f786bc0b9fd93882fc68f16.svg" alt="\(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\)" class="org-svg"&gt; . Another way of writing this is &lt;img src="ltximg/demo_5789433fe00766ac710ddf86fc85054ba0dc5f86.svg" alt="\(d = \sqrt{x^2 + y^2 + z^2}\)" class="org-svg"&gt; where &lt;img src="ltximg/demo_ab3c489517742cf17ddaaf4a050e58455c76f327.svg" alt="\(x = v_x, y=v_y, z=v_z\)" class="org-svg"&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb45c886" class="outline-3"&gt;
-&lt;a href="#orgb45c886"&gt;&lt;h3 id="orgb45c886" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgb45c886"&gt;
+&lt;div id="outline-container-orgfff9f93" class="outline-3"&gt;
+&lt;a href="#orgfff9f93"&gt;&lt;h3 id="orgfff9f93" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgfff9f93"&gt;
 
 &lt;div class="equation-container"&gt;
 &lt;span class="equation"&gt;
