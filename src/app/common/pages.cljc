@@ -391,7 +391,7 @@
        ($ :<>
           ($ :div.transition-all
              ($ header))
-          ($ :div.pt-5.px-2 {:class "sm:px-4 xl:pt-7 xl:px-8"}
+          ($ :main.pt-5.px-2 {:class "sm:px-4 xl:pt-7 xl:px-8"}
              ($ router/router-outlet))))))
 
 (defui app [{:keys [initial-route]}]
