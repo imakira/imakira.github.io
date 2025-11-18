@@ -157,7 +157,7 @@
                 {:class (str " w-full transition-all ")}
                 ($ :div.h-8.w-96 {:key "TOC"} "Table Of Content")
                 (for [toc-item toc-content]
-                  ($ :div.h-8.w-96 {:key (:id toc-item)}
+                  ($ :div.h-8.w-96.overflow-hidden {:key (:id toc-item)}
                      (:content toc-item)))))
           ($ :span.material-symbols-outlined.checked:rotate-180.transition-all.dropdown-icon
              "keyboard_arrow_down"))
