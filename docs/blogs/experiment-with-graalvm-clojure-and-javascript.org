@@ -1,0 +1,644 @@
+#+title: Experiment with GraalVM, Clojure, and JavaScript
+#+CATEGORY: Coding
+
+A common challenge when making a fullstack website using Clojure/ClojureScript is that, we are often required to use a JavaScript library on the server side when doing Server Side Rendering (SSR). GraalVM/GraalJS provides a solution to run JavaScript code on the JVM. If only we could harness that power...
+
+This blog describes the basic usage of GraalJS and what I managed to achieve with GraalJS and Clojure.
+
+* Basic Setup and a Hello World Program
+
+We add the following dependencies to our ~deps.edn~
+
+#+BEGIN_SRC bash
+  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+         org.graalvm.polyglot/polyglot {:mvn/version "25.0.1"}
+         org.graalvm.js/js-language {:mvn/version "25.0.1"}
+         org.graalvm.truffle/truffle-runtime {:mvn/version "25.0.1"}}
+#+END_SRC
+
+With the dependencies installed, we can write a Hello World program.
+
+#+BEGIN_SRC clojure
+  (ns your-namespace
+    (:import
+     [org.graalvm.polyglot Context]))
+
+
+  (defonce ^:dynamic *context*
+    (-> (Context/newBuilder (into-array String ["js"]))
+        (.build)))
+
+  (def hello-fn (.eval *context*
+                       "js"
+                       "(function (name) {console.log('hello '+name)})"))
+
+  (.executeVoid hello-fn (into-array String ["world!"])) ;; output: hello world!
+#+END_SRC
+
+All kinds of JavaScript values are represented as ~org.graalvm.polyglot.Value~ objects by GraalJS. In the above example the ~(.eval ...)~ calling returns a executable ~polyglot.Value~.
+
+We can check if it is an executable by calling the ~.canExecute()~ method.
+
+#+BEGIN_SRC clojure
+(.canExecute hello-fn) ;; true
+#+END_SRC
+
+We can invoke the executable by calling the ~.execute()~ method or the ~.executeVoid()~ method. Their difference is that latter one doesn't have a return value.
+
+#+BEGIN_SRC clojure
+  (.executeVoid hello-fn (into-array Object ["world"])) ;; output: hello world
+
+  (.executeVoid hello-fn (into-array Object ["graaljs"])) ;; output: hello graaljs
+#+END_SRC
+
+You can check if a ~polyglot.Value~ object is of a certain type by using methods starting with ~.is~, and convert the ~Value~ object to native Java value with methods starting with ~.as~. For example:
+
+#+BEGIN_SRC clojure
+  (def integer-one (.eval *context* "js" "1")) ;; #object[org.graalvm.polyglot.Value 0x3583d830 "1"]
+  (.isNumber integer-one) ;; true
+  (.asLong integer-one) ;; 1
+  (.isString integer-one) ;; false
+  (.asString integer-one) ;; ERROR: Unhandled java.lang.ClassCastException
+#+END_SRC
+
+To handle JavaScript objects, we have ~.newInstance()~ for instantiating an Object, ~.invokeMember()~ for calling a method, ~.getMemberKeys()~, ~.getMember()~ and ~.putMember()~ for accessing properties of an object.
+
+#+BEGIN_SRC clojure
+  ;; We can access top-level JavaScript variables using the (.getBindings *context* "js").
+  ;; It returns a polyglot.Value object from which we can retrieve builtin
+  ;;   JavaScript functions and objects.
+  (def Array (.getMember (.getBindings *context* "js") "Array"))
+
+  ;; create an Array
+  (def arr (.newInstance Array (into-array Object [1 2 3])))
+
+  (print arr) ;; #object[org.graalvm.polyglot.Value 0x2dd585ca "(3)[1, 2, 3]"]
+
+  ;; pop a value and cast it to Long
+  (.asLong (.invokeMember arr "pop" (into-array Object []))) ;; 3
+
+  (print arr) ;; #object[org.graalvm.polyglot.Value 0x27e1e162 (2)[1, 2]]
+#+END_SRC
+
+
+* Working With JavaScript Libraries
+:PROPERTIES:
+:ID:       a99726bb-0e5d-401e-9f66-d5588652800f
+:END:
+
+GraalJS has an option to provide a ~require~ function, with which we can import CommonJS JavaScript modules. The option isn't enabled by default. To enable it, we need to change the definition of ~*context*~ to the following:
+
+#+BEGIN_SRC clojure
+  (defonce ^:dynamic *context*
+    (-> (Context/newBuilder (into-array String ))
+        (.allowExperimentalOptions true)
+        (.options (HashMap.
+                   {"js.commonjs-require" "true"
+                    "js.commonjs-require-cwd" (str (System/getProperty "user.dir")
+                                                   "/node_modules")}))
+        (.allowIO true)
+        (.build)))
+#+END_SRC
+
+Here we use src_java{(str (System/getProperty "user.dir") "/node_modules")} as ~commonjs-require-cwd~'s value. It tells GraalJS to find JavaScript modules under the ~node_modules~ folder in the project root.
+
+We can then install JavaScript libraries using npm under the project root. Here I use "luxon" as an example.
+
+#+BEGIN_SRC bash
+  npm init
+  npm install luxon
+#+END_SRC
+
+We can then import the module by using ~require~ function.
+
+#+BEGIN_SRC clojure
+(def luxon (.eval *context* "js" "require('luxon')"))
+#+END_SRC
+
+We can access the resulting module with the ~.getMember()~ method.
+
+#+BEGIN_SRC clojure
+  (def DateTime (.getMember luxon "DateTime"))
+#+END_SRC
+
+Now we have the ~DateTime~ class from the ~luxon~ library, let's try to turn it into something useful:
+
+#+BEGIN_SRC clojure 
+  (defn now []
+    (-> DateTime
+        ;; DateTime.now() returns a DateTime object
+        (.invokeMember "now" (into-array Object []))
+        ;; We call the .toString method to convert the object
+        ;;    into a JavaScript String
+  	  (.invokeMember "toString" (into-array Object []))
+        ;; then we convert the result into a Java String
+  	  (.asString)))
+
+  ;; Let's try to call the function
+
+  (now) ;; "2025-11-15T16:56:49.798+08:00"
+  (now) ;; "2025-11-15T16:57:01.961+08:00"
+
+#+END_SRC
+
+We wrapped the details of interop between Clojure and JavaScript in a Clojure function ~now~. Now if we want to get the current time string from the ~luxon~ library, we can just call the ~now~ function. The interop is still something quite cumbersome to do, however. In this blog I will show you how to turn it into something way more concise using the macros and other facilities provided by Clojure. Here is a glimpse of it:
+
+#+BEGIN_SRC clojure
+  (js.. lux/DateTime now toString) ;; "2025-11-15T17:04:38.574+08:00"
+#+END_SRC
+
+
+* Ease Things With Helper Functions, Macros and More
+:PROPERTIES:
+:ID:       0d759e86-c97b-4c12-b38c-25a7fc42d2ce
+:END:
+
+You must have noticed the definition of the ~now~ function in the previous example is quite clumsy. In ClojureScript we have the following things that can facilitate the interop between ClojureScript and JavaScript
+- We can require a js module just like a clojure namespace
+- A ClojureScript function is just a JavaScript function, we can call JavaScript functions from the ClojureScript side, or we can pass ClojureScript functions to the JavaScript side.
+- We have dot macros ( ~.~, ~..~ and ~.-~ ) and ~set!~ to easily access properites or methods of JavaScript objects.
+
+To build something on the same level is probably very hard, however, to build a demonstration of something very similar is indeed very achievable.
+
+** Mapping between Clojure and Polyglot Values
+
+We probably don't want to manually convert the result each time we get a value from the JavaScript side as we did in the previous examples. So we would like to put the actual JavaScript functions invoking logics into a wrapper and let the wrapper automatically convert the parameters and the return value for us. To make something like this, and since GraalJS represents each JavaScript value as a Polyglot Value, we first need to establish a mapping between Clojure types and Polyglot Types.
+
+*** Primitive Types
+:PROPERTIES:
+:ID:       primitive_type
+:END:
+
+
+Each time we call the ~.execute()~ or ~.invokeMember()~ method of the ~polyglot.Value~ class, GraalJS will convert the arguments using ~.asValue()~ method of ~Context~ class. However, we are going to wrap Clojure functions as Polyglot functions in the next section. As of now, we write a Clojure -> Polyglot mapping function only calling the ~.asValue()~ method.
+
+#+BEGIN_SRC clojure
+  (defn polyglotalize-clojure [value]
+    (cond
+      ;; https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html#asValue(java.lang.Object)
+      :else
+      (.asValue *context* value)))
+#+END_SRC
+
+As for the mapping from ~polyglot.Value~ to Clojure values, we use the various checking and converting methods described before.
+
+#+BEGIN_SRC clojure
+  (defn clojurify-value [^org.graalvm.polyglot.Value value]
+    (cond (.isHostObject value)
+          (.asHostObject value)
+
+          (.isBoolean value)
+          (.asBoolean value)
+
+          (.isNull value)
+          nil
+
+          (.isString value)
+          (.asString value)
+
+          (.isNumber value)
+          (cond (.fitsInLong value)
+                (.asLong value)
+
+                (.fitsInDouble value)
+                (.asDouble value))
+
+          :else
+          value))
+#+END_SRC
+
+*** Functions
+:PROPERTIES:
+:CUSTOM_ID: functions
+:END:
+
+GraalVM provides various ~Proxy~ objects that we can use to make Clojure objects accessible in the JavaScript environment. To wrap a function, we need to use ~ProxyExecutable~.
+
+#+BEGIN_SRC clojure
+  (defn wrap-clojure-fn [f]
+    (.asValue *context*
+              (with-meta (reify org.graalvm.polyglot.proxy.ProxyExecutable
+                           #_{:clj-kondo/ignore [:unused-binding]}
+                           ;; we ignore `this` for now
+                           (execute [this ^"[Lorg.graalvm.polyglot.Value;" values]
+                             (polyglotalize-clojure (apply f (map clojurify-value values)))))
+                {::raw-fn f})))
+#+END_SRC
+
+The function takes a Clojure function as an argument, returns a Polyglot executable that we can pass to the JavaScript environment.
+
+In the function body, we use ~reify~ to instantiate an object implementing the ~ProxyExecutable~ interface. We implement the ~.execute()~ method by applying the clojurified arguments to the original Clojure function, and convert the return value back to a Polyglot value using the two functions we wrote in the [[Primitive Types][previous section]].
+
+In case we want to turn the proxy object back into a clojure function (like when a JavaScript function returns the proxy object as is), we save the original Clojure function into the [[https://clojure.org/reference/metadata][metadata]] of the proxy object using ~with-meta~. In the final step, we turn it into a Polyglot Value using ~.asValue~ method from ~Context~.
+
+Wrapping functions from JavaScript follows a similar logic.
+
+#+BEGIN_SRC clojure
+  (defn wrap-polyglot-executable [^org.graalvm.polyglot.Value obj]
+    (with-meta (fn [& args]
+                 (clojurify-value (.execute obj (into-array Object (map polyglotalize-clojure args)))))
+      {::raw-value obj}))
+#+END_SRC
+
+Here, we also save a reference to the original JavaScript function in the metadata. However, it serves a much more important role: In JavaScript, a function is like any object, it can have all kinds of properties. Therefore, after wrapping a JavaScript function as a Clojure function, we may still need to access its other properties. To do this, we save the original function in the metadata and retrieve it if necessary.
+
+With these two functions defined, we can then augmented our two mapping functions.
+
+#+BEGIN_SRC clojure
+  (defn polyglotalize-clojure [value]
+    (cond (::raw-value (meta value))
+          (::raw-value (meta value))
+
+          (fn? value)
+          (wrap-clojure-fn value)
+
+          :else
+          ;; https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html#asValue(java.lang.Object)
+          (.asValue *context* value)))
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (defn clojurify-value [^org.graalvm.polyglot.Value value]
+    (cond
+
+      (.isProxyObject value)
+      (let [prox-obj (.asProxyObject value)]
+        (if (::raw-fn (meta prox-obj))
+          (::raw-fn (meta prox-obj))
+          prox-obj))
+
+      ;;
+      ;; ... omitted
+      ;;
+
+      (.canExecute value) 
+      (wrap-polyglot-executable value)
+
+      :else
+      value))
+#+END_SRC
+
+With these two facilities created, we already achieve something very interesting.
+
+#+BEGIN_SRC clojure
+  (def hello (clojurify-value (.eval *context* "js" "(function (name){console.log(`hello ${name}`)})")))
+
+  (hello "world") ;; output: hello world
+  (hello "graaljs") ;; output: hello graaljs
+
+  (def to-array (clojurify-value
+                 (.eval *context* "js" "(function (...args){return Array.from(args);})")))
+
+  (to-array 1 2 3 4) ;; #object[org.graalvm.polyglot.Value 0x26e3da6b "(4)[1, 2, 3, 4]"]
+
+  (def join (clojurify-value
+             (.eval *context* "js" "(function (s, ...args){return args.join(s);})")))
+
+  (join "," 1 2 3 4) ;; "1,2,3,4"
+#+END_SRC
+
+As you have seen, we can now call a JavaScript function just like a Clojure function. Return values of primitive types will also be automatically converted back to Clojure values.
+
+We can also pass Clojure functions to the JavaScript side:
+
+#+BEGIN_SRC clojure
+  (def sum-term
+    (clojurify-value
+     (.eval *context* "js" "let sum = (term, a, b) => (a>b)? 0 : term(a) + sum(term, a+1,b); sum")))
+
+  ;; (sum-integers a b) calculate the sum of integers from `a` to `b` (inclusive)
+  (def sum-integers (partial sum-term identity))
+  (sum-integers 0 10) ;; 55
+
+  ;; (sum-cubes a b) calculates the sum of cubes of integers from `a` to `b` (inclusive)
+  (def sum-cubes (partial sum-term (fn [x] (* x x x))))
+  (sum-cubes 0 10) ;; 3025
+#+END_SRC
+
+
+*** Objects
+:PROPERTIES:
+:CUSTOM_ID: mapping_objects
+:END:
+
+Rougly similar to ClojureScript, We don't do mapping for objects other than those of primitives types and functions. However, in the ~clojurify-value~ function, we wrap all JavaScript functions into Clojure functions and save the reference in the metadata, and as I have explained there, a JavaScript function may have other properties we want to access. Thus, in each place where a Clojure function wrapping a JavaScript function can be taken as arguments, we cannot use methods from ~polyglot.Value~. Instead, we define helper functions that will wrap the arguments if necessary and then call the target method.
+
+#+BEGIN_SRC clojure
+  (defn polyglot-value [obj]
+    (or (::raw-value (meta obj))
+        (and (instance? org.graalvm.polyglot.Value obj)
+             obj)))
+
+  (defn- to-camel-style [s]
+    (string/replace s #"-([a-z])" (fn [g]
+                                    (.toUpperCase (second g)))))
+
+  (defmacro define-unwrap-executable-alias
+    {:clj-kondo/lint-as 'clojure.core/declare}
+    [name & args]
+    (let [docstring? (string? (first args))
+          docstring (when docstring? (first args))
+          args (if docstring? (second args) (first args))
+          obj 'obj
+          [arglist [_ vararg]] (split-with (fn [x] (not (= x '&))) args)] 
+      `(defn ~name {:doc ~docstring} [~obj ~@arglist ~@(if vararg `[& ~vararg] [])]
+         (let [~obj (or (polyglot-value ~obj)
+                        ~obj)]
+           (~(symbol (str "." (to-camel-style (str name))))
+            ~obj 
+            ~@arglist
+            ~@(if vararg
+                [`(into-array Object ~vararg)]
+                []))))))
+
+  (define-unwrap-executable-alias get-meta-object)
+  (define-unwrap-executable-alias is-meta-object)
+  (define-unwrap-executable-alias get-meta-qualified-name)
+  (define-unwrap-executable-alias has-meta-parents)
+  (define-unwrap-executable-alias has-array-elements)
+  (define-unwrap-executable-alias get-meta-parents)
+  (define-unwrap-executable-alias get-member [^String identifier])
+  (define-unwrap-executable-alias put-member [^String identifier ^Object value])
+  (define-unwrap-executable-alias get-member-keys)
+  (define-unwrap-executable-alias new-instance [& args])
+  (define-unwrap-executable-alias can-invoke-member [^String s])
+  (define-unwrap-executable-alias invoke-member [^String method & args])
+  (define-unwrap-executable-alias can-instantiate)
+  (define-unwrap-executable-alias canExecute)
+  (define-unwrap-executable-alias execute [& args])
+  (define-unwrap-executable-alias executeVoid [& args])
+#+END_SRC
+
+We wrote a macro for this purpose. The macro takes a function name and a parameter list as arguments and defines a function with the name and parameters.
+The function defined by the macro retrieves the reference from the metadata if necessary, then calls a method by the name converted from the function name and with arguments from the parameter list.
+
+One nice bonus is that the generated functions assembles all the variadic arguments into an ~Object[]~, saving us from calling ~(into-arry Object)~ manually if we need to call a method with variadic arguments.
+
+Previously we need to do this:
+
+#+BEGIN_SRC clojure
+  (.newInstance (.eval *context* "js" "Array") (into-array Object [1 2 3]))
+  ;; #object[org.graalvm.polyglot.Value 0x65b337ef "(3)[1, 2, 3]"]
+#+END_SRC
+
+Now we just need to do this:
+
+#+BEGIN_SRC clojure
+  (new-instance (.eval *context* "js" "Array") 1 2 3)
+  ;; #object[org.graalvm.polyglot.Value 0xfdabe76 "(3)[1, 2, 3]"]
+#+END_SRC
+
+
+** Dot Macros and ~set!~ 
+:PROPERTIES:
+:ID:       dotmacros
+:END:
+
+In ClojureScript we have dots special forms or macros like ~.~,  ~.-~ and ~..~ for accessing properties or calling methods of JavaScript objects.
+
+We can relatively easily implement them using macros.
+
+#+begin_quote
+There are also ~(.method obj)~ ~(.-property obj)~ as shorthands for ~(. obj method)~ and ~(.- obj property)~ in ClojureScript. However, implementing them would be really difficult if not impossible.
+#+end_quote
+
+#+BEGIN_SRC clojure
+  (defmacro js.
+    {:clj-kondo/ignore [:unresolved-symbol :type-mismatch]}
+    [obj method & args]
+    `(clojurify-value
+      (apply invoke-member ~obj ~(str method)
+             ;; evaluate args before passing them to polyglotalize-clojure
+             (map polyglotalize-clojure (list ~@args)))))
+
+
+  (defmacro js.-
+    {:clj-kondo/ignore [:unresolved-symbol :type-mismatch]}
+    [obj field]
+    `(#'clojurify-value (get-member ~obj ~(str field))))
+#+END_SRC
+
+The ~invoke-member~ and ~get-member~ helper functions are defined in the [[#mapping_objects][previous section]].
+
+With these two defined, we can write the more complicated macro ~js..~ based on them.
+
+#+BEGIN_SRC clojure
+  (defmacro js..
+    {:clj-kondo/ignore [:unresolved-symbol :type-mismatch]}
+    [obj & args]
+    (if (empty? args)
+      obj
+      (let [curr# (first args)
+            rest# (rest args)]
+        `(js.. ~(cond (seq? curr#)
+                      `(js. ~obj ~(first curr#) ~@(rest curr#))
+
+                      (.startsWith (str curr#)
+                                   "-")
+                      `(js.- ~obj ~(subs (str curr#) 1))
+
+                      :else
+                      `(js. ~obj ~curr#))
+           ~@rest#))))
+#+END_SRC
+
+Finally, we will implement the ~set!~ macro.
+
+#+BEGIN_SRC clojure
+
+  (defmacro js-set! [dot-form value]
+    (assert (seq? dot-form) "First argument must be in the form of `(js.. obj -field)` or (js.- obj field)")
+    (let [[op & args] dot-form]
+      (assert (or (= op 'js..)
+                  (= op 'js.-))
+              "First argument to js-set! must start with either `js..` or `js.-`")
+      (let [remove-hyphen (= op 'js..)
+            lst (last args)
+            last-removed (drop-last (into [op] args))]
+        `(put-member ~(if (= (count last-removed) 2)
+                        (second last-removed)
+                        last-removed)
+                     ~(if remove-hyphen
+                        (subs (str lst) 1)
+                        (str lst))
+                     ~value))))
+#+END_SRC
+
+Let's go back to the ~luxon~ example mentioned in the beginning of this blog and check what we can do with these newly defined tools.
+
+#+BEGIN_SRC clojure
+  (def luxon (.eval *context* "js" "require('luxon')"))
+
+  (js.. luxon -DateTime now toString) ;; "2025-11-14T16:48:11.324+08:00"
+#+END_SRC
+
+Compare it to the snippet I showed at the end of the first section:
+
+#+BEGIN_SRC clojure
+(js.. lux/DateTime now toString)
+#+END_SRC
+
+The only thing lacking is a ~require~ mechanism, which is what we are going to implement in the next section.
+
+** ~require~ command
+
+On the JavaScript side, the ~require()~ function returns an object from which we can access its exported variables or functions.
+
+On the Clojure side, we can dynamically create a namespace with the ~create-ns~ function. After that we can make all the variables from the module object accessible in the newly created namespace with the ~intern~ function.
+
+#+BEGIN_SRC clojure
+  (defn- require-module [name]
+    (-> *context*
+        (.eval "js"
+               (str "require('" name "')"))))
+
+  (defn- parse-flags [args]
+    (loop [args (lazy-seq args)
+           result (hash-map)]
+      (if (empty? args)
+        result
+        (let [curr (first args)
+              rst (rest args)]
+          (if (or (keyword? (first rst))
+                  (empty? rst))
+            (recur rst (assoc result curr true))
+            (recur (rest rst)
+                   (assoc result curr (first rst))))))))
+
+  (defn- normalize-module-name [name]
+    (s/replace (str name) #"/" "."))
+
+  (defn require-js
+    {:clj-kondo/lint-as 'clojure.core/require}
+    [[module-name & flags] & coll]
+    (let [flag-map (parse-flags flags)
+          module (require-module module-name)
+          alias-name (:as flag-map)
+          qualified-module-name (symbol (str "js4clj.modules." (normalize-module-name module-name)))]
+      (create-ns qualified-module-name)
+      (doseq [k (.getMemberKeys module)]
+        (intern qualified-module-name
+                (symbol k)
+                (clojurify-value (.getMember module k))))
+      (when alias-name
+        (alias alias-name qualified-module-name)))
+    (when (seq coll)
+      (apply require-js coll)))
+#+END_SRC
+
+~(require-js '[luxon :as lux])~ is now all we need to require a JavaScript module.
+
+#+BEGIN_SRC clojure
+  (require-js '[luxon :as lux])
+
+  (js.. lux/DateTime now toString) ;; "2025-11-14T17:08:40.045+08:00"
+#+END_SRC
+
+Let's try some more examples:
+
+#+BEGIN_SRC clojure
+  (js.. lux/DateTime (fromISO "2017-05-15T08:30:00") -year) ;; 2017
+
+  ;; or write it as
+  (-> lux/DateTime
+      (js. fromISO "2017-05-15T08:30:00")
+      (js.- year)) ;; 2017
+
+  (let [now (js. lux/DateTime now)
+        later (js. lux/DateTime local 2026 10 12)
+        i (js. lux/Interval fromDateTimes now later)]
+    (js. i length "years")) ;; 0.904136850298072
+#+END_SRC
+
+
+** Bonus: Special ~js~ namespace
+
+ClojureScript provides us a [[https://cljs.github.io/api/syntax/js-namespace][special ~js~ namespace]], from where we can use various JavaScript global objects. We can also implement something like that.
+
+#+BEGIN_SRC clojure
+  (def ^:dynamic *no-clojurify* false)
+
+  (defn- define-builtin [ns primitive & [alias]]
+    (intern ns (if alias (symbol alias) (symbol primitive))
+            ((if *no-clojurify* identity clojurify-value)
+             (.eval *context* "js" primitive))))
+
+  (defmacro define-builtins
+    {:clj-kondo/lint-as 'clojure.core/declare}
+    [ns & primitives]
+    (create-ns ns)
+    `(doseq [primitive# '~primitives]
+       (define-builtin '~ns (str primitive#))))
+
+  ;; In cljs there is also a js/undefined
+  ;;	in which (= nil js/undefined) but we can't mimic it.
+  ;; Still, we need a js/undefined in case we need to do some
+  ;; 	very specific interop.
+  (declare undefined)
+  (with-bindings {#'*no-clojurify* true}
+    (define-builtin 'js "undefined" "undefined"))
+
+  #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
+  (define-builtins js
+    globalThis
+    Infinity
+    NaN
+    Object
+    Function
+    Boolean
+    Symbol
+    Error
+    Number
+    BigInt
+    Math
+    Date
+    String
+    Array
+    Map
+    Set
+    WeakMap
+    WeakSet
+    JSON
+    ArrayBuffer
+    Promise
+    console)
+#+END_SRC
+
+We took a special handling of ~js/undefined~ (note when we clojurify JavaScript values, we turn both ~null~ and ~undefined~ into ~nil~), since a direct equivalent of ~undefined~ in JavaScript may be needed for some interops. However, ~js/undefined~ In ClojureScript has some special properties we can't replicate, most notably, ~(nil? js/undefined)~ and ~(= js/undefined nil)~ results in ~true~ in ClojureScript.
+
+* Limitations
+
+** Functionalities specific to an environment
+
+JavaScript packages are often written under the assumption that, the code will either run on a Browser or a node.js environment. Unfortunately, GraalJS only implements the ECMAScript specification, which means we have neither functions specific to node.js nor functions specific to a browser.
+
+For example, we don't have ~WebWorker~ api from the browser, nor ~process~, ~fs~ api from node.js.
+
+** Multithreading and the ~js~ namespace
+
+When writing programs in Java, we usually use blocking operations and multithreading. However, ~polyglot.Context~ is not thread-safe. It isn't a problem in itself, since we can spin up multiple contexts. However, variables in ~js~ refer to variables in a specific context. Thus, if we want to use multiple contexts, we cannot refer to variables in the ~js~ namespace with the current settings. We may be able to mitigate or solve this problem with dynamic bindings or using a dedicated thread for JavaScript operations.
+
+** Shorthands for dot macros
+
+We have already talked about it in the [[#dotmacros][Dot Macros]] section. In ClojureScript we can ~(ClassName.)~ for instantiate an instance or ~(.method obj)~ for invoking an method. Implementing them would be really hard if not impossible.
+
+** Importing ECMAScript Modules
+
+The ~require-js~ function can only import CommonJS modules. More and more projects are choosing ECMAScript modules over CommonJS modules these days. However, implementing an importing mechanism for ECMAScript modules is entirely feasible. GraalJS provides a ~js.esm-eval-returns-exports~ option, with this option enabled, we can import a ECMAScript module by loading the source file. However, it will take some time to write support for things like ~exports~ fields in ~package.json~.
+
+** Using JavaScript array in Clojure
+
+In ClojureScript, many times we can use a JavaScript array just like a ClojureScript vector (not vice versa though).
+We haven't implement something similar to this.
+
+#+BEGIN_SRC clojure
+  ;; ClojureScript
+  (map (fn [x] (* x 2)) #js [1 2 3])
+  ;; (2 4 6)
+#+END_SRC
+
+
+
+* To Be Continue...
+
+Despite the limitations, I still believe this approach is something worth exploring. I'm planning on making an isomorphic React demonstration with Server Side Rendering and Client Side Rehydration using only a thin wrapper over React and React DOM Server (instead of reimplementing the SSR logics on the JVM). The code presented here is also expanded and refined when I'm writing the blog, and the code is open sourced at [[https://github.com/imakira/js4clj][imakira/js4clj]].

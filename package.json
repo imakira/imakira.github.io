@@ -1,8 +1,9 @@
 {
   "name": "cerulean",
+  "version": "0.0.1",
   "scripts": {
-    "dev": "shadow-cljs -A:dev watch app & yarn styles-dev",
-    "release": "shadow-cljs -A:dev release app && yarn styles-release",
+    "dev": "shadow-cljs -A:dev watch app & npm run styles-dev",
+    "release": "shadow-cljs -A:dev release app && npm run styles-release",
     "styles-dev": "npx @tailwindcss/cli -i ./src/app/main.css -o ./public/main.css --watch",
     "styles-release": "npx @tailwindcss/cli -m -i ./src/app/main.css -o ./public/main.css"
   },

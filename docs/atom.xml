@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>Coruscation.net</title>
   <link href="https://coruscation.net"/>
-  <updated>2025-11-13T23:45:16+08:00</updated>
+  <updated>2025-11-18T15:01:16+08:00</updated>
   <author>imakira</author>
   <id>https://coruscation.net</id>
   <entry>
@@ -12,9 +12,9 @@
     <content type="html">&lt;p&gt;
 To build a ClojureScript application, we need to pull dependencies from two package managers. That is, JavaScript packages from &lt;code&gt;npm&lt;/code&gt; and Clojure packages from &lt;code&gt;deps.edn&lt;/code&gt;. After pulling the dependencies, we can then let &lt;code&gt;shadow-cljs&lt;/code&gt; compiles the ClojureScript files into a single javascript and make the result a npm package. In this post, we rely on &lt;code&gt;nixpkgs&lt;/code&gt;'s builtin &lt;code&gt;fetchNpmDeps&lt;/code&gt; and &lt;code&gt;buildNpmPackage&lt;/code&gt; for the npm side, and &lt;a href="https://github.com/jlesquembre/clj-nix"&gt;clj-nix&lt;/a&gt; for the nix side.
 &lt;/p&gt;
-&lt;div id="outline-container-org77f35cd" class="outline-2"&gt;
-&lt;a href="#org77f35cd"&gt;&lt;h2 id="org77f35cd" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org77f35cd"&gt;
+&lt;div id="outline-container-org9a8564f" class="outline-2"&gt;
+&lt;a href="#org9a8564f"&gt;&lt;h2 id="org9a8564f" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org9a8564f"&gt;
 &lt;p&gt;
 I will skip the details that are not unique to Nix. The following contents assume we already have a working shadow-cljs project that can produce a node.js target when running &lt;code&gt;npm run release&lt;/code&gt;. Which is basically:
 &lt;/p&gt;
@@ -26,9 +26,9 @@ I will skip the details that are not unique to Nix. The following contents assum
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgdd1c4c0" class="outline-2"&gt;
-&lt;a href="#orgdd1c4c0"&gt;&lt;h2 id="orgdd1c4c0" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgdd1c4c0"&gt;
+&lt;div id="outline-container-orgecff770" class="outline-2"&gt;
+&lt;a href="#orgecff770"&gt;&lt;h2 id="orgecff770" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgecff770"&gt;
 &lt;p&gt;
 During the &lt;i&gt;build&lt;/i&gt; phase of nix package, the process cannot perform any network request, as that will defeat the whole point of &lt;i&gt;determinism&lt;/i&gt;. The common practice is to use a &lt;i&gt;lock file&lt;/i&gt;. Which is essentially a recipe of all the necessary resources (and their checksums) for the building process. We can then prefetch all the resources into the nix store and tell the building process where to find the necessary resources during the actual building.
 &lt;/p&gt;
@@ -52,9 +52,9 @@ On the Clojure side, we execute the following command. It will generate a &lt;co
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org15eb63c" class="outline-2"&gt;
-&lt;a href="#org15eb63c"&gt;&lt;h2 id="org15eb63c" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org15eb63c"&gt;
+&lt;div id="outline-container-orgd6b2a5d" class="outline-2"&gt;
+&lt;a href="#orgd6b2a5d"&gt;&lt;h2 id="orgd6b2a5d" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgd6b2a5d"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 The following nix script takes heavy inspiration from &lt;a href="https://github.com/jlesquembre/clj-nix/issues/14#issuecomment-2661208232"&gt;this github issue comment&lt;/a&gt;.
@@ -114,11 +114,818 @@ You can check &lt;a href="https://github.com/imakira/espoir"&gt;this little proj
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org211721d" class="outline-2"&gt;
-&lt;a href="#org211721d"&gt;&lt;h2 id="org211721d" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org211721d"&gt;
+&lt;div id="outline-container-orgcf1a87f" class="outline-2"&gt;
+&lt;a href="#orgcf1a87f"&gt;&lt;h2 id="orgcf1a87f" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgcf1a87f"&gt;
 &lt;p&gt;
 The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulled from maven repos. Git dependencies aren't probably handled.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <title type="html">Experiment with GraalVM, Clojure, and JavaScript</title>
+    <link href="https://coruscation.net/blogs/experiment-with-graalvm--clojure--and-javascript.html"/>
+    <updated>2025-11-18T15:01:16+08:00</updated>
+    <id>https://coruscation.net/blogs/experiment-with-graalvm--clojure--and-javascript.html</id>
+    <content type="html">&lt;p&gt;
+A common challenge when making a fullstack website using Clojure/ClojureScript is that, we are often required to use a JavaScript library on the server side when doing Server Side Rendering (SSR). GraalVM/GraalJS provides a solution to run JavaScript code on the JVM. If only we could harness that power…
+&lt;/p&gt;
+
+&lt;p&gt;
+This blog describes the basic usage of GraalJS and what I managed to achieve with GraalJS and Clojure.
+&lt;/p&gt;
+&lt;div id="outline-container-org0cf3ee9" class="outline-2"&gt;
+&lt;a href="#org0cf3ee9"&gt;&lt;h2 id="org0cf3ee9" class="cr-self-reference "&gt;Basic Setup and a Hello World Program&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org0cf3ee9"&gt;
+&lt;p&gt;
+We add the following dependencies to our &lt;code&gt;deps.edn&lt;/code&gt;
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-bash"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;:deps {org.clojure/clojure {:mvn/version &lt;span class="hljs-string"&gt;&amp;quot;1.11.1&amp;quot;&lt;/span&gt;}
+       org.graalvm.polyglot/polyglot {:mvn/version &lt;span class="hljs-string"&gt;&amp;quot;25.0.1&amp;quot;&lt;/span&gt;}
+       org.graalvm.js/js-language {:mvn/version &lt;span class="hljs-string"&gt;&amp;quot;25.0.1&amp;quot;&lt;/span&gt;}
+       org.graalvm.truffle/truffle-runtime {:mvn/version &lt;span class="hljs-string"&gt;&amp;quot;25.0.1&amp;quot;&lt;/span&gt;}}
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+With the dependencies installed, we can write a Hello World program.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;ns&lt;/span&gt;&lt;/span&gt; your-namespace
+  (&lt;span class="hljs-symbol"&gt;:import&lt;/span&gt;
+   [org.graalvm.polyglot Context]))
+
+
+(&lt;span class="hljs-keyword"&gt;defonce&lt;/span&gt; ^&lt;span class="hljs-symbol"&gt;:dynamic&lt;/span&gt; &lt;span class="hljs-title"&gt;*context*&lt;/span&gt;
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;Context/newBuilder&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; String [&lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt;]))
+      (&lt;span class="hljs-name"&gt;.build&lt;/span&gt;)))
+
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;hello-fn&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context*
+                     &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt;
+                     &lt;span class="hljs-string"&gt;&amp;quot;(function (name) {console.log('hello '+name)})&amp;quot;&lt;/span&gt;))
+
+(&lt;span class="hljs-name"&gt;.executeVoid&lt;/span&gt; hello-fn (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; String [&lt;span class="hljs-string"&gt;&amp;quot;world!&amp;quot;&lt;/span&gt;])) &lt;span class="hljs-comment"&gt;;; output: hello world!&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+All kinds of JavaScript values are represented as &lt;code&gt;org.graalvm.polyglot.Value&lt;/code&gt; objects by GraalJS. In the above example the &lt;code&gt;(.eval ...)&lt;/code&gt; calling returns a executable &lt;code&gt;polyglot.Value&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+We can check if it is an executable by calling the &lt;code&gt;.canExecute()&lt;/code&gt; method.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;.canExecute&lt;/span&gt; hello-fn) &lt;span class="hljs-comment"&gt;;; true&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We can invoke the executable by calling the &lt;code&gt;.execute()&lt;/code&gt; method or the &lt;code&gt;.executeVoid()&lt;/code&gt; method. Their difference is that latter one doesn't have a return value.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;.executeVoid&lt;/span&gt; hello-fn (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object [&lt;span class="hljs-string"&gt;&amp;quot;world&amp;quot;&lt;/span&gt;])) &lt;span class="hljs-comment"&gt;;; output: hello world&lt;/span&gt;
+
+(&lt;span class="hljs-name"&gt;.executeVoid&lt;/span&gt; hello-fn (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object [&lt;span class="hljs-string"&gt;&amp;quot;graaljs&amp;quot;&lt;/span&gt;])) &lt;span class="hljs-comment"&gt;;; output: hello graaljs&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+You can check if a &lt;code&gt;polyglot.Value&lt;/code&gt; object is of a certain type by using methods starting with &lt;code&gt;.is&lt;/code&gt;, and convert the &lt;code&gt;Value&lt;/code&gt; object to native Java value with methods starting with &lt;code&gt;.as&lt;/code&gt;. For example:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;integer-one&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;1&amp;quot;&lt;/span&gt;)) &lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0x3583d830 &amp;quot;1&amp;quot;]&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;.isNumber&lt;/span&gt; integer-one) &lt;span class="hljs-comment"&gt;;; true&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;.asLong&lt;/span&gt; integer-one) &lt;span class="hljs-comment"&gt;;; 1&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;.isString&lt;/span&gt; integer-one) &lt;span class="hljs-comment"&gt;;; false&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;.asString&lt;/span&gt; integer-one) &lt;span class="hljs-comment"&gt;;; ERROR: Unhandled java.lang.ClassCastException&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+To handle JavaScript objects, we have &lt;code&gt;.newInstance()&lt;/code&gt; for instantiating an Object, &lt;code&gt;.invokeMember()&lt;/code&gt; for calling a method, &lt;code&gt;.getMemberKeys()&lt;/code&gt;, &lt;code&gt;.getMember()&lt;/code&gt; and &lt;code&gt;.putMember()&lt;/code&gt; for accessing properties of an object.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-comment"&gt;;; We can access top-level JavaScript variables using the (.getBindings *context* &amp;quot;js&amp;quot;).&lt;/span&gt;
+&lt;span class="hljs-comment"&gt;;; It returns a polyglot.Value object from which we can retrieve builtin&lt;/span&gt;
+&lt;span class="hljs-comment"&gt;;;   JavaScript functions and objects.&lt;/span&gt;
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;Array&lt;/span&gt; (&lt;span class="hljs-name"&gt;.getMember&lt;/span&gt; (&lt;span class="hljs-name"&gt;.getBindings&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt;) &lt;span class="hljs-string"&gt;&amp;quot;Array&amp;quot;&lt;/span&gt;))
+
+&lt;span class="hljs-comment"&gt;;; create an Array&lt;/span&gt;
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;arr&lt;/span&gt; (&lt;span class="hljs-name"&gt;.newInstance&lt;/span&gt; Array (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object [&lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt;])))
+
+(&lt;span class="hljs-name"&gt;print&lt;/span&gt; arr) &lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0x2dd585ca &amp;quot;(3)[1, 2, 3]&amp;quot;]&lt;/span&gt;
+
+&lt;span class="hljs-comment"&gt;;; pop a value and cast it to Long&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;.asLong&lt;/span&gt; (&lt;span class="hljs-name"&gt;.invokeMember&lt;/span&gt; arr &lt;span class="hljs-string"&gt;&amp;quot;pop&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object []))) &lt;span class="hljs-comment"&gt;;; 3&lt;/span&gt;
+
+(&lt;span class="hljs-name"&gt;print&lt;/span&gt; arr) &lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0x27e1e162 (2)[1, 2]]&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org8cc4c18" class="outline-2"&gt;
+&lt;a href="#org8cc4c18"&gt;&lt;h2 id="org8cc4c18" class="cr-self-reference "&gt;Working With JavaScript Libraries&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org8cc4c18"&gt;
+&lt;p&gt;
+GraalJS has an option to provide a &lt;code&gt;require&lt;/code&gt; function, with which we can import CommonJS JavaScript modules. The option isn't enabled by default. To enable it, we need to change the definition of &lt;code&gt;*context*&lt;/code&gt; to the following:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defonce&lt;/span&gt; ^&lt;span class="hljs-symbol"&gt;:dynamic&lt;/span&gt; &lt;span class="hljs-title"&gt;*context*&lt;/span&gt;
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;Context/newBuilder&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; String ))
+      (&lt;span class="hljs-name"&gt;.allowExperimentalOptions&lt;/span&gt; &lt;span class="hljs-literal"&gt;true&lt;/span&gt;)
+      (&lt;span class="hljs-name"&gt;.options&lt;/span&gt; (&lt;span class="hljs-name"&gt;HashMap.&lt;/span&gt;
+                 {&lt;span class="hljs-string"&gt;&amp;quot;js.commonjs-require&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;true&amp;quot;&lt;/span&gt;
+                  &lt;span class="hljs-string"&gt;&amp;quot;js.commonjs-require-cwd&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;System/getProperty&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;user.dir&amp;quot;&lt;/span&gt;)
+                                                 &lt;span class="hljs-string"&gt;&amp;quot;/node_modules&amp;quot;&lt;/span&gt;)}))
+      (&lt;span class="hljs-name"&gt;.allowIO&lt;/span&gt; &lt;span class="hljs-literal"&gt;true&lt;/span&gt;)
+      (&lt;span class="hljs-name"&gt;.build&lt;/span&gt;)))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Here we use as &lt;code&gt;commonjs-require-cwd&lt;/code&gt;'s value. It tells GraalJS to find JavaScript modules under the &lt;code&gt;node_modules&lt;/code&gt; folder in the project root.
+&lt;/p&gt;
+
+&lt;p&gt;
+We can then install JavaScript libraries using npm under the project root. Here I use &amp;quot;luxon&amp;quot; as an example.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-bash"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;npm init
+npm install luxon
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We can then import the module by using &lt;code&gt;require&lt;/code&gt; function.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;luxon&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;require('luxon')&amp;quot;&lt;/span&gt;))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We can access the resulting module with the &lt;code&gt;.getMember()&lt;/code&gt; method.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;DateTime&lt;/span&gt; (&lt;span class="hljs-name"&gt;.getMember&lt;/span&gt; luxon &lt;span class="hljs-string"&gt;&amp;quot;DateTime&amp;quot;&lt;/span&gt;))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Now we have the &lt;code&gt;DateTime&lt;/code&gt; class from the &lt;code&gt;luxon&lt;/code&gt; library, let's try to turn it into something useful:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;now&lt;/span&gt; []
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt; DateTime
+      &lt;span class="hljs-comment"&gt;;; DateTime.now() returns a DateTime object&lt;/span&gt;
+      (&lt;span class="hljs-name"&gt;.invokeMember&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;now&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object []))
+      &lt;span class="hljs-comment"&gt;;; We call the .toString method to convert the object&lt;/span&gt;
+      &lt;span class="hljs-comment"&gt;;;    into a JavaScript String&lt;/span&gt;
+          (&lt;span class="hljs-name"&gt;.invokeMember&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;toString&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object []))
+      &lt;span class="hljs-comment"&gt;;; then we convert the result into a Java String&lt;/span&gt;
+          (&lt;span class="hljs-name"&gt;.asString&lt;/span&gt;)))
+
+&lt;span class="hljs-comment"&gt;;; Let's try to call the function&lt;/span&gt;
+
+(&lt;span class="hljs-name"&gt;now&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; &amp;quot;2025-11-15T16:56:49.798+08:00&amp;quot;&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;now&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; &amp;quot;2025-11-15T16:57:01.961+08:00&amp;quot;&lt;/span&gt;
+
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We wrapped the details of interop between Clojure and JavaScript in a Clojure function &lt;code&gt;now&lt;/code&gt;. Now if we want to get the current time string from the &lt;code&gt;luxon&lt;/code&gt; library, we can just call the &lt;code&gt;now&lt;/code&gt; function. The interop is still something quite cumbersome to do, however. In this blog I will show you how to turn it into something way more concise using the macros and other facilities provided by Clojure. Here is a glimpse of it:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; lux/DateTime now toString) &lt;span class="hljs-comment"&gt;;; &amp;quot;2025-11-15T17:04:38.574+08:00&amp;quot;&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org2d313ee" class="outline-2"&gt;
+&lt;a href="#org2d313ee"&gt;&lt;h2 id="org2d313ee" class="cr-self-reference "&gt;Ease Things With Helper Functions, Macros and More&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org2d313ee"&gt;
+&lt;p&gt;
+You must have noticed the definition of the &lt;code&gt;now&lt;/code&gt; function in the previous example is quite clumsy. In ClojureScript we have the following things that can facilitate the interop between ClojureScript and JavaScript
+&lt;/p&gt;
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;We can require a js module just like a clojure namespace&lt;/li&gt;
+&lt;li&gt;A ClojureScript function is just a JavaScript function, we can call JavaScript functions from the ClojureScript side, or we can pass ClojureScript functions to the JavaScript side.&lt;/li&gt;
+&lt;li&gt;We have dot macros ( &lt;code&gt;.&lt;/code&gt;, &lt;code&gt;..&lt;/code&gt; and &lt;code&gt;.-&lt;/code&gt; ) and &lt;code&gt;set!&lt;/code&gt; to easily access properites or methods of JavaScript objects.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+To build something on the same level is probably very hard, however, to build a demonstration of something very similar is indeed very achievable.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-orge758ba9" class="outline-3"&gt;
+&lt;a href="#orge758ba9"&gt;&lt;h3 id="orge758ba9" class="cr-self-reference "&gt;Mapping between Clojure and Polyglot Values&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orge758ba9"&gt;
+&lt;p&gt;
+We probably don't want to manually convert the result each time we get a value from the JavaScript side as we did in the previous examples. So we would like to put the actual JavaScript functions invoking logics into a wrapper and let the wrapper automatically convert the parameters and the return value for us. To make something like this, and since GraalJS represents each JavaScript value as a Polyglot Value, we first need to establish a mapping between Clojure types and Polyglot Types.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-orga46c3f6" class="outline-4"&gt;
+&lt;a href="#orga46c3f6"&gt;&lt;h4 id="orga46c3f6" class="cr-self-reference "&gt;Primitive Types&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-orga46c3f6"&gt;
+&lt;p&gt;
+Each time we call the &lt;code&gt;.execute()&lt;/code&gt; or &lt;code&gt;.invokeMember()&lt;/code&gt; method of the &lt;code&gt;polyglot.Value&lt;/code&gt; class, GraalJS will convert the arguments using &lt;code&gt;.asValue()&lt;/code&gt; method of &lt;code&gt;Context&lt;/code&gt; class. However, we are going to wrap Clojure functions as Polyglot functions in the next section. As of now, we write a Clojure -&amp;gt; Polyglot mapping function only calling the &lt;code&gt;.asValue()&lt;/code&gt; method.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;polyglotalize-clojure&lt;/span&gt; [value]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt;
+    &lt;span class="hljs-comment"&gt;;; https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html#asValue(java.lang.Object)&lt;/span&gt;
+    &lt;span class="hljs-symbol"&gt;:else&lt;/span&gt;
+    (&lt;span class="hljs-name"&gt;.asValue&lt;/span&gt; *context* value)))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+As for the mapping from &lt;code&gt;polyglot.Value&lt;/code&gt; to Clojure values, we use the various checking and converting methods described before.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;clojurify-value&lt;/span&gt; [^org.graalvm.polyglot.Value value]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;.isHostObject&lt;/span&gt; value)
+        (&lt;span class="hljs-name"&gt;.asHostObject&lt;/span&gt; value)
+
+        (&lt;span class="hljs-name"&gt;.isBoolean&lt;/span&gt; value)
+        (&lt;span class="hljs-name"&gt;.asBoolean&lt;/span&gt; value)
+
+        (&lt;span class="hljs-name"&gt;.isNull&lt;/span&gt; value)
+        &lt;span class="hljs-literal"&gt;nil&lt;/span&gt;
+
+        (&lt;span class="hljs-name"&gt;.isString&lt;/span&gt; value)
+        (&lt;span class="hljs-name"&gt;.asString&lt;/span&gt; value)
+
+        (&lt;span class="hljs-name"&gt;.isNumber&lt;/span&gt; value)
+        (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;.fitsInLong&lt;/span&gt; value)
+              (&lt;span class="hljs-name"&gt;.asLong&lt;/span&gt; value)
+
+              (&lt;span class="hljs-name"&gt;.fitsInDouble&lt;/span&gt; value)
+              (&lt;span class="hljs-name"&gt;.asDouble&lt;/span&gt; value))
+
+        &lt;span class="hljs-symbol"&gt;:else&lt;/span&gt;
+        value))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-functions" class="outline-4"&gt;
+&lt;a href="#functions"&gt;&lt;h4 id="functions" class="cr-self-reference "&gt;Functions&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-functions"&gt;
+&lt;p&gt;
+GraalVM provides various &lt;code&gt;Proxy&lt;/code&gt; objects that we can use to make Clojure objects accessible in the JavaScript environment. To wrap a function, we need to use &lt;code&gt;ProxyExecutable&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;wrap-clojure-fn&lt;/span&gt; [f]
+  (&lt;span class="hljs-name"&gt;.asValue&lt;/span&gt; *context*
+            (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;with-meta&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;reify&lt;/span&gt;&lt;/span&gt; org.graalvm.polyglot.proxy.ProxyExecutable
+                         #_{&lt;span class="hljs-symbol"&gt;:clj-kondo/ignore&lt;/span&gt; [&lt;span class="hljs-symbol"&gt;:unused-binding&lt;/span&gt;]}
+                         &lt;span class="hljs-comment"&gt;;; we ignore `this` for now&lt;/span&gt;
+                         (&lt;span class="hljs-name"&gt;execute&lt;/span&gt; [this ^&lt;span class="hljs-string"&gt;&amp;quot;[Lorg.graalvm.polyglot.Value;&amp;quot;&lt;/span&gt; values]
+                           (&lt;span class="hljs-name"&gt;polyglotalize-clojure&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;apply&lt;/span&gt;&lt;/span&gt; f (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;map&lt;/span&gt;&lt;/span&gt; clojurify-value values)))))
+              {&lt;span class="hljs-symbol"&gt;::raw-fn&lt;/span&gt; f})))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The function takes a Clojure function as an argument, returns a Polyglot executable that we can pass to the JavaScript environment.
+&lt;/p&gt;
+
+&lt;p&gt;
+In the function body, we use &lt;code&gt;reify&lt;/code&gt; to instantiate an object implementing the &lt;code&gt;ProxyExecutable&lt;/code&gt; interface. We implement the &lt;code&gt;.execute()&lt;/code&gt; method by applying the clojurified arguments to the original Clojure function, and convert the return value back to a Polyglot value using the two functions we wrote in the &lt;a href="#orga46c3f6"&gt;previous section&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+In case we want to turn the proxy object back into a clojure function (like when a JavaScript function returns the proxy object as is), we save the original Clojure function into the &lt;a href="https://clojure.org/reference/metadata"&gt;metadata&lt;/a&gt; of the proxy object using &lt;code&gt;with-meta&lt;/code&gt;. In the final step, we turn it into a Polyglot Value using &lt;code&gt;.asValue&lt;/code&gt; method from &lt;code&gt;Context&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Wrapping functions from JavaScript follows a similar logic.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;wrap-polyglot-executable&lt;/span&gt; [^org.graalvm.polyglot.Value obj]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;with-meta&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [&amp;amp; args]
+               (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;.execute&lt;/span&gt; obj (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;map&lt;/span&gt;&lt;/span&gt; polyglotalize-clojure args)))))
+    {&lt;span class="hljs-symbol"&gt;::raw-value&lt;/span&gt; obj}))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Here, we also save a reference to the original JavaScript function in the metadata. However, it serves a much more important role: In JavaScript, a function is like any object, it can have all kinds of properties. Therefore, after wrapping a JavaScript function as a Clojure function, we may still need to access its other properties. To do this, we save the original function in the metadata and retrieve it if necessary.
+&lt;/p&gt;
+
+&lt;p&gt;
+With these two functions defined, we can then augmented our two mapping functions.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;polyglotalize-clojure&lt;/span&gt; [value]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-symbol"&gt;::raw-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;meta&lt;/span&gt;&lt;/span&gt; value))
+        (&lt;span class="hljs-symbol"&gt;::raw-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;meta&lt;/span&gt;&lt;/span&gt; value))
+
+        (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn?&lt;/span&gt;&lt;/span&gt; value)
+        (&lt;span class="hljs-name"&gt;wrap-clojure-fn&lt;/span&gt; value)
+
+        &lt;span class="hljs-symbol"&gt;:else&lt;/span&gt;
+        &lt;span class="hljs-comment"&gt;;; https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html#asValue(java.lang.Object)&lt;/span&gt;
+        (&lt;span class="hljs-name"&gt;.asValue&lt;/span&gt; *context* value)))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;clojurify-value&lt;/span&gt; [^org.graalvm.polyglot.Value value]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt;
+
+    (&lt;span class="hljs-name"&gt;.isProxyObject&lt;/span&gt; value)
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [prox-obj (&lt;span class="hljs-name"&gt;.asProxyObject&lt;/span&gt; value)]
+      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-symbol"&gt;::raw-fn&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;meta&lt;/span&gt;&lt;/span&gt; prox-obj))
+        (&lt;span class="hljs-symbol"&gt;::raw-fn&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;meta&lt;/span&gt;&lt;/span&gt; prox-obj))
+        prox-obj))
+
+    &lt;span class="hljs-comment"&gt;;;&lt;/span&gt;
+    &lt;span class="hljs-comment"&gt;;; ... omitted&lt;/span&gt;
+    &lt;span class="hljs-comment"&gt;;;&lt;/span&gt;
+
+    (&lt;span class="hljs-name"&gt;.canExecute&lt;/span&gt; value) 
+    (&lt;span class="hljs-name"&gt;wrap-polyglot-executable&lt;/span&gt; value)
+
+    &lt;span class="hljs-symbol"&gt;:else&lt;/span&gt;
+    value))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+With these two facilities created, we already achieve something very interesting.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;hello&lt;/span&gt; (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;(function (name){console.log(`hello ${name}`)})&amp;quot;&lt;/span&gt;)))
+
+(&lt;span class="hljs-name"&gt;hello&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;world&amp;quot;&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; output: hello world&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;hello&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;graaljs&amp;quot;&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; output: hello graaljs&lt;/span&gt;
+
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;to-array&lt;/span&gt; (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt;
+               (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;(function (...args){return Array.from(args);})&amp;quot;&lt;/span&gt;)))
+
+(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;to-array&lt;/span&gt;&lt;/span&gt; &lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt; &lt;span class="hljs-number"&gt;4&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0x26e3da6b &amp;quot;(4)[1, 2, 3, 4]&amp;quot;]&lt;/span&gt;
+
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;join&lt;/span&gt; (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt;
+           (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;(function (s, ...args){return args.join(s);})&amp;quot;&lt;/span&gt;)))
+
+(&lt;span class="hljs-name"&gt;join&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;,&amp;quot;&lt;/span&gt; &lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt; &lt;span class="hljs-number"&gt;4&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; &amp;quot;1,2,3,4&amp;quot;&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+As you have seen, we can now call a JavaScript function just like a Clojure function. Return values of primitive types will also be automatically converted back to Clojure values.
+&lt;/p&gt;
+
+&lt;p&gt;
+We can also pass Clojure functions to the JavaScript side:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;sum-term&lt;/span&gt;
+  (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt;
+   (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;let sum = (term, a, b) =&amp;gt; (a&amp;gt;b)? 0 : term(a) + sum(term, a+1,b); sum&amp;quot;&lt;/span&gt;)))
+
+&lt;span class="hljs-comment"&gt;;; (sum-integers a b) calculate the sum of integers from `a` to `b` (inclusive)&lt;/span&gt;
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;sum-integers&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;partial&lt;/span&gt;&lt;/span&gt; sum-term identity))
+(&lt;span class="hljs-name"&gt;sum-integers&lt;/span&gt; &lt;span class="hljs-number"&gt;0&lt;/span&gt; &lt;span class="hljs-number"&gt;10&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; 55&lt;/span&gt;
+
+&lt;span class="hljs-comment"&gt;;; (sum-cubes a b) calculates the sum of cubes of integers from `a` to `b` (inclusive)&lt;/span&gt;
+(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;sum-cubes&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;partial&lt;/span&gt;&lt;/span&gt; sum-term (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [x] (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;*&lt;/span&gt;&lt;/span&gt; x x x))))
+(&lt;span class="hljs-name"&gt;sum-cubes&lt;/span&gt; &lt;span class="hljs-number"&gt;0&lt;/span&gt; &lt;span class="hljs-number"&gt;10&lt;/span&gt;) &lt;span class="hljs-comment"&gt;;; 3025&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-mapping_objects" class="outline-4"&gt;
+&lt;a href="#mapping_objects"&gt;&lt;h4 id="mapping_objects" class="cr-self-reference "&gt;Objects&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-mapping_objects"&gt;
+&lt;p&gt;
+Rougly similar to ClojureScript, We don't do mapping for objects other than those of primitives types and functions. However, in the &lt;code&gt;clojurify-value&lt;/code&gt; function, we wrap all JavaScript functions into Clojure functions and save the reference in the metadata, and as I have explained there, a JavaScript function may have other properties we want to access. Thus, in each place where a Clojure function wrapping a JavaScript function can be taken as arguments, we cannot use methods from &lt;code&gt;polyglot.Value&lt;/code&gt;. Instead, we define helper functions that will wrap the arguments if necessary and then call the target method.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;polyglot-value&lt;/span&gt; [obj]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-symbol"&gt;::raw-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;meta&lt;/span&gt;&lt;/span&gt; obj))
+      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;and&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;instance?&lt;/span&gt;&lt;/span&gt; org.graalvm.polyglot.Value obj)
+           obj)))
+
+(&lt;span class="hljs-keyword"&gt;defn-&lt;/span&gt; &lt;span class="hljs-title"&gt;to-camel-style&lt;/span&gt; [s]
+  (&lt;span class="hljs-name"&gt;string/replace&lt;/span&gt; s &lt;span class="hljs-regex"&gt;#&amp;quot;-([a-z])&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [g]
+                                  (&lt;span class="hljs-name"&gt;.toUpperCase&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;second&lt;/span&gt;&lt;/span&gt; g)))))
+
+(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;define-unwrap-executable-alias&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/lint-as&lt;/span&gt; 'clojure.core/declare}
+  [name &amp;amp; args]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [docstring? (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;string?&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; args))
+        docstring (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;when&lt;/span&gt;&lt;/span&gt; docstring? (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; args))
+        args (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; docstring? (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;second&lt;/span&gt;&lt;/span&gt; args) (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; args))
+        obj 'obj
+        [arglist [_ vararg]] (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;split-with&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [x] (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;not&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; x '&amp;amp;))) args)] 
+    `(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; ~&lt;span class="hljs-title"&gt;name&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:doc&lt;/span&gt; ~docstring} [~obj ~@arglist ~@(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; vararg `[&amp;amp; ~vararg] [])]
+       (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [~obj (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;polyglot-value&lt;/span&gt; ~obj)
+                      ~obj)]
+         (~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;symbol&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;.&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;to-camel-style&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; name))))
+          ~obj 
+          ~@arglist
+          ~@(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; vararg
+              [`(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object ~vararg)]
+              []))))))
+
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; get-meta-object)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; is-meta-object)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; get-meta-qualified-name)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; has-meta-parents)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; has-array-elements)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; get-meta-parents)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; get-member [^String identifier])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; put-member [^String identifier ^Object value])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; get-member-keys)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; new-instance [&amp;amp; args])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; can-invoke-member [^String s])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; invoke-member [^String method &amp;amp; args])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; can-instantiate)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; canExecute)
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; execute [&amp;amp; args])
+(&lt;span class="hljs-name"&gt;define-unwrap-executable-alias&lt;/span&gt; executeVoid [&amp;amp; args])
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We wrote a macro for this purpose. The macro takes a function name and a parameter list as arguments and defines a function with the name and parameters.
+The function defined by the macro retrieves the reference from the metadata if necessary, then calls a method by the name converted from the function name and with arguments from the parameter list.
+&lt;/p&gt;
+
+&lt;p&gt;
+One nice bonus is that the generated functions assembles all the variadic arguments into an &lt;code&gt;Object[]&lt;/code&gt;, saving us from calling &lt;code&gt;(into-arry Object)&lt;/code&gt; manually if we need to call a method with variadic arguments.
+&lt;/p&gt;
+
+&lt;p&gt;
+Previously we need to do this:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;.newInstance&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;Array&amp;quot;&lt;/span&gt;) (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into-array&lt;/span&gt;&lt;/span&gt; Object [&lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt;]))
+&lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0x65b337ef &amp;quot;(3)[1, 2, 3]&amp;quot;]&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Now we just need to do this:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;new-instance&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;Array&amp;quot;&lt;/span&gt;) &lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt;)
+&lt;span class="hljs-comment"&gt;;; #object[org.graalvm.polyglot.Value 0xfdabe76 &amp;quot;(3)[1, 2, 3]&amp;quot;]&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org4ab09c6" class="outline-3"&gt;
+&lt;a href="#org4ab09c6"&gt;&lt;h3 id="org4ab09c6" class="cr-self-reference "&gt;Dot Macros and &lt;code&gt;set!&lt;/code&gt;&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4ab09c6"&gt;
+&lt;p&gt;
+In ClojureScript we have dots special forms or macros like &lt;code&gt;.&lt;/code&gt;,  &lt;code&gt;.-&lt;/code&gt; and &lt;code&gt;..&lt;/code&gt; for accessing properties or calling methods of JavaScript objects.
+&lt;/p&gt;
+
+&lt;p&gt;
+We can relatively easily implement them using macros.
+&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;
+There are also &lt;code&gt;(.method obj)&lt;/code&gt; &lt;code&gt;(.-property obj)&lt;/code&gt; as shorthands for &lt;code&gt;(. obj method)&lt;/code&gt; and &lt;code&gt;(.- obj property)&lt;/code&gt; in ClojureScript. However, implementing them would be really difficult if not impossible.
+&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;js.&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/ignore&lt;/span&gt; [&lt;span class="hljs-symbol"&gt;:unresolved-symbol&lt;/span&gt; &lt;span class="hljs-symbol"&gt;:type-mismatch&lt;/span&gt;]}
+  [obj method &amp;amp; args]
+  `(&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt;
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;apply&lt;/span&gt;&lt;/span&gt; invoke-member ~obj ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; method)
+           &lt;span class="hljs-comment"&gt;;; evaluate args before passing them to polyglotalize-clojure&lt;/span&gt;
+           (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;map&lt;/span&gt;&lt;/span&gt; polyglotalize-clojure (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;list&lt;/span&gt;&lt;/span&gt; ~@args)))))
+
+
+(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;js.-&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/ignore&lt;/span&gt; [&lt;span class="hljs-symbol"&gt;:unresolved-symbol&lt;/span&gt; &lt;span class="hljs-symbol"&gt;:type-mismatch&lt;/span&gt;]}
+  [obj field]
+  `(&lt;span class="hljs-name"&gt;#'clojurify-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;get-member&lt;/span&gt; ~obj ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; field))))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The &lt;code&gt;invoke-member&lt;/code&gt; and &lt;code&gt;get-member&lt;/code&gt; helper functions are defined in the &lt;a href="#mapping_objects"&gt;previous section&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+With these two defined, we can write the more complicated macro &lt;code&gt;js..&lt;/code&gt; based on them.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;js..&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/ignore&lt;/span&gt; [&lt;span class="hljs-symbol"&gt;:unresolved-symbol&lt;/span&gt; &lt;span class="hljs-symbol"&gt;:type-mismatch&lt;/span&gt;]}
+  [obj &amp;amp; args]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;empty?&lt;/span&gt;&lt;/span&gt; args)
+    obj
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [curr# (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; args)
+          rest# (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;rest&lt;/span&gt;&lt;/span&gt; args)]
+      `(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;cond&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;seq?&lt;/span&gt;&lt;/span&gt; curr#)
+                    `(&lt;span class="hljs-name"&gt;js.&lt;/span&gt; ~obj ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; curr#) ~@(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;rest&lt;/span&gt;&lt;/span&gt; curr#))
+
+                    (&lt;span class="hljs-name"&gt;.startsWith&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; curr#)
+                                 &lt;span class="hljs-string"&gt;&amp;quot;-&amp;quot;&lt;/span&gt;)
+                    `(&lt;span class="hljs-name"&gt;js.-&lt;/span&gt; ~obj ~(&lt;span class="hljs-name"&gt;subs&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; curr#) &lt;span class="hljs-number"&gt;1&lt;/span&gt;))
+
+                    &lt;span class="hljs-symbol"&gt;:else&lt;/span&gt;
+                    `(&lt;span class="hljs-name"&gt;js.&lt;/span&gt; ~obj ~curr#))
+         ~@rest#))))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Finally, we will implement the &lt;code&gt;set!&lt;/code&gt; macro.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;js-set!&lt;/span&gt; [dot-form value]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;assert&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;seq?&lt;/span&gt;&lt;/span&gt; dot-form) &lt;span class="hljs-string"&gt;&amp;quot;First argument must be in the form of `(js.. obj -field)` or (js.- obj field)&amp;quot;&lt;/span&gt;)
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [[op &amp;amp; args] dot-form]
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;assert&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; op 'js..)
+                (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; op 'js.-))
+            &lt;span class="hljs-string"&gt;&amp;quot;First argument to js-set! must start with either `js..` or `js.-`&amp;quot;&lt;/span&gt;)
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [remove-hyphen (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; op 'js..)
+          lst (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;last&lt;/span&gt;&lt;/span&gt; args)
+          last-removed (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;drop-last&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;into&lt;/span&gt;&lt;/span&gt; [op] args))]
+      `(&lt;span class="hljs-name"&gt;put-member&lt;/span&gt; ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;count&lt;/span&gt;&lt;/span&gt; last-removed) &lt;span class="hljs-number"&gt;2&lt;/span&gt;)
+                      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;second&lt;/span&gt;&lt;/span&gt; last-removed)
+                      last-removed)
+                   ~(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; remove-hyphen
+                      (&lt;span class="hljs-name"&gt;subs&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; lst) &lt;span class="hljs-number"&gt;1&lt;/span&gt;)
+                      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; lst))
+                   ~value))))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Let's go back to the &lt;code&gt;luxon&lt;/code&gt; example mentioned in the beginning of this blog and check what we can do with these newly defined tools.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; &lt;span class="hljs-title"&gt;luxon&lt;/span&gt; (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;require('luxon')&amp;quot;&lt;/span&gt;))
+
+(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; luxon -DateTime now toString) &lt;span class="hljs-comment"&gt;;; &amp;quot;2025-11-14T16:48:11.324+08:00&amp;quot;&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Compare it to the snippet I showed at the end of the first section:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; lux/DateTime now toString)
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+The only thing lacking is a &lt;code&gt;require&lt;/code&gt; mechanism, which is what we are going to implement in the next section.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org9665dba" class="outline-3"&gt;
+&lt;a href="#org9665dba"&gt;&lt;h3 id="org9665dba" class="cr-self-reference "&gt;&lt;code&gt;require&lt;/code&gt; command&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org9665dba"&gt;
+&lt;p&gt;
+On the JavaScript side, the &lt;code&gt;require()&lt;/code&gt; function returns an object from which we can access its exported variables or functions.
+&lt;/p&gt;
+
+&lt;p&gt;
+On the Clojure side, we can dynamically create a namespace with the &lt;code&gt;create-ns&lt;/code&gt; function. After that we can make all the variables from the module object accessible in the newly created namespace with the &lt;code&gt;intern&lt;/code&gt; function.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;defn-&lt;/span&gt; &lt;span class="hljs-title"&gt;require-module&lt;/span&gt; [name]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt; *context*
+      (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt;
+             (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;require('&amp;quot;&lt;/span&gt; name &lt;span class="hljs-string"&gt;&amp;quot;')&amp;quot;&lt;/span&gt;))))
+
+(&lt;span class="hljs-keyword"&gt;defn-&lt;/span&gt; &lt;span class="hljs-title"&gt;parse-flags&lt;/span&gt; [args]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;loop&lt;/span&gt;&lt;/span&gt; [args (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;lazy-seq&lt;/span&gt;&lt;/span&gt; args)
+         result (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;hash-map&lt;/span&gt;&lt;/span&gt;)]
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;empty?&lt;/span&gt;&lt;/span&gt; args)
+      result
+      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [curr (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; args)
+            rst (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;rest&lt;/span&gt;&lt;/span&gt; args)]
+        (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;keyword?&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; rst))
+                (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;empty?&lt;/span&gt;&lt;/span&gt; rst))
+          (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;recur&lt;/span&gt;&lt;/span&gt; rst (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;assoc&lt;/span&gt;&lt;/span&gt; result curr &lt;span class="hljs-literal"&gt;true&lt;/span&gt;))
+          (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;recur&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;rest&lt;/span&gt;&lt;/span&gt; rst)
+                 (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;assoc&lt;/span&gt;&lt;/span&gt; result curr (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; rst))))))))
+
+(&lt;span class="hljs-keyword"&gt;defn-&lt;/span&gt; &lt;span class="hljs-title"&gt;normalize-module-name&lt;/span&gt; [name]
+  (&lt;span class="hljs-name"&gt;s/replace&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; name) &lt;span class="hljs-regex"&gt;#&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;.&amp;quot;&lt;/span&gt;))
+
+(&lt;span class="hljs-keyword"&gt;defn&lt;/span&gt; &lt;span class="hljs-title"&gt;require-js&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/lint-as&lt;/span&gt; 'clojure.core/require}
+  [[module-name &amp;amp; flags] &amp;amp; coll]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [flag-map (&lt;span class="hljs-name"&gt;parse-flags&lt;/span&gt; flags)
+        module (&lt;span class="hljs-name"&gt;require-module&lt;/span&gt; module-name)
+        alias-name (&lt;span class="hljs-symbol"&gt;:as&lt;/span&gt; flag-map)
+        qualified-module-name (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;symbol&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;js4clj.modules.&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;normalize-module-name&lt;/span&gt; module-name)))]
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;create-ns&lt;/span&gt;&lt;/span&gt; qualified-module-name)
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;doseq&lt;/span&gt;&lt;/span&gt; [k (&lt;span class="hljs-name"&gt;.getMemberKeys&lt;/span&gt; module)]
+      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;intern&lt;/span&gt;&lt;/span&gt; qualified-module-name
+              (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;symbol&lt;/span&gt;&lt;/span&gt; k)
+              (&lt;span class="hljs-name"&gt;clojurify-value&lt;/span&gt; (&lt;span class="hljs-name"&gt;.getMember&lt;/span&gt; module k))))
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;when&lt;/span&gt;&lt;/span&gt; alias-name
+      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;alias&lt;/span&gt;&lt;/span&gt; alias-name qualified-module-name)))
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;when&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;seq&lt;/span&gt;&lt;/span&gt; coll)
+    (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;apply&lt;/span&gt;&lt;/span&gt; require-js coll)))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+&lt;code&gt;(require-js '[luxon :as lux])&lt;/code&gt; is now all we need to require a JavaScript module.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;require-js&lt;/span&gt; '[luxon &lt;span class="hljs-symbol"&gt;:as&lt;/span&gt; lux])
+
+(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; lux/DateTime now toString) &lt;span class="hljs-comment"&gt;;; &amp;quot;2025-11-14T17:08:40.045+08:00&amp;quot;&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+Let's try some more examples:
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;js..&lt;/span&gt; lux/DateTime (&lt;span class="hljs-name"&gt;fromISO&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;2017-05-15T08:30:00&amp;quot;&lt;/span&gt;) -year) &lt;span class="hljs-comment"&gt;;; 2017&lt;/span&gt;
+
+&lt;span class="hljs-comment"&gt;;; or write it as&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt; lux/DateTime
+    (&lt;span class="hljs-name"&gt;js.&lt;/span&gt; fromISO &lt;span class="hljs-string"&gt;&amp;quot;2017-05-15T08:30:00&amp;quot;&lt;/span&gt;)
+    (&lt;span class="hljs-name"&gt;js.-&lt;/span&gt; year)) &lt;span class="hljs-comment"&gt;;; 2017&lt;/span&gt;
+
+(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [now (&lt;span class="hljs-name"&gt;js.&lt;/span&gt; lux/DateTime now)
+      later (&lt;span class="hljs-name"&gt;js.&lt;/span&gt; lux/DateTime local &lt;span class="hljs-number"&gt;2026&lt;/span&gt; &lt;span class="hljs-number"&gt;10&lt;/span&gt; &lt;span class="hljs-number"&gt;12&lt;/span&gt;)
+      i (&lt;span class="hljs-name"&gt;js.&lt;/span&gt; lux/Interval fromDateTimes now later)]
+  (&lt;span class="hljs-name"&gt;js.&lt;/span&gt; i length &lt;span class="hljs-string"&gt;&amp;quot;years&amp;quot;&lt;/span&gt;)) &lt;span class="hljs-comment"&gt;;; 0.904136850298072&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org0d395f5" class="outline-3"&gt;
+&lt;a href="#org0d395f5"&gt;&lt;h3 id="org0d395f5" class="cr-self-reference "&gt;Bonus: Special &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org0d395f5"&gt;
+&lt;p&gt;
+ClojureScript provides us a &lt;a href="https://cljs.github.io/api/syntax/js-namespace"&gt;special &lt;code&gt;js&lt;/code&gt; namespace&lt;/a&gt;, from where we can use various JavaScript global objects. We can also implement something like that.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-keyword"&gt;def&lt;/span&gt; ^&lt;span class="hljs-symbol"&gt;:dynamic&lt;/span&gt; &lt;span class="hljs-title"&gt;*no-clojurify*&lt;/span&gt; &lt;span class="hljs-literal"&gt;false&lt;/span&gt;)
+
+(&lt;span class="hljs-keyword"&gt;defn-&lt;/span&gt; &lt;span class="hljs-title"&gt;define-builtin&lt;/span&gt; [ns primitive &amp;amp; [alias]]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;intern&lt;/span&gt;&lt;/span&gt; ns (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; alias (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;symbol&lt;/span&gt;&lt;/span&gt; alias) (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;symbol&lt;/span&gt;&lt;/span&gt; primitive))
+          ((&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;if&lt;/span&gt;&lt;/span&gt; *no-clojurify* identity clojurify-value)
+           (&lt;span class="hljs-name"&gt;.eval&lt;/span&gt; *context* &lt;span class="hljs-string"&gt;&amp;quot;js&amp;quot;&lt;/span&gt; primitive))))
+
+(&lt;span class="hljs-keyword"&gt;defmacro&lt;/span&gt; &lt;span class="hljs-title"&gt;define-builtins&lt;/span&gt;
+  {&lt;span class="hljs-symbol"&gt;:clj-kondo/lint-as&lt;/span&gt; 'clojure.core/declare}
+  [ns &amp;amp; primitives]
+  (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;create-ns&lt;/span&gt;&lt;/span&gt; ns)
+  `(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;doseq&lt;/span&gt;&lt;/span&gt; [primitive# '~primitives]
+     (&lt;span class="hljs-name"&gt;define-builtin&lt;/span&gt; '~ns (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;str&lt;/span&gt;&lt;/span&gt; primitive#))))
+
+&lt;span class="hljs-comment"&gt;;; In cljs there is also a js/undefined&lt;/span&gt;
+&lt;span class="hljs-comment"&gt;;;	in which (= nil js/undefined) but we can't mimic it.&lt;/span&gt;
+&lt;span class="hljs-comment"&gt;;; Still, we need a js/undefined in case we need to do some&lt;/span&gt;
+&lt;span class="hljs-comment"&gt;;; 	very specific interop.&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;declare&lt;/span&gt;&lt;/span&gt; undefined)
+(&lt;span class="hljs-name"&gt;with-bindings&lt;/span&gt; {#'*no-clojurify* &lt;span class="hljs-literal"&gt;true&lt;/span&gt;}
+  (&lt;span class="hljs-name"&gt;define-builtin&lt;/span&gt; 'js &lt;span class="hljs-string"&gt;&amp;quot;undefined&amp;quot;&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;undefined&amp;quot;&lt;/span&gt;))
+
+#_{&lt;span class="hljs-symbol"&gt;:clojure-lsp/ignore&lt;/span&gt; [&lt;span class="hljs-symbol"&gt;:clojure-lsp/unused-public-var&lt;/span&gt;]}
+(&lt;span class="hljs-name"&gt;define-builtins&lt;/span&gt; js
+  globalThis
+  Infinity
+  NaN
+  Object
+  Function
+  Boolean
+  Symbol
+  Error
+  Number
+  BigInt
+  Math
+  Date
+  String
+  Array
+  Map
+  Set
+  WeakMap
+  WeakSet
+  JSON
+  ArrayBuffer
+  Promise
+  console)
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;
+We took a special handling of &lt;code&gt;js/undefined&lt;/code&gt; (note when we clojurify JavaScript values, we turn both &lt;code&gt;null&lt;/code&gt; and &lt;code&gt;undefined&lt;/code&gt; into &lt;code&gt;nil&lt;/code&gt;), since a direct equivalent of &lt;code&gt;undefined&lt;/code&gt; in JavaScript may be needed for some interops. However, &lt;code&gt;js/undefined&lt;/code&gt; In ClojureScript has some special properties we can't replicate, most notably, &lt;code&gt;(nil? js/undefined)&lt;/code&gt; and &lt;code&gt;(= js/undefined nil)&lt;/code&gt; results in &lt;code&gt;true&lt;/code&gt; in ClojureScript.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org08365a5" class="outline-2"&gt;
+&lt;a href="#org08365a5"&gt;&lt;h2 id="org08365a5" class="cr-self-reference "&gt;Limitations&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org08365a5"&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-orgca8a04e" class="outline-3"&gt;
+&lt;a href="#orgca8a04e"&gt;&lt;h3 id="orgca8a04e" class="cr-self-reference "&gt;Functionalities specific to an environment&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgca8a04e"&gt;
+&lt;p&gt;
+JavaScript packages are often written under the assumption that, the code will either run on a Browser or a node.js environment. Unfortunately, GraalJS only implements the ECMAScript specification, which means we have neither functions specific to node.js nor functions specific to a browser.
+&lt;/p&gt;
+
+&lt;p&gt;
+For example, we don't have &lt;code&gt;WebWorker&lt;/code&gt; api from the browser, nor &lt;code&gt;process&lt;/code&gt;, &lt;code&gt;fs&lt;/code&gt; api from node.js.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org920546b" class="outline-3"&gt;
+&lt;a href="#org920546b"&gt;&lt;h3 id="org920546b" class="cr-self-reference "&gt;Multithreading and the &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org920546b"&gt;
+&lt;p&gt;
+When writing programs in Java, we usually use blocking operations and multithreading. However, &lt;code&gt;polyglot.Context&lt;/code&gt; is not thread-safe. It isn't a problem in itself, since we can spin up multiple contexts. However, variables in &lt;code&gt;js&lt;/code&gt; refer to variables in a specific context. Thus, if we want to use multiple contexts, we cannot refer to variables in the &lt;code&gt;js&lt;/code&gt; namespace with the current settings. We may be able to mitigate or solve this problem with dynamic bindings or using a dedicated thread for JavaScript operations.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org1f96fcc" class="outline-3"&gt;
+&lt;a href="#org1f96fcc"&gt;&lt;h3 id="org1f96fcc" class="cr-self-reference "&gt;Shorthands for dot macros&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org1f96fcc"&gt;
+&lt;p&gt;
+We have already talked about it in the &lt;a href="#org4ab09c6"&gt;Dot Macros&lt;/a&gt; section. In ClojureScript we can &lt;code&gt;(ClassName.)&lt;/code&gt; for instantiate an instance or &lt;code&gt;(.method obj)&lt;/code&gt; for invoking an method. Implementing them would be really hard if not impossible.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org2179c6b" class="outline-3"&gt;
+&lt;a href="#org2179c6b"&gt;&lt;h3 id="org2179c6b" class="cr-self-reference "&gt;Importing ECMAScript Modules&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org2179c6b"&gt;
+&lt;p&gt;
+The &lt;code&gt;require-js&lt;/code&gt; function can only import CommonJS modules. More and more projects are choosing ECMAScript modules over CommonJS modules these days. However, implementing an importing mechanism for ECMAScript modules is entirely feasible. GraalJS provides a &lt;code&gt;js.esm-eval-returns-exports&lt;/code&gt; option, with this option enabled, we can import a ECMAScript module by loading the source file. However, it will take some time to write support for things like &lt;code&gt;exports&lt;/code&gt; fields in &lt;code&gt;package.json&lt;/code&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org4c87b7c" class="outline-3"&gt;
+&lt;a href="#org4c87b7c"&gt;&lt;h3 id="org4c87b7c" class="cr-self-reference "&gt;Using JavaScript array in Clojure&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4c87b7c"&gt;
+&lt;p&gt;
+In ClojureScript, many times we can use a JavaScript array just like a ClojureScript vector (not vice versa though).
+We haven't implement something similar to this.
+&lt;/p&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-comment"&gt;;; ClojureScript&lt;/span&gt;
+(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;map&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [x] (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;*&lt;/span&gt;&lt;/span&gt; x &lt;span class="hljs-number"&gt;2&lt;/span&gt;)) #js [&lt;span class="hljs-number"&gt;1&lt;/span&gt; &lt;span class="hljs-number"&gt;2&lt;/span&gt; &lt;span class="hljs-number"&gt;3&lt;/span&gt;])
+&lt;span class="hljs-comment"&gt;;; (2 4 6)&lt;/span&gt;
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-org04bbe49" class="outline-2"&gt;
+&lt;a href="#org04bbe49"&gt;&lt;h2 id="org04bbe49" class="cr-self-reference "&gt;To Be Continue…&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org04bbe49"&gt;
+&lt;p&gt;
+Despite the limitations, I still believe this approach is something worth exploring. I'm planning on making an isomorphic React demonstration with Server Side Rendering and Client Side Rehydration using only a thin wrapper over React and React DOM Server (instead of reimplementing the SSR logics on the JVM). The code presented here is also expanded and refined when I'm writing the blog, and the code is open sourced at &lt;a href="https://github.com/imakira/js4clj"&gt;imakira/js4clj&lt;/a&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -132,9 +939,9 @@ The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulle
     <content type="html">&lt;p&gt;
 I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
 &lt;/p&gt;
-&lt;div id="outline-container-org94aadb4" class="outline-2"&gt;
-&lt;a href="#org94aadb4"&gt;&lt;h2 id="org94aadb4" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org94aadb4"&gt;
+&lt;div id="outline-container-orgb2d9e04" class="outline-2"&gt;
+&lt;a href="#orgb2d9e04"&gt;&lt;h2 id="orgb2d9e04" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgb2d9e04"&gt;
 &lt;p&gt;
 On the Nix we will have something like this:
 &lt;/p&gt;
@@ -191,9 +998,9 @@ With these two files we can then start developing the project with the following
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org00e1810" class="outline-2"&gt;
-&lt;a href="#org00e1810"&gt;&lt;h2 id="org00e1810" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org00e1810"&gt;
+&lt;div id="outline-container-orge7a18c9" class="outline-2"&gt;
+&lt;a href="#orge7a18c9"&gt;&lt;h2 id="orge7a18c9" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orge7a18c9"&gt;
 &lt;p&gt;
 To build an executable we need a few more snippets on the Nix side
 &lt;/p&gt;
@@ -248,9 +1055,9 @@ We can also use &lt;code&gt;nix run .&lt;/code&gt; to run the result executable 
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org08153ba" class="outline-2"&gt;
-&lt;a href="#org08153ba"&gt;&lt;h2 id="org08153ba" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org08153ba"&gt;
+&lt;div id="outline-container-orgac1a89a" class="outline-2"&gt;
+&lt;a href="#orgac1a89a"&gt;&lt;h2 id="orgac1a89a" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgac1a89a"&gt;
 &lt;p&gt;
 The biggest limitation of this solution may be you need to restart the REPL (or even the Emacs launched inside the develop environment) every time you add a package into the &lt;code&gt;flake.nix&lt;/code&gt;.
 &lt;/p&gt;
@@ -271,21 +1078,21 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
     <link href="https://coruscation.net/blogs/demonstration.html"/>
     <updated>2025-11-13T23:45:16+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-orgf30af9f" class="outline-2"&gt;
-&lt;a href="#orgf30af9f"&gt;&lt;h2 id="orgf30af9f" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgf30af9f"&gt;
+    <content type="html">&lt;div id="outline-container-org4e0f4d6" class="outline-2"&gt;
+&lt;a href="#org4e0f4d6"&gt;&lt;h2 id="org4e0f4d6" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org4e0f4d6"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org8721fd6" class="outline-3"&gt;
-&lt;a href="#org8721fd6"&gt;&lt;h3 id="org8721fd6" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org8721fd6"&gt;
+&lt;div id="outline-container-org5668138" class="outline-3"&gt;
+&lt;a href="#org5668138"&gt;&lt;h3 id="org5668138" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org5668138"&gt;
 &lt;p&gt;
 Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb81ee9c" class="outline-3"&gt;
-&lt;a href="#orgb81ee9c"&gt;&lt;h3 id="orgb81ee9c" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgb81ee9c"&gt;
+&lt;div id="outline-container-orge8611ef" class="outline-3"&gt;
+&lt;a href="#orge8611ef"&gt;&lt;h3 id="orge8611ef" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orge8611ef"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Java&lt;/li&gt;
 &lt;/ul&gt;
@@ -329,27 +1136,27 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org61cecc6" class="outline-2"&gt;
-&lt;a href="#org61cecc6"&gt;&lt;h2 id="org61cecc6" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org61cecc6"&gt;
+&lt;div id="outline-container-orgd7dee5a" class="outline-2"&gt;
+&lt;a href="#orgd7dee5a"&gt;&lt;h2 id="orgd7dee5a" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orgd7dee5a"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org71c606d" class="outline-3"&gt;
-&lt;a href="#org71c606d"&gt;&lt;h3 id="org71c606d" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org71c606d"&gt;
+&lt;div id="outline-container-orgf4bd62d" class="outline-3"&gt;
+&lt;a href="#orgf4bd62d"&gt;&lt;h3 id="orgf4bd62d" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgf4bd62d"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org00de1e2" class="outline-4"&gt;
-&lt;a href="#org00de1e2"&gt;&lt;h4 id="org00de1e2" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-org00de1e2"&gt;
+&lt;div id="outline-container-org8c261a5" class="outline-4"&gt;
+&lt;a href="#org8c261a5"&gt;&lt;h4 id="org8c261a5" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-org8c261a5"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orge2f919d" class="outline-5"&gt;
-&lt;a href="#orge2f919d"&gt;&lt;h5 id="orge2f919d" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orge2f919d"&gt;
+&lt;div id="outline-container-orgf27d54e" class="outline-5"&gt;
+&lt;a href="#orgf27d54e"&gt;&lt;h5 id="orgf27d54e" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-orgf27d54e"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
@@ -358,9 +1165,9 @@ Some text in between
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf842907" class="outline-2"&gt;
-&lt;a href="#orgf842907"&gt;&lt;h2 id="orgf842907" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgf842907"&gt;
+&lt;div id="outline-container-orge25a88c" class="outline-2"&gt;
+&lt;a href="#orge25a88c"&gt;&lt;h2 id="orge25a88c" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-orge25a88c"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
@@ -374,13 +1181,13 @@ Some text in between
 &lt;hr&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf94bf46" class="outline-2"&gt;
-&lt;a href="#orgf94bf46"&gt;&lt;h2 id="orgf94bf46" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgf94bf46"&gt;
+&lt;div id="outline-container-org411c31a" class="outline-2"&gt;
+&lt;a href="#org411c31a"&gt;&lt;h2 id="org411c31a" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org411c31a"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org53c9f24" class="outline-3"&gt;
-&lt;a href="#org53c9f24"&gt;&lt;h3 id="org53c9f24" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org53c9f24"&gt;
+&lt;div id="outline-container-org4df952f" class="outline-3"&gt;
+&lt;a href="#org4df952f"&gt;&lt;h3 id="org4df952f" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4df952f"&gt;
 &lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
 
 
@@ -414,9 +1221,9 @@ Some text in between
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgae2a172" class="outline-3"&gt;
-&lt;a href="#orgae2a172"&gt;&lt;h3 id="orgae2a172" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgae2a172"&gt;
+&lt;div id="outline-container-org71a0e73" class="outline-3"&gt;
+&lt;a href="#org71a0e73"&gt;&lt;h3 id="org71a0e73" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org71a0e73"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 Everything should be made as simple as possible,
@@ -425,9 +1232,9 @@ but not any simpler – Albert Einstein
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org08de742" class="outline-3"&gt;
-&lt;a href="#org08de742"&gt;&lt;h3 id="org08de742" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org08de742"&gt;
+&lt;div id="outline-container-org4858f3d" class="outline-3"&gt;
+&lt;a href="#org4858f3d"&gt;&lt;h3 id="org4858f3d" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org4858f3d"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2
@@ -444,9 +1251,9 @@ but not any simpler – Albert Einstein
 &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org35745a0" class="outline-5"&gt;
-&lt;a href="#org35745a0"&gt;&lt;h5 id="org35745a0" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-org35745a0"&gt;
+&lt;div id="outline-container-orge0fde94" class="outline-5"&gt;
+&lt;a href="#orge0fde94"&gt;&lt;h5 id="orge0fde94" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-orge0fde94"&gt;
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2&lt;/li&gt;
@@ -456,9 +1263,9 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org16e3276" class="outline-3"&gt;
-&lt;a href="#org16e3276"&gt;&lt;h3 id="org16e3276" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org16e3276"&gt;
+&lt;div id="outline-container-org63b436b" class="outline-3"&gt;
+&lt;a href="#org63b436b"&gt;&lt;h3 id="org63b436b" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org63b436b"&gt;
 &lt;dl class="org-dl"&gt;
 &lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
 &lt;dl class="org-dl"&gt;
@@ -468,31 +1275,31 @@ but not any simpler – Albert Einstein
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org93b87e2" class="outline-3"&gt;
-&lt;a href="#org93b87e2"&gt;&lt;h3 id="org93b87e2" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org93b87e2"&gt;
+&lt;div id="outline-container-org274a190" class="outline-3"&gt;
+&lt;a href="#org274a190"&gt;&lt;h3 id="org274a190" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-org274a190"&gt;
 
-&lt;div id="org83c619c" class="figure"&gt;
+&lt;div id="org9b0c531" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org998147a" class="figure"&gt;
+&lt;div id="orgf96ba72" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org6396288" class="figure"&gt;
+&lt;div id="orga7f2385" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgb2ab09e" class="figure"&gt;
+&lt;div id="org4f56809" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
@@ -500,21 +1307,21 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org9aeeb97" class="outline-2"&gt;
-&lt;a href="#org9aeeb97"&gt;&lt;h2 id="org9aeeb97" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org9aeeb97"&gt;
+&lt;div id="outline-container-org8fc777c" class="outline-2"&gt;
+&lt;a href="#org8fc777c"&gt;&lt;h2 id="org8fc777c" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-org8fc777c"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgab3c00a" class="outline-3"&gt;
-&lt;a href="#orgab3c00a"&gt;&lt;h3 id="orgab3c00a" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgab3c00a"&gt;
+&lt;div id="outline-container-orgfa47ed1" class="outline-3"&gt;
+&lt;a href="#orgfa47ed1"&gt;&lt;h3 id="orgfa47ed1" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgfa47ed1"&gt;
 &lt;p&gt;
 The magnitude &lt;img src="ltximg/demo_c309f6a7f999fb7c61cc3e705f2a9f768bc2c3ce.svg" alt="\(v\)" class="org-svg"&gt; is given by &lt;img src="ltximg/demo_18b830f2fdb20e199f786bc0b9fd93882fc68f16.svg" alt="\(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\)" class="org-svg"&gt; . Another way of writing this is &lt;img src="ltximg/demo_5789433fe00766ac710ddf86fc85054ba0dc5f86.svg" alt="\(d = \sqrt{x^2 + y^2 + z^2}\)" class="org-svg"&gt; where &lt;img src="ltximg/demo_ab3c489517742cf17ddaaf4a050e58455c76f327.svg" alt="\(x = v_x, y=v_y, z=v_z\)" class="org-svg"&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfff9f93" class="outline-3"&gt;
-&lt;a href="#orgfff9f93"&gt;&lt;h3 id="orgfff9f93" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgfff9f93"&gt;
+&lt;div id="outline-container-orgf51b52e" class="outline-3"&gt;
+&lt;a href="#orgf51b52e"&gt;&lt;h3 id="orgf51b52e" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-orgf51b52e"&gt;
 
 &lt;div class="equation-container"&gt;
 &lt;span class="equation"&gt;
