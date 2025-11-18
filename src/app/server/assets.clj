@@ -92,6 +92,11 @@
 (defn refresh-blogs []
   (->> (get-blogs-files)
        (map get-blog-from-path)
+       (sort (fn [a b]
+               (zoned-date-time/compare-to
+                (commons/parse-iso8601 (:published-date a))
+                (commons/parse-iso8601 (:published-date b)))))
+       reverse
        (into [])
        (reset! *blogs*)))
 
