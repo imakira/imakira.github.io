@@ -255,7 +255,8 @@
          ($ :div.gap-8.w-full.h-full {:class
 	                                  (str "md:grid md:grid-cols-[minmax(0px,7fr)_minmax(17rem,17rem)] "
                                            "2xl:grid-cols-[minmax(0px,7fr)_minmax(20rem,20rem)]")}
-            ($ :div.cr-document {:ref doc-ref
+            ($ :div.cr-document {:class "md:mt-1"
+                                 :ref doc-ref
                                  :dangerouslySetInnerHTML {:__html content}})
             ($ :div.mt-4
                (when show-toc?
