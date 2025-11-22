@@ -154,7 +154,7 @@ When writing Clojure, I would like to use ~cider~ for completion and let lsp han
 
 #+BEGIN_SRC emacs-lisp
   (use-package cider
-    :after lsp-bridge-mode
+    :after lsp-bridge
     :config
     (defun me/lsp-bridge-cider-hook ()
       (when cider-mode
