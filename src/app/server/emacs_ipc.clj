@@ -14,17 +14,20 @@
                       "--eval" "(main)"))
 
 (defn- generate-request [method params id]
-  (cheshire/generate-string {:json-rpc "2.0"
-                             :method (name method)
-                             :params params
-                             :id id}))
+  {:json-rpc "2.0"
+   :method (name method)
+   :params (or params [])
+   :id id})
 
 (defn- send-request [method params id emacs]
-  (let [req-str (generate-request method params id)
+  (let [req (generate-request method params id)
+        req-str (cheshire/generate-string req)
         emacs (or emacs @*emacs*)
         writer (java.io.PrintWriter. (.getOutputStream emacs))]
     (.write writer req-str)
     (.write writer "\n")
+    (when @*debug*
+      (logging/debug "sending request to emacs" {:request req-str}))
     (.flush writer)))
 
 (defn emacs-initialize []
@@ -40,11 +43,13 @@
         break? (atom false)]
     (let [process-servant
           (future
+            (.setName (java.lang.Thread/currentThread) (str "emacs-servant-" (.pid emacs)))
             (.waitFor emacs)
             (a/>!! emacs
                    {:exit-code (.exitValue emacs)}))
           stdout-future
           (future
+            (.setName (java.lang.Thread/currentThread) (str "emacs-stdout-" (.pid emacs)))
             (let [stdout (java.io.BufferedReader. (java.io.InputStreamReader.
                                                    (.getInputStream emacs)
                                                    java.nio.charset.StandardCharsets/UTF_8))]
@@ -62,6 +67,7 @@
 
           stderr-future
           (future
+            (.setName (java.lang.Thread/currentThread) (str "emacs-stderr-" (.pid emacs) ))
             (let [stderr (java.io.BufferedReader. (java.io.InputStreamReader.
                                                    (.getErrorStream emacs)
                                                    java.nio.charset.StandardCharsets/UTF_8))]
@@ -74,6 +80,7 @@
 
           worker-future
           (future
+            (.setName (java.lang.Thread/currentThread) (str "worker-" (.pid emacs) ))
             (while (not @break?)
               (a/alt!! shutdown ([_]
                                  (reset! break? true))
@@ -113,7 +120,7 @@
 
                        stderr-message ([error-str]
                                        (binding [*out* *err*]
-                                         (print error-str)))))
+                                         (logging/warn error-str)))))
             (.destroy emacs)
             (logging/debug "main worker exiting..."))]
 
