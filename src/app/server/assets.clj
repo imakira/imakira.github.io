@@ -6,6 +6,7 @@
    [app.user-config :as user-config]
    [cljc.java-time.zoned-date-time :as zoned-date-time]
    [clojure.data.xml :as xml]
+   [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
    [clojure.string :as str])
   (:import
@@ -23,8 +24,8 @@
         user-config/special-pages))
 
 (defn assert-file-exist [path]
-  (assert (.exists (clojure.java.io/file path)) (str "File " path " doesn't exist"))
-  (assert (.isFile (clojure.java.io/file path)) (str "Path " path " is a directory")))
+  (assert (.exists (io/file path)) (str "File " path " doesn't exist"))
+  (assert (.isFile (io/file path)) (str "Path " path " is a directory")))
 
 (defn file-first-commit-date [path]
   (assert-file-exist path)
@@ -52,13 +53,14 @@
 
 (defn file-last-modified-date [path]
   (assert-file-exist path)
-  (-> (Instant/ofEpochMilli (.lastModified (clojure.java.io/file path)))
+  (-> (Instant/ofEpochMilli
+       (.lastModified (io/file path)))
       (ZonedDateTime/ofInstant (ZoneId/systemDefault))
       (.truncatedTo ChronoUnit/SECONDS)
       (.format DateTimeFormatter/ISO_OFFSET_DATE_TIME)))
 
 (defn- get-blogs-files []
-  (let [blog-dir (clojure.java.io/file config/*blog-dir*)]
+  (let [blog-dir (io/file config/*blog-dir*)]
     (when-not (.isDirectory blog-dir)
       (throw (ex-info "Blog directory doesn't exist"
                       {:id :blog-dir-nonexistent})))
@@ -76,11 +78,11 @@
                    :id (:id temp)
                    :language (or (:language temp)
                                  "en_US")
-                   :published-date (or (:published-date
-                                        temp)
+                   :published-date (or (:published-date temp)
                                        (file-first-commit-date path)
                                        (file-last-modified-date path))
                    :modified-date (or (:modified-date temp)
+                                      (file-last-commit-date path)
                                       (file-last-modified-date path))})
       (merge blog {:id (if (special-page? blog)
                          (str (Files/getNameWithoutExtension path)
