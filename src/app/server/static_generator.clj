@@ -51,32 +51,37 @@
                   assets/resource-route
                   ["" {:handler render-wrapper} pages/routes]]))
 
-(defn generate [& _]
+
+
+(defn build [& _]
   (check/environment-check)
 
-  (fs/delete-tree config/*output*)
   (fs/create-dirs config/*output*)
-  (shadow/release :app)
-  (fs/delete-tree "./public/js/cljs-runtime")
   (assets/refresh-blogs)
   (fs/copy-tree config/*blog-dir*
-                (str config/*output* "/" "blogs"))
+                (str config/*output* "/" "blogs")
+                {:replace-existing true})
   (fs/copy-tree (str (System/getProperty "user.dir")
                      "/public")
-                config/*output*)
+                config/*output*
+                {:replace-existing true})
   (when user-config/cname
     (spit (str config/*output* "/CNAME")
           user-config/cname))
   (doseq [[path {handler :handler match :match}] (get-all-routes)]
-    (let [file (io/file (str config/*output*  (if (= path "/")
-                                                "/index.html"
-                                                path)))]
-      (.mkdirs (.getParentFile file))
-      (when (.exists file)
-        (fs/delete file))
-      (with-open [file-writer (io/writer file)]
-        (.write file-writer (let [result (handler match)]
-                              (if (string? result)
-                                result
-                                (json/generate-string result))))))))
+    (when path
+      (let [file (io/file (str config/*output*  (if (= path "/")
+                                                  "/index.html"
+                                                  path)))]
+        (.mkdirs (.getParentFile file))
+        (with-open [file-writer (io/writer file)]
+          (.write file-writer (let [result (handler match)]
+                                (if (string? result)
+                                  result
+                                  (json/generate-string result)))))))))
 
+(defn build-full [& _]
+  (fs/delete-tree config/*output*)
+  (fs/delete-tree "./public/js/cljs-runtime")
+  (shadow/release :app)
+  (build))

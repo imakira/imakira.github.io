@@ -40,4 +40,5 @@
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps
                  {}}
-           :generate {:exec-fn app.server.static-generator/generate}}}
+           :build-full {:exec-fn app.server.static-generator/build-full}
+           :build {:exec-fn app.server.static-generator/build}}}
