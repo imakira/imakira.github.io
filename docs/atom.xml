@@ -24,9 +24,9 @@ For a small example, consider that even the &lt;code&gt;go-to-definition&lt;/cod
 &lt;p&gt;
 Finally, you certainly can use lsp-bridge only for some modes and keep using &lt;code&gt;completion-at-point&lt;/code&gt; for other modes. That's also what I'm doing.
 &lt;/p&gt;
-&lt;div id="outline-container-orged9b856" class="outline-2"&gt;
-&lt;a href="#orged9b856"&gt;&lt;h2 id="orged9b856" class="cr-self-reference "&gt;Basic Setup&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orged9b856"&gt;
+&lt;div id="outline-container-basic-setup" class="outline-2"&gt;
+&lt;a href="#basic-setup"&gt;&lt;h2 id="basic-setup" class="cr-self-reference "&gt;Basic Setup&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-basic-setup"&gt;
 &lt;p&gt;
 To use &lt;code&gt;lsp-bridge&lt;/code&gt;, you first need to install some external dependencies.
 &lt;/p&gt;
@@ -97,13 +97,13 @@ If the server is installed and &lt;code&gt;lsp-bridge-mode&lt;/code&gt; is enabl
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfbd3c9f" class="outline-2"&gt;
-&lt;a href="#orgfbd3c9f"&gt;&lt;h2 id="orgfbd3c9f" class="cr-self-reference "&gt;Configuration&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgfbd3c9f"&gt;
+&lt;div id="outline-container-configuration" class="outline-2"&gt;
+&lt;a href="#configuration"&gt;&lt;h2 id="configuration" class="cr-self-reference "&gt;Configuration&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-configuration"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org8632673" class="outline-3"&gt;
-&lt;a href="#org8632673"&gt;&lt;h3 id="org8632673" class="cr-self-reference "&gt;Keymapping&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org8632673"&gt;
+&lt;div id="outline-container-keymapping" class="outline-3"&gt;
+&lt;a href="#keymapping"&gt;&lt;h3 id="keymapping" class="cr-self-reference "&gt;Keymapping&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-keymapping"&gt;
 &lt;p&gt;
 lsp-bridge provides its xef and eldoc equivalents, but it's up to us to mapping them. Here is what I do just for a reference.
 &lt;/p&gt;
@@ -122,9 +122,9 @@ lsp-bridge provides its xef and eldoc equivalents, but it's up to us to mapping 
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org2e126f5" class="outline-3"&gt;
-&lt;a href="#org2e126f5"&gt;&lt;h3 id="org2e126f5" class="cr-self-reference "&gt;a Little Hack (minimum popup width)&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org2e126f5"&gt;
+&lt;div id="outline-container-a-little-hack-(minimum-popup-width)" class="outline-3"&gt;
+&lt;a href="#a-little-hack-(minimum-popup-width)"&gt;&lt;h3 id="a-little-hack-(minimum-popup-width)" class="cr-self-reference "&gt;a Little Hack (minimum popup width)&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-a-little-hack-(minimum-popup-width)"&gt;
 &lt;p&gt;
 In corfu you can set minimum popup width with &lt;code&gt;corfu-min-width&lt;/code&gt;. &lt;code&gt;lsp-bridge~/~acm&lt;/code&gt; currently doesn't provide a way to do so. However it is relatively easy to hack one.
 &lt;/p&gt;
@@ -141,18 +141,18 @@ In corfu you can set minimum popup width with &lt;code&gt;corfu-min-width&lt;/co
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org38a875a" class="outline-3"&gt;
-&lt;a href="#org38a875a"&gt;&lt;h3 id="org38a875a" class="cr-self-reference "&gt;flymake&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org38a875a"&gt;
+&lt;div id="outline-container-flymake" class="outline-3"&gt;
+&lt;a href="#flymake"&gt;&lt;h3 id="flymake" class="cr-self-reference "&gt;flymake&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-flymake"&gt;
 &lt;p&gt;
 There is actually a third-party lsp-bridge integration for flymake. Check &lt;a href="https://github.com/eki3z/flymake-bridge"&gt;eki3z/flymake-bridge&lt;/a&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgbc8f569" class="outline-2"&gt;
-&lt;a href="#orgbc8f569"&gt;&lt;h2 id="orgbc8f569" class="cr-self-reference "&gt;Workspace Management&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgbc8f569"&gt;
+&lt;div id="outline-container-workspace-management" class="outline-2"&gt;
+&lt;a href="#workspace-management"&gt;&lt;h2 id="workspace-management" class="cr-self-reference "&gt;Workspace Management&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-workspace-management"&gt;
 &lt;p&gt;
 lsp-bridge's workspace detection depends entirely on &lt;code&gt;git&lt;/code&gt;. It simply use the nearest directory contains &lt;code&gt;.git&lt;/code&gt; as the workspace root. This may not be enough for some use cases. However, it provides a &lt;code&gt;lsp-bridge-get-project-path-by-filepath&lt;/code&gt; for us to customize. We can implement something similar to what lsp-mode provides fairly easily.
 &lt;/p&gt;
@@ -187,9 +187,9 @@ lsp-bridge's workspace detection depends entirely on &lt;code&gt;git&lt;/code&gt
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc31683c" class="outline-2"&gt;
-&lt;a href="#orgc31683c"&gt;&lt;h2 id="orgc31683c" class="cr-self-reference "&gt;Working with Java&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgc31683c"&gt;
+&lt;div id="outline-container-working-with-java" class="outline-2"&gt;
+&lt;a href="#working-with-java"&gt;&lt;h2 id="working-with-java" class="cr-self-reference "&gt;Working with Java&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-working-with-java"&gt;
 &lt;p&gt;
 We need a few more lines of configuration to make it works with Java.
 &lt;/p&gt;
@@ -206,9 +206,9 @@ We need a few more lines of configuration to make it works with Java.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgadcdbb2" class="outline-2"&gt;
-&lt;a href="#orgadcdbb2"&gt;&lt;h2 id="orgadcdbb2" class="cr-self-reference "&gt;Working with Clojure and Cider&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgadcdbb2"&gt;
+&lt;div id="outline-container-working-with-clojure-and-cider" class="outline-2"&gt;
+&lt;a href="#working-with-clojure-and-cider"&gt;&lt;h2 id="working-with-clojure-and-cider" class="cr-self-reference "&gt;Working with Clojure and Cider&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-working-with-clojure-and-cider"&gt;
 &lt;p&gt;
 When writing Clojure, I would like to use &lt;code&gt;cider&lt;/code&gt; for completion and let lsp handling everything else. With &lt;code&gt;lsp-mode&lt;/code&gt; we can just locally set &lt;code&gt;lsp-enable-completion-at-point&lt;/code&gt; to false. With &lt;code&gt;lsp-bridge&lt;/code&gt;, well, we can disable &lt;code&gt;lsp-bridge&lt;/code&gt;'s automatic popup and continue to use corfu.
 &lt;/p&gt;
@@ -226,9 +226,9 @@ When writing Clojure, I would like to use &lt;code&gt;cider&lt;/code&gt; for com
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgeb91d20" class="outline-2"&gt;
-&lt;a href="#orgeb91d20"&gt;&lt;h2 id="orgeb91d20" class="cr-self-reference "&gt;Conclusion&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgeb91d20"&gt;
+&lt;div id="outline-container-conclusion" class="outline-2"&gt;
+&lt;a href="#conclusion"&gt;&lt;h2 id="conclusion" class="cr-self-reference "&gt;Conclusion&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-conclusion"&gt;
 &lt;p&gt;
 Overall I would say I'm satisfied with what lsp-bridge provides and amazed at its fluency. I can now load and browse through &lt;a href="https://github.com/oracle/graaljs.git"&gt;graaljs&lt;/a&gt;'s source code with no stutter, no random freeze I need to &lt;code&gt;C-g&lt;/code&gt;, that may or may not work, no nothing. The strategy of off-loading computation to an external process and async everything seems to put very light weight on the Emacs side and work really well.
 &lt;/p&gt;
@@ -248,9 +248,9 @@ A common challenge when making a fullstack website using Clojure/ClojureScript i
 &lt;p&gt;
 This blog describes the basic usage of GraalJS and what I managed to achieve with GraalJS and Clojure.
 &lt;/p&gt;
-&lt;div id="outline-container-org963f513" class="outline-2"&gt;
-&lt;a href="#org963f513"&gt;&lt;h2 id="org963f513" class="cr-self-reference "&gt;Basic Setup and a Hello World Program&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org963f513"&gt;
+&lt;div id="outline-container-basic-setup-and-a-hello-world-program" class="outline-2"&gt;
+&lt;a href="#basic-setup-and-a-hello-world-program"&gt;&lt;h2 id="basic-setup-and-a-hello-world-program" class="cr-self-reference "&gt;Basic Setup and a Hello World Program&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-basic-setup-and-a-hello-world-program"&gt;
 &lt;p&gt;
 We add the following dependencies to our &lt;code&gt;deps.edn&lt;/code&gt;
 &lt;/p&gt;
@@ -345,9 +345,9 @@ To handle JavaScript objects, we have &lt;code&gt;.newInstance()&lt;/code&gt; fo
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc1f6fb9" class="outline-2"&gt;
-&lt;a href="#orgc1f6fb9"&gt;&lt;h2 id="orgc1f6fb9" class="cr-self-reference "&gt;Working With JavaScript Libraries&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgc1f6fb9"&gt;
+&lt;div id="outline-container-working-with-javascript-libraries" class="outline-2"&gt;
+&lt;a href="#working-with-javascript-libraries"&gt;&lt;h2 id="working-with-javascript-libraries" class="cr-self-reference "&gt;Working With JavaScript Libraries&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-working-with-javascript-libraries"&gt;
 &lt;p&gt;
 GraalJS has an option to provide a &lt;code&gt;require&lt;/code&gt; function, with which we can import CommonJS JavaScript modules. The option isn't enabled by default. To enable it, we need to change the definition of &lt;code&gt;*context*&lt;/code&gt; to the following:
 &lt;/p&gt;
@@ -430,9 +430,9 @@ We wrapped the details of interop between Clojure and JavaScript in a Clojure fu
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgf5a83f7" class="outline-2"&gt;
-&lt;a href="#orgf5a83f7"&gt;&lt;h2 id="orgf5a83f7" class="cr-self-reference "&gt;Ease Things With Helper Functions, Macros and More&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgf5a83f7"&gt;
+&lt;div id="outline-container-ease-things-with-helper-functions,-macros-and-more" class="outline-2"&gt;
+&lt;a href="#ease-things-with-helper-functions,-macros-and-more"&gt;&lt;h2 id="ease-things-with-helper-functions,-macros-and-more" class="cr-self-reference "&gt;Ease Things With Helper Functions, Macros and More&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-ease-things-with-helper-functions,-macros-and-more"&gt;
 &lt;p&gt;
 You must have noticed the definition of the &lt;code&gt;now&lt;/code&gt; function in the previous example is quite clumsy. In ClojureScript we have the following things that can facilitate the interop between ClojureScript and JavaScript
 &lt;/p&gt;
@@ -446,16 +446,16 @@ You must have noticed the definition of the &lt;code&gt;now&lt;/code&gt; functio
 To build something on the same level is probably very hard, however, to build a demonstration of something very similar is indeed very achievable.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org938289a" class="outline-3"&gt;
-&lt;a href="#org938289a"&gt;&lt;h3 id="org938289a" class="cr-self-reference "&gt;Mapping between Clojure and Polyglot Values&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org938289a"&gt;
+&lt;div id="outline-container-mapping-between-clojure-and-polyglot-values" class="outline-3"&gt;
+&lt;a href="#mapping-between-clojure-and-polyglot-values"&gt;&lt;h3 id="mapping-between-clojure-and-polyglot-values" class="cr-self-reference "&gt;Mapping between Clojure and Polyglot Values&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-mapping-between-clojure-and-polyglot-values"&gt;
 &lt;p&gt;
 We probably don't want to manually convert the result each time we get a value from the JavaScript side as we did in the previous examples. So we would like to put the actual JavaScript functions invoking logics into a wrapper and let the wrapper automatically convert the parameters and the return value for us. To make something like this, and since GraalJS represents each JavaScript value as a Polyglot Value, we first need to establish a mapping between Clojure types and Polyglot Types.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgcea035b" class="outline-4"&gt;
-&lt;a href="#orgcea035b"&gt;&lt;h4 id="orgcea035b" class="cr-self-reference "&gt;Primitive Types&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-orgcea035b"&gt;
+&lt;div id="outline-container-primitive-types" class="outline-4"&gt;
+&lt;a href="#primitive-types"&gt;&lt;h4 id="primitive-types" class="cr-self-reference "&gt;Primitive Types&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-primitive-types"&gt;
 &lt;p&gt;
 Each time we call the &lt;code&gt;.execute()&lt;/code&gt; or &lt;code&gt;.invokeMember()&lt;/code&gt; method of the &lt;code&gt;polyglot.Value&lt;/code&gt; class, GraalJS will convert the arguments using &lt;code&gt;.asValue()&lt;/code&gt; method of &lt;code&gt;Context&lt;/code&gt; class. However, we are going to wrap Clojure functions as Polyglot functions in the next section. As of now, we write a Clojure -&amp;gt; Polyglot mapping function only calling the &lt;code&gt;.asValue()&lt;/code&gt; method.
 &lt;/p&gt;
@@ -524,7 +524,7 @@ The function takes a Clojure function as an argument, returns a Polyglot executa
 &lt;/p&gt;
 
 &lt;p&gt;
-In the function body, we use &lt;code&gt;reify&lt;/code&gt; to instantiate an object implementing the &lt;code&gt;ProxyExecutable&lt;/code&gt; interface. We implement the &lt;code&gt;.execute()&lt;/code&gt; method by applying the clojurified arguments to the original Clojure function, and convert the return value back to a Polyglot value using the two functions we wrote in the &lt;a href="#orgcea035b"&gt;previous section&lt;/a&gt;.
+In the function body, we use &lt;code&gt;reify&lt;/code&gt; to instantiate an object implementing the &lt;code&gt;ProxyExecutable&lt;/code&gt; interface. We implement the &lt;code&gt;.execute()&lt;/code&gt; method by applying the clojurified arguments to the original Clojure function, and convert the return value back to a Polyglot value using the two functions we wrote in the &lt;a href="#primitive-types"&gt;previous section&lt;/a&gt;.
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -718,9 +718,9 @@ Now we just need to do this:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org1c9f360" class="outline-3"&gt;
-&lt;a href="#org1c9f360"&gt;&lt;h3 id="org1c9f360" class="cr-self-reference "&gt;Dot Macros and &lt;code&gt;set!&lt;/code&gt;&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org1c9f360"&gt;
+&lt;div id="outline-container-dot-macros-and-~set!~" class="outline-3"&gt;
+&lt;a href="#dot-macros-and-~set!~"&gt;&lt;h3 id="dot-macros-and-~set!~" class="cr-self-reference "&gt;Dot Macros and &lt;code&gt;set!&lt;/code&gt;&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-dot-macros-and-~set!~"&gt;
 &lt;p&gt;
 In ClojureScript we have dots special forms or macros like &lt;code&gt;.&lt;/code&gt;,  &lt;code&gt;.-&lt;/code&gt; and &lt;code&gt;..&lt;/code&gt; for accessing properties or calling methods of JavaScript objects.
 &lt;/p&gt;
@@ -830,9 +830,9 @@ The only thing lacking is a &lt;code&gt;require&lt;/code&gt; mechanism, which is
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org60a20b6" class="outline-3"&gt;
-&lt;a href="#org60a20b6"&gt;&lt;h3 id="org60a20b6" class="cr-self-reference "&gt;&lt;code&gt;require&lt;/code&gt; command&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org60a20b6"&gt;
+&lt;div id="outline-container-~require~-command" class="outline-3"&gt;
+&lt;a href="#~require~-command"&gt;&lt;h3 id="~require~-command" class="cr-self-reference "&gt;&lt;code&gt;require&lt;/code&gt; command&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-~require~-command"&gt;
 &lt;p&gt;
 On the JavaScript side, the &lt;code&gt;require()&lt;/code&gt; function returns an object from which we can access its exported variables or functions.
 &lt;/p&gt;
@@ -913,9 +913,9 @@ Let's try some more examples:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd4a6784" class="outline-3"&gt;
-&lt;a href="#orgd4a6784"&gt;&lt;h3 id="orgd4a6784" class="cr-self-reference "&gt;Bonus: Special &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgd4a6784"&gt;
+&lt;div id="outline-container-bonus:-special-~js~-namespace" class="outline-3"&gt;
+&lt;a href="#bonus:-special-~js~-namespace"&gt;&lt;h3 id="bonus:-special-~js~-namespace" class="cr-self-reference "&gt;Bonus: Special &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-bonus:-special-~js~-namespace"&gt;
 &lt;p&gt;
 ClojureScript provides us a &lt;a href="https://cljs.github.io/api/syntax/js-namespace"&gt;special &lt;code&gt;js&lt;/code&gt; namespace&lt;/a&gt;, from where we can use various JavaScript global objects. We can also implement something like that.
 &lt;/p&gt;
@@ -976,13 +976,13 @@ We took a special handling of &lt;code&gt;js/undefined&lt;/code&gt; (note when w
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orge984ab0" class="outline-2"&gt;
-&lt;a href="#orge984ab0"&gt;&lt;h2 id="orge984ab0" class="cr-self-reference "&gt;Limitations&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orge984ab0"&gt;
+&lt;div id="outline-container-limitations" class="outline-2"&gt;
+&lt;a href="#limitations"&gt;&lt;h2 id="limitations" class="cr-self-reference "&gt;Limitations&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-limitations"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc817990" class="outline-3"&gt;
-&lt;a href="#orgc817990"&gt;&lt;h3 id="orgc817990" class="cr-self-reference "&gt;Functionalities specific to an environment&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgc817990"&gt;
+&lt;div id="outline-container-functionalities-specific-to-an-environment" class="outline-3"&gt;
+&lt;a href="#functionalities-specific-to-an-environment"&gt;&lt;h3 id="functionalities-specific-to-an-environment" class="cr-self-reference "&gt;Functionalities specific to an environment&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-functionalities-specific-to-an-environment"&gt;
 &lt;p&gt;
 JavaScript packages are often written under the assumption that, the code will either run on a Browser or a node.js environment. Unfortunately, GraalJS only implements the ECMAScript specification, which means we have neither functions specific to node.js nor functions specific to a browser.
 &lt;/p&gt;
@@ -992,33 +992,33 @@ For example, we don't have &lt;code&gt;WebWorker&lt;/code&gt; api from the brows
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org06182e4" class="outline-3"&gt;
-&lt;a href="#org06182e4"&gt;&lt;h3 id="org06182e4" class="cr-self-reference "&gt;Multithreading and the &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org06182e4"&gt;
+&lt;div id="outline-container-multithreading-and-the-~js~-namespace" class="outline-3"&gt;
+&lt;a href="#multithreading-and-the-~js~-namespace"&gt;&lt;h3 id="multithreading-and-the-~js~-namespace" class="cr-self-reference "&gt;Multithreading and the &lt;code&gt;js&lt;/code&gt; namespace&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-multithreading-and-the-~js~-namespace"&gt;
 &lt;p&gt;
 When writing programs in Java, we usually use blocking operations and multithreading. However, &lt;code&gt;polyglot.Context&lt;/code&gt; is not thread-safe. It isn't a problem in itself, since we can spin up multiple contexts. However, variables in &lt;code&gt;js&lt;/code&gt; refer to variables in a specific context. Thus, if we want to use multiple contexts, we cannot refer to variables in the &lt;code&gt;js&lt;/code&gt; namespace with the current settings. We may be able to mitigate or solve this problem with dynamic bindings or using a dedicated thread for JavaScript operations.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org58d2b15" class="outline-3"&gt;
-&lt;a href="#org58d2b15"&gt;&lt;h3 id="org58d2b15" class="cr-self-reference "&gt;Shorthands for dot macros&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org58d2b15"&gt;
+&lt;div id="outline-container-shorthands-for-dot-macros" class="outline-3"&gt;
+&lt;a href="#shorthands-for-dot-macros"&gt;&lt;h3 id="shorthands-for-dot-macros" class="cr-self-reference "&gt;Shorthands for dot macros&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-shorthands-for-dot-macros"&gt;
 &lt;p&gt;
-We have already talked about it in the &lt;a href="#org1c9f360"&gt;Dot Macros&lt;/a&gt; section. In ClojureScript we can &lt;code&gt;(ClassName.)&lt;/code&gt; for instantiate an instance or &lt;code&gt;(.method obj)&lt;/code&gt; for invoking an method. Implementing them would be really hard if not impossible.
+We have already talked about it in the &lt;a href="#dot-macros-and-~set!~"&gt;Dot Macros&lt;/a&gt; section. In ClojureScript we can &lt;code&gt;(ClassName.)&lt;/code&gt; for instantiate an instance or &lt;code&gt;(.method obj)&lt;/code&gt; for invoking an method. Implementing them would be really hard if not impossible.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org86d1102" class="outline-3"&gt;
-&lt;a href="#org86d1102"&gt;&lt;h3 id="org86d1102" class="cr-self-reference "&gt;Importing ECMAScript Modules&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org86d1102"&gt;
+&lt;div id="outline-container-importing-ecmascript-modules" class="outline-3"&gt;
+&lt;a href="#importing-ecmascript-modules"&gt;&lt;h3 id="importing-ecmascript-modules" class="cr-self-reference "&gt;Importing ECMAScript Modules&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-importing-ecmascript-modules"&gt;
 &lt;p&gt;
 The &lt;code&gt;require-js&lt;/code&gt; function can only import CommonJS modules. More and more projects are choosing ECMAScript modules over CommonJS modules these days. However, implementing an importing mechanism for ECMAScript modules is entirely feasible. GraalJS provides a &lt;code&gt;js.esm-eval-returns-exports&lt;/code&gt; option, with this option enabled, we can import a ECMAScript module by loading the source file. However, it will take some time to write support for things like &lt;code&gt;exports&lt;/code&gt; fields in &lt;code&gt;package.json&lt;/code&gt;.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc209086" class="outline-3"&gt;
-&lt;a href="#orgc209086"&gt;&lt;h3 id="orgc209086" class="cr-self-reference "&gt;Using JavaScript array in Clojure&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgc209086"&gt;
+&lt;div id="outline-container-using-javascript-array-in-clojure" class="outline-3"&gt;
+&lt;a href="#using-javascript-array-in-clojure"&gt;&lt;h3 id="using-javascript-array-in-clojure" class="cr-self-reference "&gt;Using JavaScript array in Clojure&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-using-javascript-array-in-clojure"&gt;
 &lt;p&gt;
 In ClojureScript, many times we can use a JavaScript array just like a ClojureScript vector (not vice versa though).
 We haven't implement something similar to this.
@@ -1033,9 +1033,9 @@ We haven't implement something similar to this.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org0012dea" class="outline-2"&gt;
-&lt;a href="#org0012dea"&gt;&lt;h2 id="org0012dea" class="cr-self-reference "&gt;To Be Continue…&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org0012dea"&gt;
+&lt;div id="outline-container-to-be-continue..." class="outline-2"&gt;
+&lt;a href="#to-be-continue..."&gt;&lt;h2 id="to-be-continue..." class="cr-self-reference "&gt;To Be Continue…&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-to-be-continue..."&gt;
 &lt;p&gt;
 Despite the limitations, I still believe this approach is something worth exploring. I'm planning on making an isomorphic React demonstration with Server Side Rendering and Client Side Rehydration using only a thin wrapper over React and React DOM Server (instead of reimplementing the SSR logics on the JVM). The code presented here is also expanded and refined when I'm writing the blog, and the code is open sourced at &lt;a href="https://github.com/imakira/js4clj"&gt;imakira/js4clj&lt;/a&gt;.
 &lt;/p&gt;
@@ -1051,9 +1051,9 @@ Despite the limitations, I still believe this approach is something worth explor
     <content type="html">&lt;p&gt;
 To build a ClojureScript application, we need to pull dependencies from two package managers. That is, JavaScript packages from &lt;code&gt;npm&lt;/code&gt; and Clojure packages from &lt;code&gt;deps.edn&lt;/code&gt;. After pulling the dependencies, we can then let &lt;code&gt;shadow-cljs&lt;/code&gt; compiles the ClojureScript files into a single javascript and make the result a npm package. In this post, we rely on &lt;code&gt;nixpkgs&lt;/code&gt;'s builtin &lt;code&gt;fetchNpmDeps&lt;/code&gt; and &lt;code&gt;buildNpmPackage&lt;/code&gt; for the npm side, and &lt;a href="https://github.com/jlesquembre/clj-nix"&gt;clj-nix&lt;/a&gt; for the nix side.
 &lt;/p&gt;
-&lt;div id="outline-container-org6032f3d" class="outline-2"&gt;
-&lt;a href="#org6032f3d"&gt;&lt;h2 id="org6032f3d" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org6032f3d"&gt;
+&lt;div id="outline-container-prerequisites" class="outline-2"&gt;
+&lt;a href="#prerequisites"&gt;&lt;h2 id="prerequisites" class="cr-self-reference "&gt;Prerequisites&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-prerequisites"&gt;
 &lt;p&gt;
 I will skip the details that are not unique to Nix. The following contents assume we already have a working shadow-cljs project that can produce a node.js target when running &lt;code&gt;npm run release&lt;/code&gt;. Which is basically:
 &lt;/p&gt;
@@ -1065,9 +1065,9 @@ I will skip the details that are not unique to Nix. The following contents assum
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgfd833f9" class="outline-2"&gt;
-&lt;a href="#orgfd833f9"&gt;&lt;h2 id="orgfd833f9" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgfd833f9"&gt;
+&lt;div id="outline-container-prefetch-and-generate-lock-file-for-dependencies" class="outline-2"&gt;
+&lt;a href="#prefetch-and-generate-lock-file-for-dependencies"&gt;&lt;h2 id="prefetch-and-generate-lock-file-for-dependencies" class="cr-self-reference "&gt;Prefetch and generate lock file for dependencies&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-prefetch-and-generate-lock-file-for-dependencies"&gt;
 &lt;p&gt;
 During the &lt;i&gt;build&lt;/i&gt; phase of nix package, the process cannot perform any network request, as that will defeat the whole point of &lt;i&gt;determinism&lt;/i&gt;. The common practice is to use a &lt;i&gt;lock file&lt;/i&gt;. Which is essentially a recipe of all the necessary resources (and their checksums) for the building process. We can then prefetch all the resources into the nix store and tell the building process where to find the necessary resources during the actual building.
 &lt;/p&gt;
@@ -1091,9 +1091,9 @@ On the Clojure side, we execute the following command. It will generate a &lt;co
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org90d4656" class="outline-2"&gt;
-&lt;a href="#org90d4656"&gt;&lt;h2 id="org90d4656" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org90d4656"&gt;
+&lt;div id="outline-container-flake.nix" class="outline-2"&gt;
+&lt;a href="#flake.nix"&gt;&lt;h2 id="flake.nix" class="cr-self-reference "&gt;flake.nix&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-flake.nix"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 The following nix script takes heavy inspiration from &lt;a href="https://github.com/jlesquembre/clj-nix/issues/14#issuecomment-2661208232"&gt;this github issue comment&lt;/a&gt;.
@@ -1153,9 +1153,9 @@ You can check &lt;a href="https://github.com/imakira/espoir"&gt;this little proj
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org8f237cc" class="outline-2"&gt;
-&lt;a href="#org8f237cc"&gt;&lt;h2 id="org8f237cc" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org8f237cc"&gt;
+&lt;div id="outline-container-limitations" class="outline-2"&gt;
+&lt;a href="#limitations"&gt;&lt;h2 id="limitations" class="cr-self-reference "&gt;&lt;span class="todo TODO"&gt;TODO&lt;/span&gt; Limitations&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-limitations"&gt;
 &lt;p&gt;
 The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulled from maven repos. Git dependencies aren't probably handled.
 &lt;/p&gt;
@@ -1171,9 +1171,9 @@ The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulle
     <content type="html">&lt;p&gt;
 I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
 &lt;/p&gt;
-&lt;div id="outline-container-org56aab0a" class="outline-2"&gt;
-&lt;a href="#org56aab0a"&gt;&lt;h2 id="org56aab0a" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org56aab0a"&gt;
+&lt;div id="outline-container-simple-configuration-when-developing" class="outline-2"&gt;
+&lt;a href="#simple-configuration-when-developing"&gt;&lt;h2 id="simple-configuration-when-developing" class="cr-self-reference "&gt;Simple Configuration When Developing&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-simple-configuration-when-developing"&gt;
 &lt;p&gt;
 On the Nix we will have something like this:
 &lt;/p&gt;
@@ -1230,9 +1230,9 @@ With these two files we can then start developing the project with the following
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgcc30203" class="outline-2"&gt;
-&lt;a href="#orgcc30203"&gt;&lt;h2 id="orgcc30203" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgcc30203"&gt;
+&lt;div id="outline-container-building-an-executable" class="outline-2"&gt;
+&lt;a href="#building-an-executable"&gt;&lt;h2 id="building-an-executable" class="cr-self-reference "&gt;Building an Executable&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-building-an-executable"&gt;
 &lt;p&gt;
 To build an executable we need a few more snippets on the Nix side
 &lt;/p&gt;
@@ -1287,9 +1287,9 @@ We can also use &lt;code&gt;nix run .&lt;/code&gt; to run the result executable 
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org1b75ea0" class="outline-2"&gt;
-&lt;a href="#org1b75ea0"&gt;&lt;h2 id="org1b75ea0" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org1b75ea0"&gt;
+&lt;div id="outline-container-limitations-of-this-method-and-other-notes" class="outline-2"&gt;
+&lt;a href="#limitations-of-this-method-and-other-notes"&gt;&lt;h2 id="limitations-of-this-method-and-other-notes" class="cr-self-reference "&gt;Limitations of This Method and Other Notes&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-limitations-of-this-method-and-other-notes"&gt;
 &lt;p&gt;
 The biggest limitation of this solution may be you need to restart the REPL (or even the Emacs launched inside the develop environment) every time you add a package into the &lt;code&gt;flake.nix&lt;/code&gt;.
 &lt;/p&gt;
@@ -1310,21 +1310,21 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
     <link href="https://coruscation.net/blogs/demonstration.html"/>
     <updated>2025-11-13T23:46:17+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-org87ac7ea" class="outline-2"&gt;
-&lt;a href="#org87ac7ea"&gt;&lt;h2 id="org87ac7ea" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org87ac7ea"&gt;
+    <content type="html">&lt;div id="outline-container-blog_Code%20Blocks1" class="outline-2"&gt;
+&lt;a href="#blog_Code%20Blocks1"&gt;&lt;h2 id="blog_Code%20Blocks1" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-blog_Code%20Blocks1"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org7515d28" class="outline-3"&gt;
-&lt;a href="#org7515d28"&gt;&lt;h3 id="org7515d28" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org7515d28"&gt;
+&lt;div id="outline-container-blog_Inline%20Code%20Block1" class="outline-3"&gt;
+&lt;a href="#blog_Inline%20Code%20Block1"&gt;&lt;h3 id="blog_Inline%20Code%20Block1" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Inline%20Code%20Block1"&gt;
 &lt;p&gt;
 Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgdfc15ee" class="outline-3"&gt;
-&lt;a href="#orgdfc15ee"&gt;&lt;h3 id="orgdfc15ee" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgdfc15ee"&gt;
+&lt;div id="outline-container-blog_Code%20Blocks1" class="outline-3"&gt;
+&lt;a href="#blog_Code%20Blocks1"&gt;&lt;h3 id="blog_Code%20Blocks1" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Code%20Blocks1"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Java&lt;/li&gt;
 &lt;/ul&gt;
@@ -1365,30 +1365,45 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
     (&lt;span class="hljs-name"&gt;goto-char&lt;/span&gt; (&lt;span class="hljs-name"&gt;point-min&lt;/span&gt;))    
 &lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+
+&lt;div class="org-src-container"&gt;
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;with-current-buffer&lt;/span&gt; (&lt;span class="hljs-name"&gt;current-buffer&lt;/span&gt;)
+  (&lt;span class="hljs-name"&gt;let&lt;/span&gt; ((&lt;span class="hljs-name"&gt;ids&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-map-entries&lt;/span&gt; (&lt;span class="hljs-name"&gt;lambda&lt;/span&gt; ()
+                                (&lt;span class="hljs-name"&gt;org-entry-get&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt;)))))
+    (&lt;span class="hljs-name"&gt;org-map-entries&lt;/span&gt; (&lt;span class="hljs-name"&gt;lambda&lt;/span&gt; ()
+                       (&lt;span class="hljs-name"&gt;when&lt;/span&gt; (&lt;span class="hljs-name"&gt;not&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-entry-get&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt;))
+                         (&lt;span class="hljs-name"&gt;let*&lt;/span&gt; ((&lt;span class="hljs-name"&gt;candidate-id&lt;/span&gt; (&lt;span class="hljs-name"&gt;concat&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;blog_&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;url-encode-url&lt;/span&gt; (&lt;span class="hljs-name"&gt;nth&lt;/span&gt; &lt;span class="hljs-number"&gt;4&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-heading-components&lt;/span&gt;)))))
+                                (&lt;span class="hljs-name"&gt;duplicates&lt;/span&gt; (&lt;span class="hljs-name"&gt;cl-count&lt;/span&gt; candidate-id ids)))
+                           (&lt;span class="hljs-name"&gt;org-entry-put&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt; (&lt;span class="hljs-name"&gt;concat&lt;/span&gt; candidate-id
+                                                                  (&lt;span class="hljs-name"&gt;prin1-to-string&lt;/span&gt; (&lt;span class="hljs-name"&gt;+&lt;/span&gt; &lt;span class="hljs-number"&gt;1&lt;/span&gt; duplicates))))))
+                       (&lt;span class="hljs-name"&gt;setq&lt;/span&gt; ids (&lt;span class="hljs-name"&gt;cons&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-entry-get&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt;)
+                                       ids))))))
+&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc0a250d" class="outline-2"&gt;
-&lt;a href="#orgc0a250d"&gt;&lt;h2 id="orgc0a250d" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgc0a250d"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org17f1d93" class="outline-3"&gt;
-&lt;a href="#org17f1d93"&gt;&lt;h3 id="org17f1d93" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org17f1d93"&gt;
+&lt;div id="outline-container-blog_H2%20Sample%20Text1" class="outline-2"&gt;
+&lt;a href="#blog_H2%20Sample%20Text1"&gt;&lt;h2 id="blog_H2%20Sample%20Text1" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-blog_H2%20Sample%20Text1"&gt;
+&lt;/div&gt;
+&lt;div id="outline-container-blog_H3%20Sample%20Text%20Sample%20Text1" class="outline-3"&gt;
+&lt;a href="#blog_H3%20Sample%20Text%20Sample%20Text1"&gt;&lt;h3 id="blog_H3%20Sample%20Text%20Sample%20Text1" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_H3%20Sample%20Text%20Sample%20Text1"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd031a9c" class="outline-4"&gt;
-&lt;a href="#orgd031a9c"&gt;&lt;h4 id="orgd031a9c" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-orgd031a9c"&gt;
+&lt;div id="outline-container-blog_H4%20Sample%20Text%20Sample%20Text1" class="outline-4"&gt;
+&lt;a href="#blog_H4%20Sample%20Text%20Sample%20Text1"&gt;&lt;h4 id="blog_H4%20Sample%20Text%20Sample%20Text1" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
+&lt;div class="outline-text-4" id="text-blog_H4%20Sample%20Text%20Sample%20Text1"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgc5778fe" class="outline-5"&gt;
-&lt;a href="#orgc5778fe"&gt;&lt;h5 id="orgc5778fe" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-orgc5778fe"&gt;
+&lt;div id="outline-container-blog_H5%20Sample%20Text%20Sample%20Text1" class="outline-5"&gt;
+&lt;a href="#blog_H5%20Sample%20Text%20Sample%20Text1"&gt;&lt;h5 id="blog_H5%20Sample%20Text%20Sample%20Text1" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-blog_H5%20Sample%20Text%20Sample%20Text1"&gt;
 &lt;p&gt;
 Some text in between
 &lt;/p&gt;
@@ -1397,9 +1412,9 @@ Some text in between
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org182f885" class="outline-2"&gt;
-&lt;a href="#org182f885"&gt;&lt;h2 id="org182f885" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org182f885"&gt;
+&lt;div id="outline-container-blog_Common%20Elements1" class="outline-2"&gt;
+&lt;a href="#blog_Common%20Elements1"&gt;&lt;h2 id="blog_Common%20Elements1" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-blog_Common%20Elements1"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
@@ -1413,13 +1428,13 @@ Some text in between
 &lt;hr&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd896a50" class="outline-2"&gt;
-&lt;a href="#orgd896a50"&gt;&lt;h2 id="orgd896a50" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-orgd896a50"&gt;
+&lt;div id="outline-container-blog_Other%20Elements1" class="outline-2"&gt;
+&lt;a href="#blog_Other%20Elements1"&gt;&lt;h2 id="blog_Other%20Elements1" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
+&lt;div class="outline-text-2" id="text-blog_Other%20Elements1"&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orga054bad" class="outline-3"&gt;
-&lt;a href="#orga054bad"&gt;&lt;h3 id="orga054bad" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orga054bad"&gt;
+&lt;div id="outline-container-blog_Table1" class="outline-3"&gt;
+&lt;a href="#blog_Table1"&gt;&lt;h3 id="blog_Table1" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Table1"&gt;
 &lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
 
 
@@ -1453,9 +1468,9 @@ Some text in between
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org65966aa" class="outline-3"&gt;
-&lt;a href="#org65966aa"&gt;&lt;h3 id="org65966aa" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org65966aa"&gt;
+&lt;div id="outline-container-blog_Reference1" class="outline-3"&gt;
+&lt;a href="#blog_Reference1"&gt;&lt;h3 id="blog_Reference1" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Reference1"&gt;
 &lt;blockquote&gt;
 &lt;p&gt;
 Everything should be made as simple as possible,
@@ -1464,9 +1479,9 @@ but not any simpler – Albert Einstein
 &lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgd0f836d" class="outline-3"&gt;
-&lt;a href="#orgd0f836d"&gt;&lt;h3 id="orgd0f836d" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgd0f836d"&gt;
+&lt;div id="outline-container-blog_Unordered%20List1" class="outline-3"&gt;
+&lt;a href="#blog_Unordered%20List1"&gt;&lt;h3 id="blog_Unordered%20List1" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Unordered%20List1"&gt;
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2
@@ -1483,9 +1498,9 @@ but not any simpler – Albert Einstein
 &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org990a06c" class="outline-5"&gt;
-&lt;a href="#org990a06c"&gt;&lt;h5 id="org990a06c" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-org990a06c"&gt;
+&lt;div id="outline-container-blog_Ordered%20List1" class="outline-5"&gt;
+&lt;a href="#blog_Ordered%20List1"&gt;&lt;h5 id="blog_Ordered%20List1" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
+&lt;div class="outline-text-5" id="text-blog_Ordered%20List1"&gt;
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;Item 1&lt;/li&gt;
 &lt;li&gt;Item 2&lt;/li&gt;
@@ -1495,9 +1510,9 @@ but not any simpler – Albert Einstein
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-org692ebfe" class="outline-3"&gt;
-&lt;a href="#org692ebfe"&gt;&lt;h3 id="org692ebfe" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org692ebfe"&gt;
+&lt;div id="outline-container-blog_Description%20List1" class="outline-3"&gt;
+&lt;a href="#blog_Description%20List1"&gt;&lt;h3 id="blog_Description%20List1" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Description%20List1"&gt;
 &lt;dl class="org-dl"&gt;
 &lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
 &lt;dl class="org-dl"&gt;
@@ -1507,66 +1522,34 @@ but not any simpler – Albert Einstein
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgb03876c" class="outline-3"&gt;
-&lt;a href="#orgb03876c"&gt;&lt;h3 id="orgb03876c" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-orgb03876c"&gt;
+&lt;div id="outline-container-blog_Sample%20Image1" class="outline-3"&gt;
+&lt;a href="#blog_Sample%20Image1"&gt;&lt;h3 id="blog_Sample%20Image1" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
+&lt;div class="outline-text-3" id="text-blog_Sample%20Image1"&gt;
 
-&lt;div id="org6b9d509" class="figure"&gt;
+&lt;div id="org2257e99" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org3443459" class="figure"&gt;
+&lt;div id="orgf90c05c" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgb263c0d" class="figure"&gt;
+&lt;div id="org70439ea" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgc06904d" class="figure"&gt;
+&lt;div id="org5e4bcaa" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org7009d28" class="outline-2"&gt;
-&lt;a href="#org7009d28"&gt;&lt;h2 id="org7009d28" class="cr-self-reference "&gt;Latex Test&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-org7009d28"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org19c5c02" class="outline-3"&gt;
-&lt;a href="#org19c5c02"&gt;&lt;h3 id="org19c5c02" class="cr-self-reference "&gt;Inline LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org19c5c02"&gt;
-&lt;p&gt;
-The magnitude &lt;img src="ltximg/demo_c309f6a7f999fb7c61cc3e705f2a9f768bc2c3ce.svg" alt="\(v\)" class="org-svg"&gt; is given by &lt;img src="ltximg/demo_18b830f2fdb20e199f786bc0b9fd93882fc68f16.svg" alt="\(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\)" class="org-svg"&gt; . Another way of writing this is &lt;img src="ltximg/demo_5789433fe00766ac710ddf86fc85054ba0dc5f86.svg" alt="\(d = \sqrt{x^2 + y^2 + z^2}\)" class="org-svg"&gt; where &lt;img src="ltximg/demo_ab3c489517742cf17ddaaf4a050e58455c76f327.svg" alt="\(x = v_x, y=v_y, z=v_z\)" class="org-svg"&gt;.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-org320b28a" class="outline-3"&gt;
-&lt;a href="#org320b28a"&gt;&lt;h3 id="org320b28a" class="cr-self-reference "&gt;Block LaTeX&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-org320b28a"&gt;
-
-&lt;div class="equation-container"&gt;
-&lt;span class="equation"&gt;
-&lt;img src="ltximg/demo_ae291cc724486596fdc90ff15d6f43a08beec0aa.svg" alt="\begin{block*}
-\mathrm{Fib}(n) =
-\begin{cases}
-    \ 0 &amp;amp;amp; \akif \ n=0, \\
-    \ 1 &amp;amp;amp; \akif \  n=1, \\
-    \ \mathrm{Fib}(n-1) + \mathrm{Fib}(n-2)  &amp;amp;amp; \mathrm{otherwise}.
-\end{cases}
-\end{block*}
-" class="org-svg"&gt;
-&lt;/span&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

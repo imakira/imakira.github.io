@@ -15,12 +15,21 @@
 #+LATEX_HEADER: \usepackage{siunitx}
 
 * Code Blocks
+:PROPERTIES:
+:custom_id: blog_Code%20Blocks1
+:END:
 
 ** Inline Code Block
+:PROPERTIES:
+:custom_id: blog_Inline%20Code%20Block1
+:END:
 
 Text around src_clojure[:exports code]{(uix.dom/create-root (js/document.getElementById "root"))} the inline code block.
 
 ** Code Blocks
+:PROPERTIES:
+:custom_id: blog_Code%20Blocks1
+:END:
 
 - Java
 
@@ -54,23 +63,53 @@ public static int fib(int n) {
       (goto-char (point-min))    
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (with-current-buffer (current-buffer)
+    (let ((ids (org-map-entries (lambda ()
+                                  (org-entry-get nil "custom_id")))))
+      (org-map-entries (lambda ()
+                         (when (not (org-entry-get nil "custom_id"))
+                           (let* ((candidate-id (concat "blog_" (url-encode-url (nth 4 (org-heading-components)))))
+                                  (duplicates (cl-count candidate-id ids)))
+                             (org-entry-put nil "custom_id" (concat candidate-id
+                                                                    (prin1-to-string (+ 1 duplicates))))))
+                         (setq ids (cons (org-entry-get nil "custom_id")
+                                         ids))))))
+#+END_SRC
+
+
 
 * H2 Sample Text
+:PROPERTIES:
+:custom_id: blog_H2%20Sample%20Text1
+:END:
 
 ** H3 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: blog_H3%20Sample%20Text%20Sample%20Text1
+:END:
 
 Some text in between
 
 *** H4 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: blog_H4%20Sample%20Text%20Sample%20Text1
+:END:
 
 Some text in between
 
 **** H5 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: blog_H5%20Sample%20Text%20Sample%20Text1
+:END:
 
 Some text in between
 
 
 * Common Elements
+:PROPERTIES:
+:custom_id: blog_Common%20Elements1
+:END:
 
 + /italic/
 + *bold*
@@ -83,8 +122,14 @@ Some text in between
 -----
 
 * Other Elements
+:PROPERTIES:
+:custom_id: blog_Other%20Elements1
+:END:
 
 ** Table
+:PROPERTIES:
+:custom_id: blog_Table1
+:END:
 
 | Name  | Phone | Age |
 |-------+-------+-----|
@@ -92,6 +137,9 @@ Some text in between
 | Anna  |  4321 |  25 |
 
 ** Reference
+:PROPERTIES:
+:custom_id: blog_Reference1
+:END:
 
  #+BEGIN_QUOTE
  Everything should be made as simple as possible,
@@ -99,6 +147,9 @@ Some text in between
  #+END_QUOTE
 
 ** Unordered List
+:PROPERTIES:
+:custom_id: blog_Unordered%20List1
+:END:
 
 + Item 1
 + Item 2
@@ -109,6 +160,9 @@ Some text in between
 + Item 3
   
 **** Ordered List
+:PROPERTIES:
+:custom_id: blog_Ordered%20List1
+:END:
 
 1. Item 1
 2. Item 2
@@ -116,6 +170,9 @@ Some text in between
 4. Item 4
 
 ** Description List
+:PROPERTIES:
+:custom_id: blog_Description%20List1
+:END:
 
 + Name :: Description
   - Nested :: Nested Description
@@ -123,6 +180,9 @@ Some text in between
 
 
 ** Sample Image
+:PROPERTIES:
+:custom_id: blog_Sample%20Image1
+:END:
 
 #+CAPTION: This is an image
 [[file:imgs/1.jpg]]
@@ -134,21 +194,4 @@ Some text in between
 
 #+CAPTION: sample high resolution horizontal iamge
 [[https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg]]
-
-* Latex Test
-
-** Inline LaTeX
-
-The magnitude \(v\) is given by \(||x|| = \sqrt{v^2_x + v^2_y + v^2_z}\) . Another way of writing this is \(d = \sqrt{x^2 + y^2 + z^2}\) where \(x = v_x, y=v_y, z=v_z\).
-
-** Block LaTeX
-
-\begin{block}
-\mathrm{Fib}(n) =
-\begin{cases}
-    \ 0 & \akif \ n=0, \\
-    \ 1 & \akif \  n=1, \\
-    \ \mathrm{Fib}(n-1) + \mathrm{Fib}(n-2)  & \mathrm{otherwise}.
-\end{cases}
-\end{block}
 
