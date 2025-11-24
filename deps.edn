@@ -33,7 +33,8 @@
         com.twelvemonkeys.imageio/imageio-jpeg {:mvn/version "3.12.0"}
         com.twelvemonkeys.imageio/imageio-webp {:mvn/version "3.12.0"}
         com.potetm/fusebox {:mvn/version "1.0.11"}
-        }
+        org.clojure/tools.logging {:mvn/version "1.3.0"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.21"}}
  :paths ["src" "dev"]
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps

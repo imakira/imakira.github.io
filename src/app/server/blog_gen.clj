@@ -14,7 +14,8 @@
    [hickory.select :as hs]
    [hickory.zip :as hz]
    [com.potetm.fusebox.fallback :as fallback]
-   [com.potetm.fusebox.retry :as retry]) 
+   [com.potetm.fusebox.retry :as retry]
+   [app.server.emacs-ipc :as eipc])
   (:import
    [com.google.common.io Files]
    [javax.imageio ImageIO]))
@@ -133,7 +134,7 @@
              :width  (.getWidth img)}))))))
 
 (defn set-img-dimension-if-not-exist [img dimension]
-  (update-in img 
+  (update-in img
              [:attrs]
              (fn [m]
                (merge dimension m))))
@@ -152,7 +153,7 @@
   (let [image-path (get-image-src img)
         optimize? (fn [image-path]
                     (not (re-matches #".*\.svg$" image-path)))]
-    
+
     (if (optimize? image-path)
       (let [{:keys [width height] } (get-img-dimension image-path)]
         (set-img-dimension-if-not-exist img (if width
@@ -173,14 +174,9 @@
       hickory-tree)))
 
 (defn org-file->html [path]
-  ;; TODO escape path
+  (eipc/init-emacs!)
   (let [{:keys [content title category tags email language author description] :as result}
-        (-> (sh "emacs" "--batch" "-q" "-l" "init.el"
-                "--eval" (str "(org->html-to-stdout \"" path "\")")
-                :dir (System/getProperty "user.dir"))
-            :out
-            (parse-string true))
-
+        (eipc/elisp-funcall! :org->html path)
         hickory-blocks (->> content
                             hk/parse-fragment
                             (map (fn [block]
@@ -211,5 +207,6 @@
                              155)
                         (str (subs text 0 155) "...")
                         (subs text 0 (min (count text) 153)))))}))
+
 
 #_(def ^:dynamic *demo* (org-file->html "./blogs/build-a-commonlisp-project-with-nix.org"))
