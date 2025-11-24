@@ -2,6 +2,7 @@
 (require 'org)
 (require 'json)
 (require 'backtrace)
+(require 'url-util)
 
 (setq org-html-head ""
       org-html-head-extra ""
@@ -20,20 +21,52 @@
       org-latex-compiler "xelatex"
       org-preview-latex-default-process 'dvisvgm)
 
+(defun eval-string (str)
+  (eval (car (read-from-string str))))
+
+(defun hash (&rest args)
+  (let ((result (make-hash-table :test #'equal)))
+    (cl-loop for (key value) on args by #'cddr while value
+             do (puthash key value result))
+    result))
+
 (defun org->html (file)
   (save-window-excursion
     (find-file file)
-    (let* ((keywords '("title" "category" "tags" "email" "language" "author" "description"))
+    (let* ((blog-buffer (current-buffer))
+           (keywords '("title" "category" "tags" "email" "language" "author" "description"))
            (kvs (org-collect-keywords keywords)))
-      (append
-       (mapcar (lambda (kv)
-                 (cons (intern (downcase (car kv)))
-                       (cadr kv)))
-               kvs)
-       `((content .
-                  ,(progn
-                     (org-html-export-as-html nil nil nil t)
-                     (buffer-string))))))))
+      (with-current-buffer blog-buffer
+        (let ((ids (org-map-entries (lambda ()
+                                      (org-entry-get nil "custom_id")))))
+          (org-map-entries (lambda ()
+                             (when (not (org-entry-get nil "custom_id"))
+                               (let* ((candidate-id (concat
+                                                     (url-encode-url
+                                                      (string-replace " " "-"
+                                                                      (downcase
+                                                                       (nth 4
+                                                                            (org-heading-components)))))))
+                                      (duplicates (cl-count candidate-id ids)))
+                                 (org-entry-put nil "custom_id" (concat candidate-id
+                                                                        (if (= duplicates 0)
+                                                                            ""
+                                                                          (prin1-to-string (+ 1 duplicates)))))))
+                             (setq ids (cons (org-entry-get nil "custom_id")
+                                             ids))))))
+      (prog1
+          (append
+           (mapcar (lambda (kv)
+                     (cons (intern (downcase (car kv)))
+                           (cadr kv)))
+                   kvs)
+           `((content .
+                      ,(progn
+                         (org-html-export-as-html nil nil nil t)
+                         (buffer-string)))))
+        (progn
+          (kill-buffer blog-buffer)
+          (kill-buffer))))))
 
 (defun main ()
   (cl-loop
@@ -59,6 +92,6 @@
                            'result result
                            'id id)))
              (princ "\n")))
-       (error (princ (prin1-to-string e) 'external-debugging-output)
-              (princ "\n" 'external-debugging-output))))))
+       (error (message (prin1-to-string e) )
+              (message "\n"))))))
 ;; (org->html-to-stdout (concat default-directory "blogs/demo.org"))
