@@ -56,7 +56,7 @@ With external dependencies installed, now we can install the ~lsp-bridge~ packag
                  (boundp 'corfu-mode)
                  corfu-mode)
         (corfu-mode -1)))
-    (add-hook 'lsp-bridge-mode-hook #'me/lsp-bridge-corfu-hook))
+    (add-hook 'corfu-mode-hook #'me/lsp-bridge-corfu-hook))
 #+END_SRC
 
 Here I only enabled ~lsp-bridge-mode~ for modes in the ~:hook~ part, and I disabled ~corfu~ in ~lsp-bridge-mode-hook~ (I'm still using it for other programming or writing tasks).
@@ -153,11 +153,25 @@ We need a few more lines of configuration to make it works with Java.
 When writing Clojure, I would like to use ~cider~ for completion and let lsp handling everything else. With ~lsp-mode~ we can just locally set ~lsp-enable-completion-at-point~ to false. With ~lsp-bridge~, well, we can disable ~lsp-bridge~'s automatic popup and continue to use corfu.
 
 #+BEGIN_SRC emacs-lisp
+  (use-package lsp-bridge
+    ;; ...
+    ;; add a new variable
+    (defvar me/force-corfu nil)
+
+    ;; change the previous hook to this
+    (defun me/lsp-bridge-corfu-hook ()
+      (when (and lsp-bridge-mode
+                 (boundp 'corfu-mode)
+                 corfu-mode
+                 (not me/force-corfu))
+        (corfu-mode -1))))
+
   (use-package cider
     :after lsp-bridge
     :config
     (defun me/lsp-bridge-cider-hook ()
       (when cider-mode
+        (setq-local me/force-corfu t)
         (setq-local lsp-bridge-complete-manually t)
         (corfu-mode 1)))
     (add-hook 'cider-mode-hook #'me/lsp-bridge-cider-hook 80))

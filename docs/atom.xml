@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>Coruscation.net</title>
   <link href="https://coruscation.net"/>
-  <updated>2025-11-23T00:05:17+08:00</updated>
+  <updated>2025-11-25T00:44:14+08:00</updated>
   <author>imakira</author>
   <id>https://coruscation.net</id>
   <entry>
@@ -80,7 +80,7 @@ With external dependencies installed, now we can install the &lt;code&gt;lsp-bri
                (&lt;span class="hljs-name"&gt;boundp&lt;/span&gt; 'corfu-mode)
                corfu-mode)
       (&lt;span class="hljs-name"&gt;corfu-mode&lt;/span&gt; &lt;span class="hljs-number"&gt;-1&lt;/span&gt;)))
-  (&lt;span class="hljs-name"&gt;add-hook&lt;/span&gt; 'lsp-bridge-mode-hook #'me/lsp-bridge-corfu-hook))
+  (&lt;span class="hljs-name"&gt;add-hook&lt;/span&gt; 'corfu-mode-hook #'me/lsp-bridge-corfu-hook))
 &lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
@@ -214,11 +214,25 @@ When writing Clojure, I would like to use &lt;code&gt;cider&lt;/code&gt; for com
 &lt;/p&gt;
 
 &lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;use-package&lt;/span&gt; cider
+&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;use-package&lt;/span&gt; lsp-bridge
+  &lt;span class="hljs-comment"&gt;;; ...&lt;/span&gt;
+  &lt;span class="hljs-comment"&gt;;; add a new variable&lt;/span&gt;
+  (&lt;span class="hljs-name"&gt;defvar&lt;/span&gt; me/force-corfu &lt;span class="hljs-literal"&gt;nil&lt;/span&gt;)
+
+  &lt;span class="hljs-comment"&gt;;; change the previous hook to this&lt;/span&gt;
+  (&lt;span class="hljs-name"&gt;defun&lt;/span&gt; me/lsp-bridge-corfu-hook ()
+    (&lt;span class="hljs-name"&gt;when&lt;/span&gt; (&lt;span class="hljs-name"&gt;and&lt;/span&gt; lsp-bridge-mode
+               (&lt;span class="hljs-name"&gt;boundp&lt;/span&gt; 'corfu-mode)
+               corfu-mode
+               (&lt;span class="hljs-name"&gt;not&lt;/span&gt; me/force-corfu))
+      (&lt;span class="hljs-name"&gt;corfu-mode&lt;/span&gt; &lt;span class="hljs-number"&gt;-1&lt;/span&gt;))))
+
+(&lt;span class="hljs-name"&gt;use-package&lt;/span&gt; cider
   &lt;span class="hljs-symbol"&gt;:after&lt;/span&gt; lsp-bridge
   &lt;span class="hljs-symbol"&gt;:config&lt;/span&gt;
   (&lt;span class="hljs-name"&gt;defun&lt;/span&gt; me/lsp-bridge-cider-hook ()
     (&lt;span class="hljs-name"&gt;when&lt;/span&gt; cider-mode
+      (&lt;span class="hljs-name"&gt;setq-local&lt;/span&gt; me/force-corfu &lt;span class="hljs-literal"&gt;t&lt;/span&gt;)
       (&lt;span class="hljs-name"&gt;setq-local&lt;/span&gt; lsp-bridge-complete-manually &lt;span class="hljs-literal"&gt;t&lt;/span&gt;)
       (&lt;span class="hljs-name"&gt;corfu-mode&lt;/span&gt; &lt;span class="hljs-number"&gt;1&lt;/span&gt;)))
   (&lt;span class="hljs-name"&gt;add-hook&lt;/span&gt; 'cider-mode-hook #'me/lsp-bridge-cider-hook &lt;span class="hljs-number"&gt;80&lt;/span&gt;))
@@ -1308,7 +1322,7 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
   <entry>
     <title type="html">Demonstration</title>
     <link href="https://coruscation.net/blogs/demonstration.html"/>
-    <updated>2025-11-13T23:46:17+08:00</updated>
+    <updated>2025-11-25T00:44:14+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
     <content type="html">&lt;div id="outline-container-blog_Code%20Blocks1" class="outline-2"&gt;
 &lt;a href="#blog_Code%20Blocks1"&gt;&lt;h2 id="blog_Code%20Blocks1" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
@@ -1526,27 +1540,27 @@ but not any simpler – Albert Einstein
 &lt;a href="#blog_Sample%20Image1"&gt;&lt;h3 id="blog_Sample%20Image1" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
 &lt;div class="outline-text-3" id="text-blog_Sample%20Image1"&gt;
 
-&lt;div id="org2257e99" class="figure"&gt;
+&lt;div id="org7099db5" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="orgf90c05c" class="figure"&gt;
+&lt;div id="org1b1f017" class="figure"&gt;
 &lt;p&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 &lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org70439ea" class="figure"&gt;
+&lt;div id="org5c6c7c6" class="figure"&gt;
 &lt;p&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;div id="org5e4bcaa" class="figure"&gt;
+&lt;div id="org8f06cd8" class="figure"&gt;
 &lt;p&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 &lt;/p&gt;
 &lt;p&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/p&gt;
