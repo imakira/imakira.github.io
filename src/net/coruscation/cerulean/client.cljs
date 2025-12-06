@@ -1,10 +1,10 @@
-(ns app.client
+(ns net.coruscation.cerulean.client
   (:require
    [cljs.spec.alpha :as s]
    [clojure.edn :as edn]
    [uix.core :as uix :refer [defui $ use-state use-effect]]
    [uix.dom :as dom]
-   [app.common.pages :as pages]
+   [net.coruscation.cerulean.common.pages :as pages]
    [clojure.core.async :as a]))
 
 (defonce root

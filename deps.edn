@@ -39,5 +39,5 @@
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps
                  {}}
-           :build-full {:exec-fn app.server.static-generator/build-full}
-           :build {:exec-fn app.server.static-generator/build}}}
+           :build-full {:exec-fn net.coruscation.cerulean.server.static-generator/build-full}
+           :build {:exec-fn net.coruscation.cerulean.server.static-generator/build}}}

@@ -1,8 +1,8 @@
-(ns app.user-config
+(ns net.coruscation.cerulean.user-config
   (:require
    #?@(:clj [[clojure.edn :as edn]])
    [clojure.string :as str])
-  #?(:cljs (:require-macros [app.user-config :refer [read-config]])))
+  #?(:cljs (:require-macros [net.coruscation.cerulean.user-config :refer [read-config]])))
 
 
 (defn remove-tailing-slash [str]

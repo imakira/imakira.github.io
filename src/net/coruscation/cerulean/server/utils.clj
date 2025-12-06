@@ -1,4 +1,4 @@
-(ns app.server.utils
+(ns net.coruscation.cerulean.server.utils
   (:require [clojure.string :as str]))
 
 (defn extract-string [hickory-elements & {:keys [spacer]

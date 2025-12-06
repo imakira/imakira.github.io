@@ -1,4 +1,4 @@
-(ns app.common.commons
+(ns net.coruscation.cerulean.common.commons
   (:require [cljc.java-time.format.date-time-formatter :as date-time-formatter]
             [cljc.java-time.zoned-date-time :as zoned-date-time]))
 

@@ -1,4 +1,4 @@
-(ns app.server.check
+(ns net.coruscation.cerulean.check
   (:require [clojure.string :as str]))
 
 

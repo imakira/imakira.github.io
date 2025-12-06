@@ -1,28 +1,28 @@
-(ns app.common.pages
+(ns net.coruscation.cerulean.common.pages
   (:require
    [clojure.core.async :as a]
    [clojure.string :as str]
    [uix.core :as uix :refer
     [defui use-state use-effect $ use-ref use-memo]]
-   [app.router :as router]
-   [app.user-config :as user-config]
-   [app.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
+   [net.coruscation.cerulean.router :as router]
+   [net.coruscation.cerulean.user-config :as user-config]
+   [net.coruscation.cerulean.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
    [reitit.core :as r]
-   [app.components :refer [btn-wrapper]]
-   [app.common.commons :as commons]
+   [net.coruscation.cerulean.components :refer [btn-wrapper]]
+   [net.coruscation.cerulean.common.commons :as commons]
    [cljc.java-time.format.date-time-formatter :as date-time-formatter]
    [cljc.java-time.zoned-date-time :as zoned-date-time]
    [cljc.java-time.zone-id :as zone-id]
    [uix-fontawesome.brands :as brands]
    [uix-fontawesome.regular :as regular]
    [uix-fontawesome.solid :as solid]
-   #?@(:clj [[app.server.assets :as assets]
+   #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
              [hickory.core :as hc]
              [hickory.select :as hs]
-             [app.server.utils :as su]
+             [net.coruscation.cerulean.server.utils :as su]
              [cheshire.core :as json]])
    #?@(:cljs [[uix.core :refer [create-context]]
-              [app.utils :refer [obj->clj]]
+              [net.coruscation.cerulean.utils :refer [obj->clj]]
               ["@js-joda/locale_en-us" :as js-joda-locale]])))
 
 
