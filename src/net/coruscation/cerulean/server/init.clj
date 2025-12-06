@@ -1,6 +1,6 @@
-(ns app.server.init
+(ns net.coruscation.cerulean.server.init
   (:require [clojure.java.io :as io]
-            [app.config :as config])
+            [net.coruscation.cerulean.config :as config])
   (:import [java.nio.file Path]
            [java.io File]))
 

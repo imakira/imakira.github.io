@@ -1,16 +1,16 @@
-(ns app.server.static-generator
+(ns net.coruscation.cerulean.server.static-generator
   (:require
-   [app.common.pages :as pages]
-   [app.config :as config]
-   [app.server.assets :as assets]
-   [app.server.check :as check]
-   [app.server.render :as render]
+   [net.coruscation.cerulean.common.pages :as pages]
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.server.assets :as assets]
+   [net.coruscation.cerulean.check :as check]
+   [net.coruscation.cerulean.server.render :as render]
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.java.io :as io]
    [reitit.core :as r]
    [shadow.cljs.devtools.api :as shadow]
-   [app.user-config :as user-config]))
+   [net.coruscation.cerulean.user-config :as user-config]))
 
 (defn- derive-routes [routes]
   (let [router (r/router routes)

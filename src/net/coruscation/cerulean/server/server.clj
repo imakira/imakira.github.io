@@ -1,9 +1,9 @@
-(ns app.server.server
+(ns net.coruscation.cerulean.server.server
   (:require
-   [app.common.pages :as pages]
-   [app.server.assets :as assets]
-   [app.server.check :as check]
-   [app.server.render :as render]
+   [net.coruscation.cerulean.common.pages :as pages]
+   [net.coruscation.cerulean.server.assets :as assets]
+   [net.coruscation.cerulean.check :as check]
+   [net.coruscation.cerulean.server.render :as render]
    [reitit.ring :as ring]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cors :as cors]

@@ -1,9 +1,9 @@
-(ns app.server.assets
+(ns net.coruscation.cerulean.server.assets
   (:require
-   [app.common.commons :as commons]
-   [app.config :as config]
-   [app.server.blog-gen :as blog-gen]
-   [app.user-config :as user-config]
+   [net.coruscation.cerulean.common.commons :as commons]
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.server.blog-gen :as blog-gen]
+   [net.coruscation.cerulean.user-config :as user-config]
    [cljc.java-time.zoned-date-time :as zoned-date-time]
    [clojure.data.xml :as xml]
    [clojure.java.io :as io]

@@ -1,4 +1,4 @@
-(ns app.config)
+(ns net.coruscation.cerulean.config)
 
 #?(:clj (def ^:dynamic *blog-dir*
           (str (System/getProperty "user.dir")

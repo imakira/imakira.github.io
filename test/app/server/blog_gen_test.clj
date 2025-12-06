@@ -1,6 +1,6 @@
 (ns app.server.blog-gen-test
   (:require
-   [app.server.blog-gen :as subject]
+   [net.coruscation.cerulean.server.blog-gen :as subject]
    [clojure.java.io :as io]
    [clojure.test :refer [deftest is]]
    [hickory.core :as core]))

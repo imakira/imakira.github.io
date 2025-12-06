@@ -1,9 +1,9 @@
-(ns app.router
+(ns net.coruscation.cerulean.router
   (:require
    [uix.core :as uix :refer
     [defui use-state use-ref use-effect use-memo $]]
    [reitit.core :as r]
-   [app.utils :as utils :refer [use-context]]
+   [net.coruscation.cerulean.utils :as utils :refer [use-context]]
    #?@(:cljs [[reitit.frontend.easy :as rfe]
               [reitit.frontend.controllers :as rfc]])))
 

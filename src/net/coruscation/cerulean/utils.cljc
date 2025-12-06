@@ -1,4 +1,4 @@
-(ns app.utils
+(ns net.coruscation.cerulean.utils
   (:require [uix.dom.server :as dom.server]
             [clojure.core.async :as a]
             [malli.core :as m]
@@ -8,11 +8,11 @@
             #?@(:cljs [["axios" :as axios]
                        [uix.core :refer [use-state use-effect]]
                        [goog.object :as goog.object]])
-            #?@(:clj [[app.server.assets :as assets]
+            #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
                       [reitit.core :as r]
                       [hickory.zip :as hzip]])
             [clojure.zip :as zip])
-  #?(:cljs (:require-macros [app.utils :refer [use-context context-binding defcontext if-cljs]]))
+  #?(:cljs (:require-macros [net.coruscation.cerulean.utils :refer [use-context context-binding defcontext if-cljs]]))
   #?(:cljs (:import [goog.async Throttle Debouncer])))
 
 

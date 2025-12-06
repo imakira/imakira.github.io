@@ -1,4 +1,4 @@
-(ns app.build
+(ns net.coruscation.cerulean.build
   (:require
    [babashka.process :as process]))
 

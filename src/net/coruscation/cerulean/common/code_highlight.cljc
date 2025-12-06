@@ -1,4 +1,4 @@
-(ns app.common.code-highlight
+(ns net.coruscation.cerulean.common.code-highlight
   #?(:clj
      (:import (org.graalvm.polyglot Context Source)
               (java.util HashMap))))

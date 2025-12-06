@@ -1,12 +1,12 @@
-(ns app.server.render
+(ns net.coruscation.cerulean.server.render
   (:require [hiccup2.core :as h]
             [hiccup.util :refer [raw-string]]
             [clojure.string :as str]
             [cheshire.core :as json]
             [uix.dom.server :as dom.server]
             [uix.core :refer [defui $]]
-            [app.common.pages :as pages]
-            [app.user-config :as user-config]))
+            [net.coruscation.cerulean.common.pages :as pages]
+            [net.coruscation.cerulean.user-config :as user-config]))
 
 (defn template [inner serialized-assets & {:keys [ssr? server-url description title]
                                            :or {ssr? false

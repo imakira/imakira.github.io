@@ -1,9 +1,9 @@
-(ns app.server.blog-gen
+(ns net.coruscation.cerulean.server.blog-gen
   (:require
-   [app.common.code-highlight :as code-highlight]
-   [app.config :as config]
-   [app.server.utils :refer [extract-string]]
-   [app.server.utils :as su]
+   [net.coruscation.cerulean.common.code-highlight :as code-highlight]
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.server.utils :refer [extract-string]]
+   [net.coruscation.cerulean.server.utils :as su]
    [cheshire.core :refer [parse-string]]
    [clojure.java.io :as io]
    [clojure.java.shell :refer [sh]]
@@ -15,7 +15,7 @@
    [hickory.zip :as hz]
    [com.potetm.fusebox.fallback :as fallback]
    [com.potetm.fusebox.retry :as retry]
-   [app.server.emacs-ipc :as eipc])
+   [net.coruscation.cerulean.emacs-ipc :as eipc])
   (:import
    [com.google.common.io Files]
    [javax.imageio ImageIO]))

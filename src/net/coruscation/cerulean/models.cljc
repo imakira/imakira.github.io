@@ -1,4 +1,4 @@
-(ns app.models
+(ns net.coruscation.cerulean.models
   (:require [malli.core :as m]
             [malli.generator :as mg]))
 
