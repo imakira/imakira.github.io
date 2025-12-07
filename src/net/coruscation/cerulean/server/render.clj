@@ -49,7 +49,7 @@
                                                           (json/generate-string value)
                                                           ";"))
                                                    serialized-assets)))]))
-         [:script {:src "/js/main.js"}]]])))
+         [:script {:src "/js/main.js" :type "module"}]]])))
 
 (def ^:dynamic *serialized-assets* (atom {}))
 
