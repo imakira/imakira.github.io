@@ -15,6 +15,7 @@
       org-export-with-toc nil
       org-export-with-latex t
       org-html-html5-fancy t
+      org-html-doctype "html5"
       org-html-toplevel-hlevel 2
       org-export-with-section-numbers nil
       org-export-headline-levels 6
@@ -34,7 +35,10 @@
   (save-window-excursion
     (find-file file)
     (let* ((blog-buffer (current-buffer))
-           (keywords '("title" "category" "tags" "email" "language" "author" "description"))
+           (keywords '("title" "category"
+                       "tags" "email"
+                       "language"
+                       "author" "description" "orgx_require" "orgx"))
            (kvs (org-collect-keywords keywords)))
       (with-current-buffer blog-buffer
         (let ((ids (org-map-entries (lambda ()
@@ -67,6 +71,15 @@
         (progn
           (kill-buffer blog-buffer)
           (kill-buffer))))))
+
+(defun cerulean--export-uix-advice (oldfun special-block contents info)
+  (if (string= (upcase (org-element-property :type special-block)) "UIX")
+      (format "<pre class=\"uix\">\n%s\n</pre>"
+              (buffer-substring (org-element-property :contents-begin special-block)
+                                (org-element-property :contents-end special-block)))
+    (funcall oldfun special-block contents info)))
+
+(advice-add 'org-html-special-block :around #'cerulean--export-uix-advice)
 
 (defun main ()
   (cl-loop
