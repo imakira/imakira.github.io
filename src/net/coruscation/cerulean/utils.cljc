@@ -49,19 +49,19 @@
      :clj
      (let [asset (a/<!! (fetch-asset path))]
 
-       (swap! (var-get (resolve 'app.server.render/*serialized-assets*) ) conj
+       (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*) ) conj
               [path asset])
        asset)))
 
 (defn set-title! [title]
   #?(:cljs (use-effect (fn [] (set! js/document.title title) (fn []))
                        [title])
-     :clj (swap! (var-get (resolve 'app.server.render/*serialized-assets*))
+     :clj (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*))
                  conj [:title title])))
 
 #_{:clj-kondo/ignore [:unused-binding]}
 (defn set-description! [description]
-  #?(:clj (swap! (var-get (resolve 'app.server.render/*serialized-assets*))
+  #?(:clj (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*))
                  conj [:description description])))
 
 ;; (defmacro case [& {:keys [cljd cljs clj]}]
