@@ -371,8 +371,7 @@
    ["/" {:component home
          :controllers [{:identity identity
                         :start (fn [{{:keys [routing-state set-routing-state!] :as data}:data}]
-                                 (set-routing-state! (assoc-in routing-state [:home-page?] true))
-                                 (tap> "called"))
+                                 (set-routing-state! (assoc-in routing-state [:home-page?] true)))
                         :stop (fn [{{:keys [routing-state set-routing-state!]} :data}]
                                 (set-routing-state! (assoc-in routing-state [:home-page?] false)))}]}]
 
