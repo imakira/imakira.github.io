@@ -1,19 +1,13 @@
 (ns net.coruscation.cerulean.server.assets
   (:require
-   [net.coruscation.cerulean.common.commons :as commons]
-   [net.coruscation.cerulean.config :as config]
-   [net.coruscation.cerulean.server.blog-gen :as blog-gen]
-   [net.coruscation.cerulean.user-config :as user-config]
    [cljc.java-time.zoned-date-time :as zoned-date-time]
    [clojure.data.xml :as xml]
-   [clojure.java.io :as io]
-   [clojure.java.shell :refer [sh]]
-   [clojure.string :as str])
+   [com.wsscode.pathom3.interface.eql :as p.eql]
+   [net.coruscation.cerulean.common.commons :as commons]
+   [net.coruscation.cerulean.server.resolver :refer [blog-eql env]]
+   [net.coruscation.cerulean.user-config :as user-config])
   (:import
-   (com.google.common.io Files)
-   (java.time Instant ZoneId ZonedDateTime)
-   (java.time.format DateTimeFormatter)
-   (java.time.temporal ChronoUnit)))
+   (com.google.common.io Files)))
 
 (defonce ^:dynamic *blogs* (atom []))
 
@@ -23,95 +17,14 @@
                    (or (:file-path blog) (:id blog)))))
         user-config/special-pages))
 
-(defn assert-file-exist [path]
-  (assert (.exists (io/file path)) (str "File " path " doesn't exist"))
-  (assert (.isFile (io/file path)) (str "Path " path " is a directory")))
-
-(defn file-first-commit-date [path]
-  (assert-file-exist path)
-  (if-let [date-str (some->
-                     (sh "/usr/bin/env" "git" "log" "--reverse" "--format=%aI" path)
-                     :out
-                     (str/split #"\n")
-                     first
-                     str/trim
-                     not-empty)]
-    date-str
-    nil))
-
-(defn file-last-commit-date [path]
-  (assert-file-exist path)
-  (if-let [date-str (some->
-                     (sh "/usr/bin/env" "git" "log" "--format=%aI" path)
-                     :out
-                     (str/split #"\n")
-                     first
-                     str/trim
-                     not-empty)]
-    date-str
-    nil))
-
-(defn file-last-modified-date [path]
-  (assert-file-exist path)
-  (-> (Instant/ofEpochMilli
-       (.lastModified (io/file path)))
-      (ZonedDateTime/ofInstant (ZoneId/systemDefault))
-      (.truncatedTo ChronoUnit/SECONDS)
-      (.format DateTimeFormatter/ISO_OFFSET_DATE_TIME)))
-
-(defn- get-blogs-files []
-  (let [blog-dir (io/file config/*blog-dir*)]
-    (when-not (.isDirectory blog-dir)
-      (throw (ex-info "Blog directory doesn't exist"
-                      {:id :blog-dir-nonexistent})))
-    (let [files (->> (.listFiles blog-dir)
-                     (filter (fn [file]
-                               (and (.isFile file)
-                                    (re-matches #".*\.org$" (.getAbsolutePath file)))))
-                     (map (fn [file] (.getAbsolutePath file))))]
-      (into [] files))))
-
-(defn- get-blog-from-path [path]
-  (let [temp (blog-gen/org-file->html path)]
-    (as-> temp blog
-      (merge blog {:file-path path
-                   :id (:id temp)
-                   :language (or (:language temp)
-                                 "en_US")
-                   :published-date (or (:published-date temp)
-                                       (file-first-commit-date path)
-                                       (file-last-modified-date path))
-                   :modified-date (or (:modified-date temp)
-                                      (file-last-commit-date path)
-                                      (file-last-modified-date path))})
-      (merge blog {:id (if (special-page? blog)
-                         (str (Files/getNameWithoutExtension path)
-                              ".html")
-                         (:id blog))
-                   :show-toc? (not (special-page? blog))}))))
-
-
-(defn refresh-blogs []
-  (->> (get-blogs-files)
-       (map get-blog-from-path)
-       (sort (fn [a b]
-               (zoned-date-time/compare-to
-                (commons/parse-iso8601 (:published-date a))
-                (commons/parse-iso8601 (:published-date b)))))
-       reverse
-       (into [])
-       (reset! *blogs*)))
-
-(def refresh-blogs-once! (memoize (fn []
-                                    (refresh-blogs)
-                                    nil)))
-
 (defn fetch-blog [{{id :id} :path-params}]
-  (first (filter #(= id (:id %))
-                 @*blogs*)))
+  (p.eql/process env
+                 {:blog/id id}
+                 blog-eql))
 
 (defn fetch-all-blogs [& rest]
-  (into [] (map #(dissoc % :content) @*blogs*)))
+  (p.eql/process-one env
+                     :blog-query/all-blogs))
 
 (defn fetch-blogs [& rest]
   (into [] (filter (comp not special-page?)
