@@ -101,7 +101,7 @@
   {:blog/blogs blog-files})
 
 
-(pco/defresolver blog-by-id?? [{:blog/keys [blogs id]}]
+(pco/defresolver blog-by-id [{:blog/keys [blogs id]}]
   {::pco/output
    blog-eql}
   (first (filter (fn [blog]
@@ -134,7 +134,7 @@
                      blogs
                      blog-from-path
                      file-last-modified-time
-                     blog-by-id??
+                     blog-by-id
 
                      query-all-blogs
                      query-blogs
