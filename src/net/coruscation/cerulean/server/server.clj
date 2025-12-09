@@ -1,11 +1,12 @@
 (ns net.coruscation.cerulean.server.server
   (:require
+   [net.coruscation.cerulean.check :as check]
    [net.coruscation.cerulean.common.pages :as pages]
    [net.coruscation.cerulean.server.assets :as assets]
-   [net.coruscation.cerulean.check :as check]
-   [net.coruscation.cerulean.server.render :as render]
+   [net.coruscation.cerulean.render.render :as render]
    [reitit.ring :as ring]
    [ring.adapter.jetty :as jetty]
+   [ring.middleware.content-type :refer [wrap-content-type]]
    [ring.middleware.cors :as cors]
    [ring.middleware.file :refer [wrap-file]]
    [ring.middleware.json :refer
@@ -19,8 +20,10 @@
         (resp/ok (handler request))
         (resp/not-found)))))
 
-(defn client-render-wrapper [{uri :uri :as request}]
-  (resp/ok (render/render uri)))
+(defn client-render-wrapper [{uri :uri}]
+  (resp/header (resp/ok (render/render uri))
+               "Content-Type"
+               "text/html"))
 
 (def router
   (ring/ring-handler
@@ -34,13 +37,9 @@
      ["" {:middleware [wrap-restful-response]}
       assets/resource-route]])))
 
-(defn handler [request]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Hello World"})
-
 (def app (-> #'router
              (wrap-file "./public")
+             (wrap-content-type)
              (cors/wrap-cors :access-control-allow-origin [#"http://localhost:8080" #"http://localhost:8000"]
                              :access-control-allow-methods [:get :put :post :delete])
              wrap-json-params))
@@ -48,8 +47,3 @@
 (check/environment-check)
 (assets/refresh-blogs)
 (def ^:dynamic *jetty* (jetty/run-jetty #'app {:port 3001 :join? false}))
-
-#_(do
-    (.stop *jetty*)
-    (.start *jetty*))
-

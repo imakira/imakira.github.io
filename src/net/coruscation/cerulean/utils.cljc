@@ -38,31 +38,29 @@
 
 (defn use-asset [path]
   #?(:cljs
-     (or (js->clj (aget js/globalThis path)
-                  :keywordize-keys true)
-         (let [[asset set-asset!]
-               (use-state {})]
-           (use-effect (fn []
-                         (a/go (set-asset! (a/<! (fetch-asset path)))))
-                       [path])
-           asset))
+     (let [[asset set-asset!] (use-state nil)
+           saved (js->clj (aget js/globalThis path)
+                          :keywordize-keys true)]
+       (use-effect (fn []
+                     (when (not saved)
+                       (a/go (set-asset! (a/<! (fetch-asset path))))))
+                   [path saved])
+       (or saved asset))
      :clj
      (let [asset (a/<!! (fetch-asset path))]
-
-       (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*) ) conj
-              [path asset])
+       (render-context/add-assets! path asset)
        asset)))
 
 (defn set-title! [title]
   #?(:cljs (use-effect (fn [] (set! js/document.title title) (fn []))
                        [title])
-     :clj (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*))
-                 conj [:title title])))
+     :clj
+     (render-context/put-value! :title title)))
 
 #_{:clj-kondo/ignore [:unused-binding]}
 (defn set-description! [description]
-  #?(:clj (swap! (var-get (resolve 'net.coruscation.cerulean.server.render/*serialized-assets*))
-                 conj [:description description])))
+  #?(:clj
+     (render-context/put-value! :description description)))
 
 ;; (defmacro case [& {:keys [cljd cljs clj]}]
 ;;   (cond
@@ -84,7 +82,7 @@
           [then else]
           (if (cljs-env? &env) then else)))
 
-#?(:clj (defmacro defcontext
+#?(:clj (defmacro defcontext {:clj-kondo/lint-as 'clojure.core/def}
           [name default-value]
           (if (cljs-env? &env)
             ;; setting as dynamic just for suppressing the naming warning
@@ -191,6 +189,3 @@
                (.-documentElement)
                (.-style)
                (.setProperty var value))))
-
-
-

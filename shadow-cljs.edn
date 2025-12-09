@@ -1,6 +1,6 @@
 {:deps {:aliases [:orgx]}
  :dev-http {8080 {:roots ["public" "./"]
-                  :handler net.coruscation.cerulean.server.render/dev-template}}
+                  :handler net.coruscation.cerulean.render.render/dev-template}}
  :builds {:app
           {:target :esm
            :output-dir "public/js"
