@@ -4,18 +4,11 @@
    [clojure.data.xml :as xml]
    [com.wsscode.pathom3.interface.eql :as p.eql]
    [net.coruscation.cerulean.common.commons :as commons]
+   [net.coruscation.cerulean.server.blogs :refer [special-page?]]
    [net.coruscation.cerulean.server.resolver :refer [blog-eql env]]
-   [net.coruscation.cerulean.user-config :as user-config])
-  (:import
-   (com.google.common.io Files)))
+   [net.coruscation.cerulean.user-config :as user-config]))
 
 (defonce ^:dynamic *blogs* (atom []))
-
-(defn- special-page? [blog]
-  (some (fn [name]
-          (= name (Files/getNameWithoutExtension
-                   (or (:file-path blog) (:id blog)))))
-        user-config/special-pages))
 
 (defn fetch-blog [{{id :id} :path-params}]
   (p.eql/process env
