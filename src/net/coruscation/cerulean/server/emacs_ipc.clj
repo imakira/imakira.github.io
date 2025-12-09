@@ -1,4 +1,4 @@
-(ns net.coruscation.cerulean.emacs-ipc
+(ns net.coruscation.cerulean.server.emacs-ipc
   (:require
    [cheshire.core :as cheshire]
    [clojure.core.async :as a]

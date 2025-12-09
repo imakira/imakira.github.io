@@ -4,7 +4,7 @@
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.server.assets :as assets]
    [net.coruscation.cerulean.check :as check]
-   [net.coruscation.cerulean.server.render :as render]
+   [net.coruscation.cerulean.render.render :as render]
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.java.io :as io]

@@ -1,16 +1,23 @@
-(ns net.coruscation.cerulean.server.render
-  (:require [hiccup2.core :as h]
-            [hiccup.util :refer [raw-string]]
-            [clojure.string :as str]
-            [cheshire.core :as json]
-            [uix.dom.server :as dom.server]
-            [uix.core :refer [defui $]]
-            [net.coruscation.cerulean.common.pages :as pages]
-            [net.coruscation.cerulean.user-config :as user-config]))
+(ns net.coruscation.cerulean.render.render
+  (:require
+   [cheshire.core :as json]
+   [clojure.string :as str]
+   [hiccup.util :refer [raw-string]]
+   [hiccup2.core :as h]
+   [net.coruscation.cerulean.common.pages :as pages]
+   [net.coruscation.cerulean.render.context :refer [with-new-context] :as render-context]
+   [net.coruscation.cerulean.render.context-commons :refer [extra-script-global-this-name]]
+   [net.coruscation.cerulean.user-config :as user-config]
+   [uix.core :refer [$]]
+   [uix.dom.server :as dom.server]))
 
-(defn template [inner serialized-assets & {:keys [ssr? server-url description title]
-                                           :or {ssr? false
-                                                server-url "http://localhost:3001/"}}]
+(defn template [inner serialized-assets
+                & {:keys [ssr? server-url
+                          description
+                          title
+                          extra-scripts]
+                   :or {ssr? false
+                        server-url "http://localhost:3001/"}}]
   (str
    "<!DOCTYPE html>"
    (h/html
@@ -49,6 +56,12 @@
                                                           (json/generate-string value)
                                                           ";"))
                                                    serialized-assets)))]))
+         (map (fn [{:keys [id module]}]
+                (list [:script {:src (str "/js/" module) :type "module"} ]
+                      [:script {:type "module"}
+                       (raw-string "import * as exps  from '/js/" module "';\n")
+                       (raw-string "window['" (extra-script-global-this-name id) "'] = exps;")]))
+              extra-scripts)
          [:script {:src "/js/main.js" :type "module"}]]])))
 
 (def ^:dynamic *serialized-assets* (atom {}))
@@ -57,17 +70,17 @@
   (template nil nil))
 
 (defn render [path]
-  (binding [*serialized-assets* (atom {})]
+  (with-new-context
     (let [inner (->
                  ($ pages/app {:initial-route path})
                  (dom.server/render-to-string))
-          {:keys [description title]} @*serialized-assets*]
-      (template inner @*serialized-assets*
+          {:keys [description title extra-scripts]} (render-context/values)]
+      (template inner (render-context/assets)
                 :ssr? true :server-url "/"
                 :description description
-                :title title))))
+                :title title
+                :extra-scripts extra-scripts))))
 
 (defn dev-template [{:keys [uri http-roots http-config] :as req}]
   {:status 200
    :body (template nil nil)})
-
