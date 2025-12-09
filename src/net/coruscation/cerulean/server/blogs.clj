@@ -10,10 +10,13 @@
    [java.time.format DateTimeFormatter]
    [java.time.temporal ChronoUnit]))
 
+;;TODO
 (defn special-page? [blog]
   (some (fn [name]
           (= name (Files/getNameWithoutExtension
-                   (or (:blog/file-path blog) (:blog/id blog)))))
+                   (or (:file-path blog)
+                       (:id blog)
+                       (:blog/file-path blog) (:blog/id blog)))))
         user-config/special-pages))
 
 (defn assert-file-exist [path]
