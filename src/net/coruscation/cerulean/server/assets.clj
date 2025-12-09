@@ -36,7 +36,7 @@
                      first
                      str/trim
                      not-empty)]
-    date-str 
+    date-str
     nil))
 
 (defn file-last-commit-date [path]
@@ -101,6 +101,10 @@
        reverse
        (into [])
        (reset! *blogs*)))
+
+(def refresh-blogs-once! (memoize (fn []
+                                    (refresh-blogs)
+                                    nil)))
 
 (defn fetch-blog [{{id :id} :path-params}]
   (first (filter #(= id (:id %))

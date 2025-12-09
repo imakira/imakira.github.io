@@ -1,9 +1,9 @@
 (ns app.server.blog-gen-test
   (:require
-   [net.coruscation.cerulean.server.blog-gen :as subject]
    [clojure.java.io :as io]
-   [clojure.test :refer [deftest is]]
-   [hickory.core :as core]))
+   [clojure.test :refer [deftest is testing]]
+   [hickory.core :as core]
+   [net.coruscation.cerulean.server.blog-gen :as subject :refer [org-file->html]]))
 
 
 (deftest relative-path?-test
@@ -82,3 +82,12 @@
 
     (is (= (to-hickory sample-img-html-remote-nonexistence)
            (subject/optimize-img-tag (to-hickory sample-img-html-remote-nonexistence))))))
+
+
+(deftest orgx-test
+  (testing ""
+    (let [demo (org-file->html "./blogs/demo.org")]
+      (is (= (:orgx-require demo)
+             [['net.coruscation.cerulean.components :as 'comp]]))
+      (is (true? (:orgx demo))))))
+

@@ -41,21 +41,24 @@
                        "author" "description" "orgx_require" "orgx"))
            (kvs (org-collect-keywords keywords)))
       (with-current-buffer blog-buffer
+
         (let ((ids (org-map-entries (lambda ()
                                       (org-entry-get nil "custom_id")))))
           (org-map-entries (lambda ()
-                             (when (not (org-entry-get nil "custom_id"))
-                               (let* ((candidate-id (concat
-                                                     (url-encode-url
-                                                      (string-replace " " "-"
-                                                                      (downcase
-                                                                       (nth 4
-                                                                            (org-heading-components)))))))
-                                      (duplicates (cl-count candidate-id ids)))
-                                 (org-entry-put nil "custom_id" (concat candidate-id
-                                                                        (if (= duplicates 0)
-                                                                            ""
-                                                                          (prin1-to-string (+ 1 duplicates)))))))
+                             (if (not (org-entry-get nil "custom_id"))
+                                 (let* ((candidate-id (concat
+                                                       (url-encode-url
+                                                        (string-replace " " "-"
+                                                                        (downcase
+                                                                         (nth 4
+                                                                              (org-heading-components)))))))
+                                        (duplicates (cl-count candidate-id ids :test #'equal)))
+                                   (org-entry-put nil "custom_id" (concat candidate-id
+                                                                          (if (= duplicates 0)
+                                                                              ""
+                                                                            (prin1-to-string (+ 1 duplicates)))))
+                                   (setq ids (cons candidate-id
+                                                   ids))))
                              (setq ids (cons (org-entry-get nil "custom_id")
                                              ids))))))
       (prog1

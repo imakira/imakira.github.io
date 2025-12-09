@@ -1,7 +1,7 @@
 (ns net.coruscation.cerulean.router
   (:require
    [uix.core :as uix :refer
-    [defui use-state use-ref use-effect use-memo $]]
+    [defui use-state use-ref use-effect use-memo $ #?@(:cljs [lazy suspense])]]
    [reitit.core :as r]
    [net.coruscation.cerulean.utils :as utils :refer [use-context]]
    #?@(:cljs [[reitit.frontend.easy :as rfe]
@@ -47,15 +47,15 @@
                 [routing-data routing-state ])
 
     (utils/context-binding
-     [*router* {:route route
-                :set-route! set-route!
-                :reitit-router reitit-router
-                :routing-data routing-data
-                :component component
-                :routing-state routing-state
-                :set-routing-state! set-routing-state!}]
-     ($ :<>
-        children))))
+        [*router* {:route route
+                   :set-route! set-route!
+                   :reitit-router reitit-router
+                   :routing-data routing-data
+                   :component component
+                   :routing-state routing-state
+                   :set-routing-state! set-routing-state!}]
+      ($ :<>
+         children))))
 
 
 (defui router-outlet [{:keys [hook]}]
@@ -70,7 +70,7 @@
   #?(:clj (throw (UnsupportedOperationException. "Operation navigate-to! isn't supported in CLJ."))
      :cljs (do
              (if (re-matches #"^https?://.*$" href)
-               (set! (.. js/window -location -href) 
+               (set! (.. js/window -location -href)
                      href)
                (do (js/history.pushState js/undefined js/undefined href)
                    (js/dispatchEvent (js/PopStateEvent. "popstate", js/undefined)))))))
