@@ -24,5 +24,3 @@
 #?(:clj
    (defn highlight [code lang]
      (.asString (.execute (.getMember *module*  "highlight_wrapper") (into-array Object [code lang])))))
-
-(highlight "<h1></h1>" "cljc")

@@ -15,7 +15,7 @@
    [hickory.zip :as hz]
    [com.potetm.fusebox.fallback :as fallback]
    [com.potetm.fusebox.retry :as retry]
-   [net.coruscation.cerulean.emacs-ipc :as eipc])
+   [net.coruscation.cerulean.server.emacs-ipc :as eipc])
   (:import
    [com.google.common.io Files]
    [javax.imageio ImageIO]))
