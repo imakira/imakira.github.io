@@ -1,19 +1,21 @@
 (ns net.coruscation.cerulean.utils
-  (:require [uix.dom.server :as dom.server]
-            [clojure.core.async :as a]
-            [malli.core :as m]
-            [malli.generator :as mg]
-            [clojure.walk :as walk]
-            [clojure.string :as str]
-            #?@(:cljs [["axios" :as axios]
-                       [uix.core :refer [use-state use-effect]]
-                       [goog.object :as goog.object]])
-            #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
-                      [reitit.core :as r]
-                      [hickory.zip :as hzip]])
-            [clojure.zip :as zip])
+  (:require
+   #?@(:cljs [["axios" :as axios]
+              [uix.core :refer [use-effect use-state]]
+              [goog.object :as goog.object]
+              [shadow.esm :as esm]])
+   #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
+             [reitit.core :as r]
+             [hickory.zip :as hzip]
+             [net.coruscation.cerulean.orgx.orgx :as orgx]
+             [net.coruscation.cerulean.render.context :as render-context]])
+   [clojure.core.async :as a]
+   [clojure.zip :as zip]
+   [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
+   [net.coruscation.cerulean.render.context-commons :as render-context-commons])
   #?(:cljs (:require-macros [net.coruscation.cerulean.utils :refer [use-context context-binding defcontext if-cljs]]))
-  #?(:cljs (:import [goog.async Throttle Debouncer])))
+  #?(:cljs (:import
+            [goog.async Debouncer Throttle])))
 
 
 #?(:cljs (def SERVER_PATH js/window.__server_path))
@@ -50,6 +52,35 @@
      (let [asset (a/<!! (fetch-asset path))]
        (render-context/add-assets! path asset)
        asset)))
+
+(defn use-module [module-name use?]
+  #?(:cljs
+     (let [[module set-module!] (use-state nil)
+           saved  (and use? (aget js/window
+                                  (render-context-commons/extra-script-global-this-name module-name)))]
+       (tap> [module saved])
+       (use-effect (fn []
+                     (when (and use?
+                                (seq module-name))
+                       (.then (esm/dynamic-import (str "/js/" module-name ".js"))
+                              (fn [m]
+                                (set-module! m)))))
+                   [saved module-name use?])
+       (and use? (or saved module)))
+     :clj (when use?
+            (render-context/add-extra-script! module-name
+                                              (str "./" module-name ".js"))
+            (require '(symbol module-name))
+            (find-ns (symbol module-name)))))
+
+(defn use-orgx [id orgx?]
+  (let [qualified-name (str "orgx." id)]
+    #?(:cljs
+       (let [module (use-module qualified-name orgx?)]
+         (when module (aget module orgx-commons/orgx-default-component-name)))
+       :clj
+       (when orgx? (intern (use-module qualified-name orgx?)
+                           (symbol orgx-commons/orgx-default-component-name))))))
 
 (defn set-title! [title]
   #?(:cljs (use-effect (fn [] (set! js/document.title title) (fn []))

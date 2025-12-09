@@ -6,6 +6,7 @@
    [net.coruscation.cerulean.server.utils :as su]
    [cheshire.core :refer [parse-string]]
    [clojure.java.io :as io]
+   [clojure.edn :as edn]
    [clojure.java.shell :refer [sh]]
    [clojure.string :as str]
    [clojure.zip :as zip]
@@ -46,7 +47,8 @@
   (let [select-fn (hs/or (hs/and (hs/tag :code)
                                  (hs/class :src))
                          (hs/and (hs/tag :pre)
-                                 (hs/not (hs/class :cr-highlighted))))]
+                                 (hs/not (hs/class :cr-highlighted))
+                                 (hs/not (hs/class :uix))))]
     (if-let [loc (hs/select-next-loc select-fn
                                      (hz/hickory-zip hickory-tree))]
       (loop [loc loc]
@@ -175,8 +177,9 @@
 
 (defn org-file->html [path]
   (eipc/init-emacs!)
-  (let [{:keys [content title category tags email language author description] :as result}
+  (let [{:keys [content title category tags email language author description orgx orgx_require] :as result}
         (eipc/elisp-funcall! :org->html path)
+
         hickory-blocks (->> content
                             hk/parse-fragment
                             (map (fn [block]
@@ -184,29 +187,35 @@
                                        hk/as-hickory
                                        image-optimization
                                        html-header-self-reference
-                                       html-code-highlight))))]
-    {:id (if title
-           (str/lower-case (str/replace title #"[^\p{IsAlphabetic}]" "-"))
-           (Files/getNameWithoutExtension path))
+                                       html-code-highlight))))
 
-     :content (->> hickory-blocks
-                   (map hr/hickory-to-html)
-                   (str/join ""))
-     :title title
-     :category category
-     :tags (if tags (str/split tags #" ") [])
-     :email email
-     :language language
-     :author author
-     :description (if (seq description)
-                    description
-                    (let [text (->> hickory-blocks
-                             	    (map extract-string)
-                                    (str/join ""))]
-                      (if (> (count text)
-                             155)
-                        (str (subs text 0 155) "...")
-                        (subs text 0 (min (count text) 153)))))}))
+        blog {:id (if title
+                    (str/lower-case (str/replace title #"[^\p{IsAlphabetic}]" "-"))
+                    (Files/getNameWithoutExtension path))
+
+              :content (->> hickory-blocks
+                            (map hr/hickory-to-html)
+                            (str/join ""))
+              :title title
+              :category category
+              :tags (if tags (str/split tags #" ") [])
+              :email email
+              :language language
+              :author author
+              :orgx (boolean orgx)
+              :orgx-require (when orgx_require (edn/read-string orgx_require))
+              :description (if (seq description)
+                             description
+                             (let [text (->> hickory-blocks
+                             	             (map extract-string)
+                                             (str/join ""))]
+                               (if (> (count text)
+                                      155)
+                                 (str (subs text 0 155) "...")
+                                 (subs text 0 (min (count text) 153)))))}]
+    blog))
 
 
-#_(def ^:dynamic *demo* (org-file->html "./blogs/build-a-commonlisp-project-with-nix.org"))
+
+
+#_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))

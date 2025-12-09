@@ -1,29 +1,24 @@
 (ns net.coruscation.cerulean.common.pages
   (:require
-   [clojure.core.async :as a]
-   [clojure.string :as str]
-   [uix.core :as uix :refer
-    [defui use-state use-effect $ use-ref use-memo]]
-   [net.coruscation.cerulean.router :as router]
-   [net.coruscation.cerulean.user-config :as user-config]
-   [net.coruscation.cerulean.utils :refer [use-asset defcontext context-binding  use-context] :as utils]
-   [reitit.core :as r]
-   [net.coruscation.cerulean.components :refer [btn-wrapper]]
-   [net.coruscation.cerulean.common.commons :as commons]
-   [cljc.java-time.format.date-time-formatter :as date-time-formatter]
-   [cljc.java-time.zoned-date-time :as zoned-date-time]
-   [cljc.java-time.zone-id :as zone-id]
-   [uix-fontawesome.brands :as brands]
-   [uix-fontawesome.regular :as regular]
-   [uix-fontawesome.solid :as solid]
    #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
              [hickory.core :as hc]
              [hickory.select :as hs]
              [net.coruscation.cerulean.server.utils :as su]
-             [cheshire.core :as json]])
-   #?@(:cljs [[uix.core :refer [create-context]]
-              [net.coruscation.cerulean.utils :refer [obj->clj]]
-              ["@js-joda/locale_en-us" :as js-joda-locale]])))
+             [net.coruscation.cerulean.orgx.orgx :as orgx]])
+   #?@(:cljs [["@js-joda/locale_en-us" :as js-joda-locale]])
+   [cljc.java-time.format.date-time-formatter :as date-time-formatter]
+   [clojure.string :as str]
+   [net.coruscation.cerulean.common.commons :as commons]
+   [net.coruscation.cerulean.components :refer [btn-wrapper]]
+   [net.coruscation.cerulean.router :as router]
+   [net.coruscation.cerulean.user-config :as user-config]
+   [net.coruscation.cerulean.utils :refer
+    [#?@(:cljs [obj->clj]) use-asset use-context use-orgx] :as utils]
+   [uix-fontawesome.brands :as brands]
+   [uix-fontawesome.solid :as solid]
+   [uix.core :as uix :refer
+    [$ #?@(:cljs [lazy suspense]) defui use-effect use-memo
+     use-ref use-state]]))
 
 
 (defn date-time-to-readable-string [zoned-date-time]
@@ -99,7 +94,7 @@
                                  observer (js/IntersectionObserver. callback
                                                                     #js {:rootMargin "-1px 0px 0px 0px"
                                                                          :threshold #js [1]})]
-                             (if @toc-header-ref (.observe observer @toc-header-ref)) 
+                             (if @toc-header-ref (.observe observer @toc-header-ref))
                              (fn []
                                (if @toc-header-ref (.unobserve observer @toc-header-ref)))))
                          []))
@@ -147,7 +142,7 @@
           {:for "toc-mobile-control"
            :class (str " toc-header cursor-pointer select-none block text-sky-700 border-1 pl-2 "
                        " flex justify-between items-center mt-3 bg-white sticky top-0 h-8 pr-1 "
-           	       " md:hidden ml-[1px] relative ")
+           	           " md:hidden ml-[1px] relative ")
            :on-click (fn [e]
                        (.preventDefault e)
                        (set-toc-open! (not toc-open?)))
@@ -204,7 +199,12 @@
                         ($ :span content))))))))))
 
 (defui blog [{{:keys [id]} :path-params :as data}]
-  (let [{:keys [content title show-toc? category tags modified-date published-date description] :as blog-asset} (use-asset (str "blog/" id))
+  (let [{:keys [content title show-toc? category
+                tags modified-date
+                published-date description
+                orgx] :as blog-asset}
+        (use-asset (str "blog/" id))
+        orgx-comp (use-orgx id orgx)
         toc-content (use-memo
                      (fn []
                        #?(:cljs (if show-toc? (let [dummy (.createElement js/document "html")]
@@ -237,7 +237,7 @@
                        (fn []
                          (js/removeEventListener "scroll" scroll-event))))
                    []))
-    (if (seq blog-asset)
+    (when (seq blog-asset)
       ($ :div.px-4.relative
          ($ :div
             ($ :h1.font-medium.text-neutral-700.leading-tight {:class "text-2xl sm:text-[2rem]"} title)
@@ -255,9 +255,15 @@
          ($ :div.gap-8.w-full.h-full {:class
 	                                  (str "md:grid md:grid-cols-[minmax(0px,7fr)_minmax(17rem,17rem)] "
                                            "2xl:grid-cols-[minmax(0px,7fr)_minmax(20rem,20rem)]")}
-            ($ :div.cr-document {:class "md:mt-1"
-                                 :ref doc-ref
-                                 :dangerouslySetInnerHTML {:__html content}})
+            (if (not orgx)
+              ($ :div.cr-document {:class "md:mt-1"
+                                   :ref doc-ref
+
+                                   :dangerouslySetInnerHTML {:__html content}})
+              (when orgx-comp
+                ($ :div.cr-document {:class "md:mt-1"
+                                     :ref doc-ref}
+                   ($ orgx-comp))))
             ($ :div.mt-4
                (when show-toc?
                  ($ toc {:class (str "w-78 fixed right-0 top-[13.5rem] z-200 max-h-[80vh] "
@@ -286,7 +292,6 @@
 
 (defui home [_]
   (let [blogs  (use-asset "blogs")
-
         landscape-ref (use-ref nil)]
     (use-effect
      (fn []
@@ -370,6 +375,9 @@
                                  (tap> "called"))
                         :stop (fn [{{:keys [routing-state set-routing-state!]} :data}]
                                 (set-routing-state! (assoc-in routing-state [:home-page?] false)))}]}]
+
+   ;; ["/blogs/demonstration.html" {:component #?(:cljs (shadow.lazy/loadable orgx.demonstration/compnent)
+   ;;                                        :clj orgx.demonstration/compnent)}]
    ["/blogs/{id}.html" {:component blog
                         :name ::blog
                         :depends #?(:clj {:route :assets/blogs

@@ -5,18 +5,19 @@
           {:target :esm
            :output-dir "public/js"
            :runtime :browser
-           :modules {:main {:entries
+           :modules {:default {:entries
+                               [net.coruscation.cerulean.utils]}
+                     :main {:entries
                             [net.coruscation.cerulean.common.pages
-                             net.coruscation.cerulean.client
-                             net.coruscation.cerulean.utils]
-                            :init-fn net.coruscation.cerulean.client/init}
-                     :demonstration {:entries
-                                     [orgx.demonstration]
-                                     :depends-on #{:main}}}
+                             net.coruscation.cerulean.client]
+                            :init-fn net.coruscation.cerulean.client/init
+                            :depends-on #{:default}}}
            :devtools {:preloads [preload devtools.preload]}
            :compiler-options {:source-map true}
-           :build-hooks [(net.coruscation.cerulean.build/build-css-hook)]
+           :build-hooks [(net.coruscation.cerulean.build/build-css-hook)
+                         (net.coruscation.cerulean.build/orgx-hook)]
            }}
+
  :dependencies [[cider/cider-nrepl "0.47.0"] ;; mandatory (unless it's inherited from deps.edn or otherwise present in the classpath of shadow-cljs's JVM process)
                 [refactor-nrepl/refactor-nrepl "3.9.0"]] ;; refactor-nrepl is optional
 
