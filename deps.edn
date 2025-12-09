@@ -36,7 +36,8 @@
         org.clojure/tools.logging {:mvn/version "1.3.0"}
         ch.qos.logback/logback-classic {:mvn/version "1.5.21"}
         org.apache.commons/commons-text {:mvn/version "1.14.0"}
-        rewrite-clj/rewrite-clj {:mvn/version "1.2.50"}}
+        com.wsscode/pathom3 {:mvn/version "2025.01.16-alpha"}
+        com.github.seancorfield/honeysql {:mvn/version "2.7.1364"}}
  :paths ["src" "dev" "resources" "orgx"]
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps

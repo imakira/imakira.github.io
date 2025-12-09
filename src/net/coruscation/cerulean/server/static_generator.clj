@@ -57,7 +57,6 @@
   (check/environment-check)
 
   (fs/create-dirs config/*output*)
-  (assets/refresh-blogs)
   (fs/copy-tree config/*blog-dir*
                 (str config/*output* "/" "blogs")
                 {:replace-existing true})
