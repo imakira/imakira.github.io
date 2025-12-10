@@ -67,11 +67,12 @@
                                 (set-module! m)))))
                    [saved module-name use?])
        (and use? (or saved module)))
-     :clj (when use?
-            (render-context/add-extra-script! module-name
-                                              (str "./" module-name ".js"))
-            (require '(symbol module-name))
-            (find-ns (symbol module-name)))))
+     :clj
+     (when use?
+       (render-context/add-extra-script! module-name
+                                         (str "./" module-name ".js"))
+       (require (symbol module-name))
+       (find-ns (symbol module-name)))))
 
 (defn use-orgx [id orgx?]
   (let [qualified-name (str "orgx." id)]

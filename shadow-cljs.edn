@@ -8,6 +8,7 @@
            :modules {:default {:entries
                                [net.coruscation.cerulean.utils]}
                      :main {:entries
+
                             [net.coruscation.cerulean.common.pages
                              net.coruscation.cerulean.client]
                             :init-fn net.coruscation.cerulean.client/init

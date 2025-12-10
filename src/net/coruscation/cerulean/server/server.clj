@@ -45,5 +45,5 @@
              wrap-json-params))
 
 (check/environment-check)
-(assets/refresh-blogs)
+;; (assets/refresh-blogs)
 (def ^:dynamic *jetty* (jetty/run-jetty #'app {:port 3001 :join? false}))

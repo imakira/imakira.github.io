@@ -4,46 +4,44 @@
    [clojure.data.xml :as xml]
    [com.wsscode.pathom3.interface.eql :as p.eql]
    [net.coruscation.cerulean.common.commons :as commons]
-   [net.coruscation.cerulean.server.blogs :refer [special-page?]]
    [net.coruscation.cerulean.server.resolver :refer [blog-eql env]]
    [net.coruscation.cerulean.user-config :as user-config]))
 
 (defonce ^:dynamic *blogs* (atom []))
 
-(defn fetch-blog [{{id :id} :path-params}]
+(defn fetch-all-blogs [& rest]
+  (p.eql/process-one env
+                     :blog.query/all-blogs-desc))
+
+(defn fetch-blog [{{id :blog/id} :path-params}]
   (p.eql/process env
                  {:blog/id id}
                  blog-eql))
 
-(defn fetch-all-blogs [& rest]
-  (p.eql/process-one env
-                     :blog-query/all-blogs))
-
 (defn fetch-blogs [& rest]
-  (into [] (filter (comp not special-page?)
-                   (fetch-all-blogs))))
+  (p.eql/process-one env
+                     :blog.query/home-page-blogs-desc))
 
 (defn fetch-blog-ids [& rest]
-  (into [] (map (fn [item]
-                  {:id (:id item)})
-                (fetch-blogs nil))))
-
+  (p.eql/process-one env
+                     {:blog.query/all-blogs-desc
+                      [:blog/id]}))
 
 (def json-assets-route
   ["/assets"
    ["/blogs"  {:name ::blogs
                :handler #'fetch-blogs}]
-   ["/blog/:id"  {:name ::blog
-                  :handler #'fetch-blog
-                  :depends
-                  {:route ::blogs
-                   :params-list-fn
-                   fetch-blog-ids}}]
+   ["/blog/{blog/id}"  {:name ::blog
+                        :handler #'fetch-blog
+                        :depends
+                        {:route ::blogs
+                         :params-list-fn
+                         #'fetch-blog-ids}}]
    ])
 
 (defn- site-last-modified []
   (->> (fetch-all-blogs)
-       (map :modified-date)
+       (map :blog/modified-date)
        (map commons/parse-iso8601)
        (sort (fn [a b]
                (zoned-date-time/compare-to a b)))
@@ -61,7 +59,7 @@
                                (xml/element :id {} user-config/root-url)
 
                                (for [blog (fetch-blogs)]
-                                 (let [href (str user-config/root-url "/blogs/" (:id blog) ".html")]
+                                 (let [href (str user-config/root-url "/blogs/" (:blog/id blog) ".html")]
                                    (xml/element :entry {}
                                                 (xml/element :title {:type "html"}
                                                              (:title blog))
@@ -71,7 +69,7 @@
                                                 (xml/element :id {}
                                                              href)
                                                 (xml/element :content {:type "html"}
-                                                             (:content (fetch-blog {:path-params {:id (:id blog)}})))))))))
+                                                             (:content (fetch-blog {:path-params {:blog/id (:blog/id blog)}})))))))))
 
 (defn generate-sitemap [& _]
   (xml/indent-str (xml/element :urlset {:xmlns "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -83,7 +81,7 @@
                                (for [blog (fetch-all-blogs)]
                                  (xml/element :url {}
                                               (xml/element :loc {}
-                                                           (str user-config/root-url "/blogs/" (:id blog) ".html"))
+                                                           (str user-config/root-url "/blogs/" (:blog/id blog) ".html"))
                                               (xml/element :lastmod {}
                                                            (:modified-date blog)))))))
 

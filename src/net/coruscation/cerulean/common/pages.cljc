@@ -198,13 +198,14 @@
                          :href (str "#" id)}
                         ($ :span content))))))))))
 
-(defui blog [{{:keys [id]} :path-params :as data}]
-  (let [{:keys [content title show-toc? category
-                tags modified-date
-                published-date description
-                orgx] :as blog-asset}
+(defui blog [{{:blog/keys [id]} :path-params :as data}]
+  (let [{:blog/keys [content title show-toc? category
+                     tags modified-date
+                     published-date description
+                     orgx] :as blog-asset}
         (use-asset (str "blog/" id))
         orgx-comp (use-orgx id orgx)
+
         toc-content (use-memo
                      (fn []
                        #?(:cljs (if show-toc? (let [dummy (.createElement js/document "html")]
@@ -274,7 +275,7 @@
 
 
 (defui blog-item [{:keys [preview onclick class]}]
-  (let [{:keys [title id tags published-date modified-date author category]} preview]
+  (let [{:blog/keys [title id tags published-date modified-date author category]} preview]
     ($ :div.blog-item {:class class}
        ($ :div.relative.group
           ($ :div
@@ -312,9 +313,9 @@
           ($ :div.w-full
              ($ :div.flex.justify-center.flex-col.gap-6.bg-opacity-100.w-full
                 (for [blog blogs]
-                  ($ :div.w-full {:key (:id blog)}
+                  ($ :div.w-full {:key (:blog/id blog)}
                      ($ blog-item {:preview blog
-                                   :key (:id blog)
+                                   :key (:blog/id blog)
                                    :class "w-full"})
                      ($ :hr {:class "mt-2 border-gray-500"})))))))))
 
@@ -377,15 +378,15 @@
 
    ;; ["/blogs/demonstration.html" {:component #?(:cljs (shadow.lazy/loadable orgx.demonstration/compnent)
    ;;                                        :clj orgx.demonstration/compnent)}]
-   ["/blogs/{id}.html" {:component blog
-                        :name ::blog
-                        :depends #?(:clj {:route :assets/blogs
-                                          :params-list-fn
-                                          assets/fetch-blog-ids}
-                                    :cljs nil)}]
+   ["/blogs/{blog/id}.html" {:component blog
+                        	 :name ::blog
+                             :depends #?(:clj {:route :assets/blogs
+                                               :params-list-fn
+                                               assets/fetch-blog-ids}
+                                         :cljs nil)}]
    ;; TODO: make this configurable
-   ["/about.html" {:component blog
-                   :extra-data {:path-params {:id "about.html"}}}]
+   ;; ["/about.html" {:component blog
+   ;;                 :extra-data {:path-params {:blog/id "about.html"}}}]
    ])
 
 (defui main [_]
