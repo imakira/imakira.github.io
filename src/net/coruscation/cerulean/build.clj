@@ -21,14 +21,14 @@
                                      'orgx.demonstration/component}}}
                        (->> (fetch-all-blogs)
                             (map (fn [blog]
-                                   (when (:orgx blog)
+                                   (when (:blog/orgx blog)
                                      (orgx/generate-cljc-from-blog blog)
-                                     [(keyword (str "orgx." (:id blog)))
+                                     [(keyword (str "orgx." (:blog/id blog)))
                                       {:entries
-                                       [(symbol (str "orgx." (:id blog)))]
+                                       [(symbol (str "orgx." (:blog/id blog)))]
                                        :depends-on #{:default}
                                        :exports {(symbol "component")
-                                                 (symbol (str "orgx." (:id blog))
+                                                 (symbol (str "orgx." (:blog/id blog))
                                                          "component")}}])))
                             (remove nil?)
                             (into {})))]

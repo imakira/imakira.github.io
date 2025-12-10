@@ -3,8 +3,10 @@
    [clojure.edn :as edn]
    [clojure.string :as str]
    [clojure.zip :as zip]
+   [com.wsscode.pathom3.interface.eql :refer [process-one]]
    [hickory.core :refer [as-hiccup]]
    [net.coruscation.cerulean.orgx.orgx-commons :refer :all]
+   [net.coruscation.cerulean.server.resolver :refer [env]]
    [uix.dev :refer [from-hiccup]])
   (:import
    [java.nio.file Path]
@@ -57,7 +59,7 @@
        (map from-hiccup)
        (map unwrap-clj-code)))
 
-(defn blog->cljc [{:keys [id content orgx-require]}]
+(defn blog->cljc [{:blog/keys [id content orgx-require]}]
   (->> (concat
         `((~'ns ~(symbol (str orgx-base-ns "." id))
            (:require [uix.core :as ~'uix :refer
@@ -67,9 +69,11 @@
            (~'$ :<> ~@(from-html content)))))
        (str/join "\n")))
 
-(defn generate-cljc-from-blog [{:keys [id] :as blog}]
+(defn generate-cljc-from-blog [{:blog/keys [id] :as blog}]
   (spit (.toString (Path/of orgx-dest-dir
                             (into-array String
                                         [(str (str/replace id "-" "_")
                                               ".cljc")])))
         (blog->cljc blog)))
+
+(generate-cljc-from-blog (last (process-one env :blog.query/all-blogs-desc)))
