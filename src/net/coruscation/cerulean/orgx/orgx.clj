@@ -12,6 +12,16 @@
    [java.nio.file Path]
    [org.apache.commons.text StringEscapeUtils]))
 
+(deftype CljCode [^String s]
+  Object
+  (^String toString [_] s)
+  (^boolean equals [_ other]
+   (and (instance? CljCode other)
+        (= s  (.toString other)))))
+
+(defmethod print-method CljCode [this writer]
+  (.write writer (.toString this)))
+
 (defn unescape-contents [hiccup]
   (loop [zip (zip/vector-zip hiccup)]
     (if (zip/end? zip)
@@ -35,8 +45,9 @@
                     :pre)
                  (= (:class (nth node 2))
                     "uix"))
-          (recur (zip/next (zip/replace loc
-                                        (edn/read-string (last node)))))
+          (recur
+           (zip/next (zip/replace loc
+                                  (CljCode. (str/trim (last node))))))
           (recur (zip/next loc)))))))
 
 (defn remove-extra-newline [hiccup]
@@ -57,7 +68,7 @@
        remove-extra-newline
        (map unescape-contents)
        (map from-hiccup)
-       (map unwrap-clj-code)))
+       (mapv unwrap-clj-code)))
 
 (defn blog->cljc [{:blog/keys [id content orgx-require]}]
   (->> (concat
@@ -67,6 +78,7 @@
                      ~@orgx-require)))
         `((~'defui ~(symbol orgx-default-component-name) []
            (~'$ :<> ~@(from-html content)))))
+       (map str)
        (str/join "\n")))
 
 (defn generate-cljc-from-blog [{:blog/keys [id] :as blog}]
@@ -75,5 +87,3 @@
                                         [(str (str/replace id "-" "_")
                                               ".cljc")])))
         (blog->cljc blog)))
-
-(generate-cljc-from-blog (last (process-one env :blog.query/all-blogs-desc)))
