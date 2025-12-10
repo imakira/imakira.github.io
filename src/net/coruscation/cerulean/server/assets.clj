@@ -28,19 +28,6 @@
                   {:id (:id item)})
                 (fetch-blogs nil))))
 
-(defn fetch-categories [& _]
-  (->> (fetch-blogs)
-       (map (fn [item] {:category (:category item)}))
-       (sort (fn [a b]
-               (compare (:category a)
-                        (:category b))))
-       dedupe))
-
-(defn fetch-blog-by-category [{{category :category} :path-params}]
-  (into [] (filter (fn [item]
-                     (= category
-                        (:category item)))
-                   (fetch-blogs))))
 
 (def json-assets-route
   ["/assets"
@@ -52,13 +39,7 @@
                   {:route ::blogs
                    :params-list-fn
                    fetch-blog-ids}}]
-   ["/categories" {:name ::categories
-                   :handler #'fetch-categories}]
-   ["/category/:category" {:name ::category
-                           :handler #'fetch-blog-by-category
-                           :depends
-                           {:route ::categories
-                            :params-list-fn #'fetch-categories}}]])
+   ])
 
 (defn- site-last-modified []
   (->> (fetch-all-blogs)
