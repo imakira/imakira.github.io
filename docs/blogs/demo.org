@@ -2,6 +2,8 @@
 #+TAGS: clojure lsp tailwindcss
 #+CATEGORY: Coding
 #+OPTIONS: tex:dvisvgm
+#+ORGX: true
+#+ORGX_REQUIRE: [[net.coruscation.cerulean.components :as comp]]
 #+DESCRIPTION: This is a demonstration of this static blog generator
 #+LATEX_HEADER: \usepackage{pgfplots}
 #+LATEX_HEADER: \usepackage{svg}
@@ -16,19 +18,19 @@
 
 * Code Blocks
 :PROPERTIES:
-:custom_id: blog_Code%20Blocks1
+:custom_id: code-blocks
 :END:
 
 ** Inline Code Block
 :PROPERTIES:
-:custom_id: blog_Inline%20Code%20Block1
+:custom_id: inline-code-block
 :END:
 
 Text around src_clojure[:exports code]{(uix.dom/create-root (js/document.getElementById "root"))} the inline code block.
 
 ** Code Blocks
 :PROPERTIES:
-:custom_id: blog_Code%20Blocks1
+:custom_id: code-blocks3
 :END:
 
 - Java
@@ -81,26 +83,26 @@ public static int fib(int n) {
 
 * H2 Sample Text
 :PROPERTIES:
-:custom_id: blog_H2%20Sample%20Text1
+:custom_id: h2-sample-text
 :END:
 
 ** H3 Sample Text Sample Text
 :PROPERTIES:
-:custom_id: blog_H3%20Sample%20Text%20Sample%20Text1
+:custom_id: h3-sample-text-sample-text
 :END:
 
 Some text in between
 
 *** H4 Sample Text Sample Text
 :PROPERTIES:
-:custom_id: blog_H4%20Sample%20Text%20Sample%20Text1
+:custom_id: h4-sample-text-sample-text
 :END:
 
 Some text in between
 
 **** H5 Sample Text Sample Text
 :PROPERTIES:
-:custom_id: blog_H5%20Sample%20Text%20Sample%20Text1
+:custom_id: h5-sample-text-sample-text
 :END:
 
 Some text in between
@@ -108,7 +110,7 @@ Some text in between
 
 * Common Elements
 :PROPERTIES:
-:custom_id: blog_Common%20Elements1
+:custom_id: common-elements
 :END:
 
 + /italic/
@@ -123,12 +125,12 @@ Some text in between
 
 * Other Elements
 :PROPERTIES:
-:custom_id: blog_Other%20Elements1
+:custom_id: other-elements
 :END:
 
 ** Table
 :PROPERTIES:
-:custom_id: blog_Table1
+:custom_id: table
 :END:
 
 | Name  | Phone | Age |
@@ -138,7 +140,7 @@ Some text in between
 
 ** Reference
 :PROPERTIES:
-:custom_id: blog_Reference1
+:custom_id: reference
 :END:
 
  #+BEGIN_QUOTE
@@ -148,7 +150,7 @@ Some text in between
 
 ** Unordered List
 :PROPERTIES:
-:custom_id: blog_Unordered%20List1
+:custom_id: unordered-list
 :END:
 
 + Item 1
@@ -161,7 +163,7 @@ Some text in between
   
 **** Ordered List
 :PROPERTIES:
-:custom_id: blog_Ordered%20List1
+:custom_id: ordered-list
 :END:
 
 1. Item 1
@@ -171,7 +173,7 @@ Some text in between
 
 ** Description List
 :PROPERTIES:
-:custom_id: blog_Description%20List1
+:custom_id: description-list
 :END:
 
 + Name :: Description
@@ -181,7 +183,7 @@ Some text in between
 
 ** Sample Image
 :PROPERTIES:
-:custom_id: blog_Sample%20Image1
+:custom_id: sample-image
 :END:
 
 #+CAPTION: This is an image
@@ -195,3 +197,17 @@ Some text in between
 #+CAPTION: sample high resolution horizontal iamge
 [[https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg]]
 
+** Verbatim
+:PROPERTIES:
+:custom_id: verbatim
+:END:
+
+
+* Inline CLJC Code
+:PROPERTIES:
+:custom_id: inline-cljc-code
+:END:
+
+#+begin_uix
+  ($ :button {:on-click (fn [& _] #?(:cljs (js/alert "clicked!")))} "Click Me")
+#+end_uix

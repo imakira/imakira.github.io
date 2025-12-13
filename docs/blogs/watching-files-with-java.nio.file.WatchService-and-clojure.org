@@ -1,0 +1,238 @@
+#+title: Watching Files with java.nio.file.WatchService and Clojure
+#+CATEGORY: Coding
+
+Recently I want to have a utility in Clojure that can notify me when there is a change happened in some specified directory. Fortunately Java seems to natively support it by providing a ~java.nio.file.WatchService~. It seems trivial so I want to use it directly in Clojure instead of adding another dependency to my project. It turns out to be sightly more complicated than I expected. Let me explain.
+
+* The Problem
+
+The challenge mainly lies in the fact that, Java doesn't natively support recursively watching a directory. If we want this behavoir, we have to implement it ourselves.
+
+#+BEGIN_SRC clojure
+  (def ^:dynamic *chan-size* 512)
+
+  (defn register [^Path path ^WatchService watch-service]
+    (.register path
+               watch-service
+               (into-array WatchEvent$Kind
+                           [StandardWatchEventKinds/ENTRY_CREATE
+                            StandardWatchEventKinds/ENTRY_DELETE
+                            StandardWatchEventKinds/ENTRY_MODIFY
+                            StandardWatchEventKinds/OVERFLOW])))
+
+  (defn watch [& paths]
+    (let [resp-chan (a/chan *chan-size*)
+          cancel-chan (a/chan 1)
+          stopped? (atom false)
+
+          worker
+          (future
+            (let [paths (map (fn [p]
+                               (Path/of p (into-array String [])))
+                             paths)
+                  watch-service (-> (java.nio.file.FileSystems/getDefault)
+                                    (.newWatchService))]
+              (doseq [path paths]
+                (doseq [^File subpath-file (file-seq (.toFile path))]
+                  (when (.isDirectory subpath-file)
+                    (register (.toPath subpath-file)
+                              watch-service))))
+              (try
+                (while (not @stopped?)
+                  (let [watch-key (.take watch-service)
+                        events (.pollEvents watch-key)
+                        ^Path parent-dir (.watchable watch-key)]
+                    (doseq [^WatchEvent event events]
+                      (let [^WatchEvent$Kind kind (.kind event)
+                            ^Path event-path (.context event)
+                            ^Path resolved-path (.resolve parent-dir event-path)]
+                        (a/>!! resp-chan
+                               {:kind (case (.name kind)
+                                        "ENTRY_CREATE" :entry-create
+                                        "ENTRY_MODIFY" :entry-modify
+                                        "ENTRY_DELETE" :entry-delete
+                                        "OVERFLOW" :overflow)
+                                :path resolved-path})
+
+                        ;; If the newly created object is a directory,
+                        ;;   we recursively register files in it.
+  	                  (when (and (= kind StandardWatchEventKinds/ENTRY_CREATE)
+                                   (.isDirectory (.toFile resolved-path)))
+                          (doseq [^File subpath-file (file-seq (.toFile resolved-path))]
+                            (when (.isDirectory subpath-file)
+                              (register (.toPath subpath-file)
+                                        watch-service))))
+                        (.reset watch-key)))))
+                (catch InterruptedException _)
+                (finally
+                  (.close watch-service)))))
+
+          sentinel (future
+                     (while (not (a/<!! cancel-chan)))
+                     (reset! stopped? true)
+                     (future-cancel worker)
+                     (a/close! resp-chan)
+                     (a/close! cancel-chan))]
+      (with-meta [resp-chan cancel-chan]
+        {:debug {:worker worker
+                 :sentinel sentinel
+                 :stopped? stopped?}})))
+#+END_SRC
+
+The initial implementation looks like this, which is fairly straightforward. We start by recursively registering files in the directories provided by ~paths~ argument, and if there is a newly created directory, we also recursively register its contents. Clojure provides a ~file-seq~ function that makes this task much easier. However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
+
+#+begin_example
+  +---------------+
+  | worker thread |
+  +-------+-------+
+          +                 +---------------+
+          +-----------------| create subdir |
+          |                 +---------------+
+  +-------+---------------+
+  | event: subdir created |
+  +-------+---------------+    
+          |                 +------------------------+
+          +-----------------+ new file in the subdir |
+          |                 +------------------------+
+  +-------+-----------+
+  | subdir registered |
+  +-------------------+
+#+end_example
+
+* The Workaround
+
+We can have a workaround of this by emitting an event of each file in the newly created directory, like this:
+
+#+BEGIN_SRC clojure
+  (when (and (= kind StandardWatchEventKinds/ENTRY_CREATE)
+             (.isDirectory (.toFile resolved-path)))
+
+    (register resolved-path
+              watch-service)
+
+    (doseq [^File subpath-file (rest (file-seq (.toFile resolved-path)))]
+      (when (.isDirectory subpath-file)
+        (register (.toPath subpath-file)
+                  watch-service))
+      (a/>!! resp-chan
+             {:kind :entry-create
+              :path (.toPath subpath-file)})))
+#+END_SRC
+
+However, it introduces a new problem. If a file is created in a subdirectory after be subdirectory is regsitered, but before the subdirectories scanning is finished. The event of the file may be emitted twice.
+
+#+begin_example
+    +---------------+
+    | worker thread |
+    +-------+-------+
+            +                +----------------+
+            +----------------+ subdir created |
+            |                +----------------+
+            |
+   +--------+----------+
+   | subdir registered |
+   +--------+----------+
+            |              +-------------------------+
+            |--------------+ file1 created in subdir |
+            |              +-------------------------+
+   +--------+---------+
+   | scan: find file1 |
+   +--------+---------+  
+            |               
+            |               
+  +---------+------------+ 
+  | event: file1 created |
+  +----------------------+      
+#+end_example
+
+We have three choices here, we can:
+
+ - ignore this issue, treat it as something acceptable.
+ - discard the workaround all together, let the user scan if there is any new file in the newly created directory.
+ - memorize all the files detected, check if the event has already been fired if a new file is detected.
+
+In my case, the first option is good enough, however, it got me curious about how this issue is handled by other projects.
+
+* How is it Handled by Other Projects?
+
+** [[https://github.com/paulmillr/chokidar][chokidar]]
+
+~chokidar~ is a famous file watching library in JavaScript. It seems to have chosen the third option:
+
+#+BEGIN_SRC typescript
+  // handler.ts
+  // line starting from 575
+
+  // Files that present in current directory snapshot
+  // but absent in previous are added to watch list and
+  // emit `add` event.
+  if (item === target || (!target && !previous.has(item))) {
+    this.fsw._incrReadyCount();
+
+    // ensure relativeness of path is preserved in case of watcher reuse
+    path = sp.join(dir, sp.relative(dir, path));
+
+    this._addToNodeFs(path, initialAdd, wh, depth + 1);
+  }
+#+END_SRC
+
+** [[https://github.com/inotify-tools/inotify-tools][inotify-tools]]
+
+~inotify-tools~ is a set of cli tools providing interface to ~inotify~. It was written in C++ and newer version is rewritten in Rust.
+
+By default, ~inotify-wait~ quits after it detected a change. Therefore the problem described in the previous section is naturally up to the user to solve.
+
+It also provides an ~--monitor~ option to continuously monitoring the changes happened in a directory. With ~--monitor~ on, it seems to choose the second option described in the previous section.
+
+#+BEGIN_SRC bash
+  > inotifywait -mr -e create .
+
+  Setting up watches.  Beware: since -r was given, this may take a while!
+  Watches established.
+
+  # executing `mkdir -p s1/s2/s3/s4` in another shell session
+  
+  ./ CREATE,ISDIR s1
+  Watching new directory ./s1/
+#+END_SRC
+
+If we create the directories one by one, all the directories will be notified. However, by using ~-p~ option to create multiple level of directories at once. Only the first one will be notified.
+
+We can further confirm it by reading the source code:
+
+#+BEGIN_SRC cpp
+  // inotifywait.cpp
+  // L391, main function
+
+  do {
+    event = inotifytools_next_event(timeout);
+
+    /*
+     ,* ......
+     ,*/
+
+    if (monitor && recursive) {
+      if ((event->mask & IN_CREATE) ||
+          (!moved_from && (event->mask & IN_MOVED_TO))) {
+        // New file - if it is a directory, watch it
+        char *new_file = inotifytools_dirpath_from_event(event);
+        if (new_file && *new_file && isdir(new_file)) {
+          if (!quiet) {
+            output_error(sysl, "Watching new directory %s\n", new_file);
+          }
+          if (!inotifytools_watch_recursively(new_file, events)) {
+            output_error(sysl, "Couldn't watch new directory %s: %s\n", new_file,
+                         strerror(inotifytools_error()));
+          }
+        }
+        free(new_file);
+      } 
+
+      /*
+       ,* ......
+       ,*/
+    }
+    fflush(NULL);
+  } while (monitor)
+#+END_SRC
+
+The program constantly polls and prints new events in the main function, and if the newly created object is a directory and ~--recursive~ option is on. It recursively watch the newly created directory. However, it won't print files in the new directory if we check the ~inotifytools_watch_recursively~ function.

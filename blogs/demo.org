@@ -209,6 +209,5 @@ Some text in between
 :END:
 
 #+begin_uix
-  ($ :button {:on-click (fn [& _] (js/alert "clicked!"))} "Click Me")
+  ($ :button {:on-click (fn [& _] #?(:cljs (js/alert "clicked!")))} "Click Me")
 #+end_uix
-

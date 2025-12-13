@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://coruscation.net</loc>
-    <lastmod>2025-11-25T00:44:14+08:00</lastmod>
+    <lastmod>2025-12-13T22:11:45+08:00</lastmod>
+  </url>
+  <url>
+    <loc>https://coruscation.net/blogs/watching-files-with-java-nio-file-watchservice-and-clojure.html</loc>
+    <lastmod/>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/my-experience-with-lsp-bridge.html</loc>
-    <lastmod>2025-11-23T00:05:17+08:00</lastmod>
+    <lastmod/>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/experiment-with-graalvm--clojure--and-javascript.html</loc>
-    <lastmod>2025-11-18T15:03:31+08:00</lastmod>
+    <lastmod/>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/build-a-clojurescript-application-running-on-node-using-nix.html</loc>
-    <lastmod>2025-11-03T17:25:27+08:00</lastmod>
+    <lastmod/>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html</loc>
-    <lastmod>2025-10-27T17:50:17+08:00</lastmod>
-  </url>
-  <url>
-    <loc>https://coruscation.net/blogs/about.html.html</loc>
-    <lastmod>2025-06-22T13:42:37+08:00</lastmod>
+    <lastmod/>
   </url>
   <url>
     <loc>https://coruscation.net/blogs/demonstration.html</loc>
-    <lastmod>2025-11-25T00:44:14+08:00</lastmod>
+    <lastmod/>
   </url>
 </urlset>
