@@ -78,7 +78,9 @@ The challenge mainly lies in the fact that, Java doesn't natively support recurs
                  :stopped? stopped?}})))
 #+END_SRC
 
-The initial implementation looks like this, which is fairly straightforward. We start by recursively registering files in the directories provided by ~paths~ argument, and if there is a newly created directory, we also recursively register its contents. Clojure provides a ~file-seq~ function that makes this task much easier. However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
+The initial implementation looks like this, which is fairly straightforward. We start by recursively registering files in the directories provided by ~paths~ argument, and if there is a newly created directory, we also recursively register its contents. Clojure provides a ~file-seq~ function that makes this task much easier. For an example usage of this code, check the end of this post.
+
+However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
 
 #+begin_example
   +---------------+
@@ -99,6 +101,9 @@ The initial implementation looks like this, which is fairly straightforward. We 
 #+end_example
 
 * The Workaround
+:PROPERTIES:
+:ID:       9eb04df8-4ce7-4120-8e22-4a17b25e041c
+:END:
 
 We can have a workaround of this by emitting an event of each file in the newly created directory, like this:
 
@@ -154,9 +159,9 @@ In my case, the first option is good enough, however, it got me curious about ho
 
 * How is it Handled by Other Projects?
 
-** [[https://github.com/paulmillr/chokidar][chokidar]]
+** chokidar
 
-~chokidar~ is a famous file watching library in JavaScript. It seems to have chosen the third option:
+ [[https://github.com/paulmillr/chokidar][chokidar]] is a famous file watching library in JavaScript. It seems to have chosen the third option:
 
 #+BEGIN_SRC typescript
   // handler.ts
@@ -175,9 +180,9 @@ In my case, the first option is good enough, however, it got me curious about ho
   }
 #+END_SRC
 
-** [[https://github.com/inotify-tools/inotify-tools][inotify-tools]]
+** inotify-tools
 
-~inotify-tools~ is a set of cli tools providing interface to ~inotify~. It was written in C++ and newer version is rewritten in Rust.
+[[https://github.com/inotify-tools/inotify-tools][inotify-tools]] is a set of cli tools providing interface to ~inotify~. It was written in C++ and newer version is rewritten in Rust.
 
 By default, ~inotify-wait~ quits after it detected a change. Therefore the problem described in the previous section is naturally up to the user to solve.
 
@@ -235,4 +240,53 @@ We can further confirm it by reading the source code:
   } while (monitor)
 #+END_SRC
 
-The program constantly polls and prints new events in the main function, and if the newly created object is a directory and ~--recursive~ option is on. It recursively watch the newly created directory. However, it won't print files in the new directory if we check the ~inotifytools_watch_recursively~ function.
+The program constantly polls and prints new events in the main function. If the newly created object is a directory and ~--recursive~ option is on, it recursively watch the newly created directory. However, it won't print files in the new directory if we check the ~inotifytools_watch_recursively~ function.
+
+* Conclusion
+
+There doesn't seem to a definitive solution to this issue. The workaround described in [[id:9eb04df8-4ce7-4120-8e22-4a17b25e041c][section 2]] seems to be good enough in my case. I will conclude this post by posing a simple example usage of the code with the workaround applied.
+
+#+BEGIN_SRC clojure
+  (deftest wach_service_example
+    (testing ""
+      (let [test-dir (str *test-dir* "/example")]
+        (.mkdirs (io/file test-dir))
+        (let [[resp cancel] (subject/watch test-dir)
+              worker (future
+                       (loop [event (a/<!! resp)
+                              result (transient [])]
+                         (if (not (nil? event))
+                           (recur (a/<!! resp)
+                                  (conj! result
+                                         {:kind (:kind event)
+                                          :path (.toString (:path event))}))
+                           (persistent! result))))]
+          (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+          (.mkdirs (io/file (str test-dir "/s1/s2")))
+          (.createNewFile (io/file (str test-dir "/s1/s2/file")))
+          ;; We can't delete the files too quickly after they are created,
+          ;;    otherwise we will receive no event.
+          (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+          (doseq [f (reverse (rest (file-seq (io/file test-dir))))]
+            (.delete f))
+          (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+          ;; shutdown the watch service
+          (a/>!! cancel true)
+
+          ;; verify the result
+          (is (= [{:kind :entry-create,		  
+  		         :path "test/resource/watch_service_test/example/s1"}
+  		        {:kind :entry-create,
+  		         :path "test/resource/watch_service_test/example/s1/s2"}
+  		        {:kind :entry-create,
+  		         :path "test/resource/watch_service_test/example/s1/s2/file"}
+  		        {:kind :entry-delete,
+  		         :path "test/resource/watch_service_test/example/s1/s2/file"}
+  		        {:kind :entry-delete,
+  		         :path "test/resource/watch_service_test/example/s1/s2"}
+  		        {:kind :entry-delete,
+  		         :path "test/resource/watch_service_test/example/s1"}]
+                 @worker))))))
+#+END_SRC
+
+You can also find the source code and some unit tests [[https://gist.github.com/imakira/4b537a13ecd8c1816427068d10777565][here]].
