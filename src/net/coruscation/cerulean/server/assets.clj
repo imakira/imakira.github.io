@@ -62,14 +62,14 @@
                                  (let [href (str user-config/root-url "/blogs/" (:blog/id blog) ".html")]
                                    (xml/element :entry {}
                                                 (xml/element :title {:type "html"}
-                                                             (:title blog))
+                                                             (:blog/title blog))
                                                 (xml/element :link {:href href})
                                                 (xml/element :updated {}
-                                                             (:modified-date blog))
+                                                             (:blog/modified-date blog))
                                                 (xml/element :id {}
                                                              href)
                                                 (xml/element :content {:type "html"}
-                                                             (:content (fetch-blog {:path-params {:blog/id (:blog/id blog)}})))))))))
+                                                             (:blog/content (fetch-blog {:path-params {:blog/id (:blog/id blog)}})))))))))
 
 (defn generate-sitemap [& _]
   (xml/indent-str (xml/element :urlset {:xmlns "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -83,7 +83,7 @@
                                               (xml/element :loc {}
                                                            (str user-config/root-url "/blogs/" (:blog/id blog) ".html"))
                                               (xml/element :lastmod {}
-                                                           (:modified-date blog)))))))
+                                                           (:blog/modified-date blog)))))))
 
 (def resource-route
   [""
