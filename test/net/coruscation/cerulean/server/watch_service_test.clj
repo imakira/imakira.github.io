@@ -50,6 +50,45 @@
                           :debug
                           :stopped?))))))))
 
+(deftest wach_service_example
+  (testing ""
+    (let [test-dir (str *test-dir* "/example")]
+      (.mkdirs (io/file test-dir))
+      (let [[resp cancel] (subject/watch test-dir)
+            worker (future
+                     (loop [event (a/<!! resp)
+                            result (transient [])]
+                       (if (not (nil? event))
+                         (recur (a/<!! resp)
+                                (conj! result
+                                       {:kind (:kind event)
+                                        :path (.toString (:path event))}))
+                         (persistent! result))))]
+
+        (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+        (.mkdirs (io/file (str test-dir "/s1/s2")))
+        (.createNewFile (io/file (str test-dir "/s1/s2/file")))
+        ;; We can't delete the files too quickly after they are created,
+        ;;    otherwise we will receive no event.
+        (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+        (doseq [f (reverse (rest (file-seq (io/file test-dir))))]
+          (.delete f))
+        (.sleep java.util.concurrent.TimeUnit/MILLISECONDS 200)
+        (a/>!! cancel true)
+        (is (= [{:kind :entry-create,
+		         :path "test/resource/watch_service_test/example/s1"}
+		        {:kind :entry-create,
+		         :path "test/resource/watch_service_test/example/s1/s2"}
+		        {:kind :entry-create,
+		         :path "test/resource/watch_service_test/example/s1/s2/file"}
+		        {:kind :entry-delete,
+		         :path "test/resource/watch_service_test/example/s1/s2/file"}
+		        {:kind :entry-delete,
+		         :path "test/resource/watch_service_test/example/s1/s2"}
+		        {:kind :entry-delete,
+		         :path "test/resource/watch_service_test/example/s1"}]
+               @worker))))))
+
 (deftest watch-subdir-test
   (testing
       (let [test-dir (str *test-dir* "/subdir-test")]
