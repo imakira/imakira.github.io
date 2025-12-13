@@ -53,20 +53,21 @@
                                      (hz/hickory-zip hickory-tree))]
       (loop [loc loc]
         (let [lang (get-code-code (zip/node loc))
-              result (zip/replace loc
-                                  (-> (code-highlight/highlight
-                                       (-> loc
-                                           zip/node
-                                           :content
-                                           first)
-                                       lang)
-                                      hk/parse
-                                      hk/as-hickory
-                                      ((fn [node]
-                                         (if (= (:tag (zip/node loc))
-                                                :pre)
-                                           (wrap-in-pre-code node lang)
-                                           node)))))]
+              result (if lang (zip/replace loc
+                                           (-> (code-highlight/highlight
+                                                (-> loc
+                                                    zip/node
+                                                    :content
+                                                    first)
+                                                lang)
+                                               hk/parse
+                                               hk/as-hickory
+                                               ((fn [node]
+                                                  (if (= (:tag (zip/node loc))
+                                                         :pre)
+                                                    (wrap-in-pre-code node lang)
+                                                    node)))))
+                         (zip/next loc))]
           (if-let [loc (hs/select-next-loc
                         select-fn
                         (zip/next result))]
