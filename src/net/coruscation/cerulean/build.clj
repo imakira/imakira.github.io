@@ -4,6 +4,7 @@
    [clojure.core.async :as a]
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.orgx.orgx :as orgx]
+   [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
    [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all-blogs]]
    [net.coruscation.cerulean.server.watch-service :as watch-service]
    [shadow.build.targets.esm :as esm]))
@@ -42,13 +43,17 @@
                        (->> (fetch-all-blogs)
                             (map (fn [blog]
                                    (when (:blog/orgx blog)
-                                     [(keyword (str "orgx." (:blog/id blog)))
-                                      {:entries
-                                       [(symbol (str "orgx." (:blog/id blog)))]
-                                       :depends-on #{:default}
-                                       :exports {(symbol "component")
-                                                 (symbol (str "orgx." (:blog/id blog))
-                                                         "component")}}])))
+                                     (let [blog-ns (str "orgx." (:blog/id blog))
+                                           qualified-component-sym (symbol blog-ns
+                                                                           orgx-commons/orgx-default-component-name)]
+                                       [(keyword blog-ns)
+                                        {:entries
+                                         [(symbol blog-ns)]
+                                         :depends-on #{:default}
+                                         :exports {(symbol "default")
+                                                   qualified-component-sym
+                                                   orgx-commons/orgx-default-component-name
+                                                   qualified-component-sym}}]))))
                             (remove nil?)
                             (into {})))]
     (esm/configure-modules (-> build-state
