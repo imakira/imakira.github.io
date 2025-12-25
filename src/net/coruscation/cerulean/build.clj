@@ -2,6 +2,7 @@
   (:require
    [babashka.process :as process]
    [clojure.core.async :as a]
+   [clojure.tools.logging :as logging]
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.orgx.orgx :as orgx]
    [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
@@ -21,7 +22,9 @@
        (let [[resp cancel] (watch-service/watch config/*blog-dir*)]
          (loop [event (a/<!! resp)]
            (when (not (nil? event))
-             (generate-all-orgx!)
+             (try (generate-all-orgx!)
+                  (catch Throwable t
+                    (logging/warn "Generated orgx file failed" t)))
              (recur (a/<!! resp)))))))))
 
 (defn build-css-hook {:shadow.build/stage :compile-prepare}
