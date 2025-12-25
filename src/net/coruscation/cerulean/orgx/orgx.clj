@@ -70,20 +70,24 @@
        (map from-hiccup)
        (mapv unwrap-clj-code)))
 
-(defn blog->cljc [{:blog/keys [id content orgx-require]}]
+(defn blog->cljc [{:blog/keys [id content orgx-require] :as blog-asset}]
   (->> (concat
         `((~'ns ~(symbol (str orgx-base-ns "." id))
            (:require [uix.core :as ~'uix :refer
                       [~'defui ~'use-state ~'use-effect ~'use-context ~'$]]
                      ~@orgx-require)))
-        `((~'defui ~(symbol orgx-default-component-name) []
-           (~'$ :<> ~@(from-html content)))))
+        `((~'defui ~'_comp [~'props]
+           (~'$ :<> ~@(from-html content))))
+        `((~'defui ~(symbol orgx-default-component-name) [~'props]
+           (~'$ ~'_comp (~'merge (~'quote ~blog-asset)
+                         ~'props)))))
        (map str)
        (str/join "\n")))
 
 (defn generate-cljc-from-blog [{:blog/keys [id] :as blog}]
-  (spit (.toString (Path/of orgx-dest-dir
-                            (into-array String
-                                        [(str (str/replace id "-" "_")
-                                              ".cljc")])))
-        (blog->cljc blog)))
+  (binding [*print-namespace-maps* false]
+    (spit (.toString (Path/of orgx-dest-dir
+                              (into-array String
+                                          [(str (str/replace id "-" "_")
+                                                ".cljc")])))
+          (blog->cljc blog))))
