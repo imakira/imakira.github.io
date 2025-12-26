@@ -34,46 +34,47 @@
 (defun org->html (file)
   (save-window-excursion
     (find-file file)
-    (let* ((blog-buffer (current-buffer))
-           (keywords '("title" "category"
-                       "tags" "email"
-                       "language"
-                       "author" "description" "orgx_require" "orgx"))
-           (kvs (org-collect-keywords keywords)))
-      (with-current-buffer blog-buffer
+    (let ((blog-buffer (current-buffer)))
+      (unwind-protect
+          (let* ((keywords '("title" "category"
+                             "tags" "email"
+                             "language"
+                             "author" "description"
+                             "orgx_require" "orgx"
+                             "unlisted"))
+                 (kvs (org-collect-keywords keywords)))
+            (with-current-buffer blog-buffer
 
-        (let ((ids (org-map-entries (lambda ()
-                                      (org-entry-get nil "custom_id")))))
-          (org-map-entries (lambda ()
-                             (if (not (org-entry-get nil "custom_id"))
-                                 (let* ((candidate-id (concat
-                                                       (url-encode-url
-                                                        (string-replace " " "-"
-                                                                        (downcase
-                                                                         (nth 4
-                                                                              (org-heading-components)))))))
-                                        (duplicates (cl-count candidate-id ids :test #'equal)))
-                                   (org-entry-put nil "custom_id" (concat candidate-id
-                                                                          (if (= duplicates 0)
-                                                                              ""
-                                                                            (prin1-to-string (+ 1 duplicates)))))
-                                   (setq ids (cons candidate-id
-                                                   ids))))
-                             (setq ids (cons (org-entry-get nil "custom_id")
-                                             ids))))))
-      (prog1
-          (append
-           (mapcar (lambda (kv)
-                     (cons (intern (downcase (car kv)))
-                           (cadr kv)))
-                   kvs)
-           `((content .
-                      ,(progn
-                         (org-html-export-as-html nil nil nil t)
-                         (buffer-string)))))
-        (progn
-          (kill-buffer blog-buffer)
-          (kill-buffer))))))
+              (let ((ids (org-map-entries (lambda ()
+                                            (org-entry-get nil "custom_id")))))
+                (org-map-entries (lambda ()
+                                   (if (not (org-entry-get nil "custom_id"))
+                                       (let* ((candidate-id (concat
+                                                             (url-encode-url
+                                                              (string-replace " " "-"
+                                                                              (downcase
+                                                                               (nth 4
+                                                                                    (org-heading-components)))))))
+                                              (duplicates (cl-count candidate-id ids :test #'equal)))
+                                         (org-entry-put nil "custom_id" (concat candidate-id
+                                                                                (if (= duplicates 0)
+                                                                                    ""
+                                                                                  (prin1-to-string (+ 1 duplicates)))))
+                                         (setq ids (cons candidate-id
+                                                         ids))))
+                                   (setq ids (cons (org-entry-get nil "custom_id")
+                                                   ids))))))
+            (append
+             (mapcar (lambda (kv)
+                       (cons (intern (downcase (car kv)))
+                             (cadr kv)))
+                     kvs)
+             `((content .
+                        ,(progn
+                           (org-html-export-as-html nil nil nil t)
+                           (buffer-string))))))
+        (kill-buffer blog-buffer)
+        (kill-buffer (current-buffer))))))
 
 (defun cerulean--export-uix-advice (oldfun special-block contents info)
   (if (string= (upcase (org-element-property :type special-block)) "UIX")
