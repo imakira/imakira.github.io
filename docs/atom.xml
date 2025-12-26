@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>Coruscation.net</title>
   <link href="https://coruscation.net"/>
-  <updated>2025-12-25T17:02:59+08:00</updated>
+  <updated>2025-12-26T14:01:57+08:00</updated>
   <author>imakira</author>
   <id>https://coruscation.net</id>
   <entry>
@@ -99,7 +99,7 @@ The initial implementation looks like this, which is fairly straightforward. We 
 However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org40a7b9b"&gt;+---------------+
+&lt;pre class="example" id="org844eb9c"&gt;+---------------+
 | worker thread |
 +-------+-------+
         +                 +---------------+
@@ -145,7 +145,7 @@ We can have a workaround of this by emitting an event of each file in the newly 
 However, it introduces a new problem. If a file is created in a subdirectory after be subdirectory is regsitered, but before the subdirectories scanning is finished. The event of the file may be emitted twice.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org2ab27c9"&gt;  +---------------+
+&lt;pre class="example" id="org3b0bfe3"&gt;  +---------------+
   | worker thread |
   +-------+-------+
           +                +----------------+
@@ -1668,7 +1668,7 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
   <entry>
     <title type="html">Demonstration</title>
     <link href="https://coruscation.net/blogs/demonstration.html"/>
-    <updated>2025-12-25T17:02:59+08:00</updated>
+    <updated>2025-12-26T14:01:57+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
     <content type="html">&lt;div id="outline-container-code-blocks" class="outline-2"&gt;
 &lt;a href="#code-blocks"&gt;&lt;h2 id="code-blocks" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
@@ -1886,27 +1886,27 @@ but not any simpler – Albert Einstein
 &lt;a href="#sample-image"&gt;&lt;h3 id="sample-image" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
 &lt;div class="outline-text-3" id="text-sample-image"&gt;
 
-&lt;figure id="orgf99fa18"&gt;
+&lt;figure id="orgc2c2e94"&gt;
 &lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 
-&lt;figure id="orge600cc6"&gt;
+&lt;figure id="org9f4315e"&gt;
 &lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 
 &lt;/figure&gt;
 
 
-&lt;figure id="org7add069"&gt;
+&lt;figure id="org7075c56"&gt;
 &lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 
-&lt;figure id="org5ab2b38"&gt;
+&lt;figure id="org7b32059"&gt;
 &lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/figcaption&gt;
@@ -1930,14 +1930,14 @@ You can embedded Clojure code inside a blog file using &lt;code&gt;#+begin_uix&l
 Enable this feature first in the org metadata:
 &lt;/p&gt;
 
-&lt;pre class="example" id="org6c00cc0"&gt;#+ORGX: true
+&lt;pre class="example" id="org6c1598a"&gt;#+ORGX: true
 &lt;/pre&gt;
 
 &lt;p&gt;
 With the following snippet embedded in a org file.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org9879ab6"&gt;#+begin_uix
+&lt;pre class="example" id="org2e22313"&gt;#+begin_uix
   ;; You can style it using tailwindcss
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
 #+end_uix
@@ -1960,7 +1960,7 @@ Since the code is in CLJC, this feature works very well with static page generat
 We can access the blog page's meta data using &lt;code&gt;props&lt;/code&gt; variable.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orge454c42"&gt;#+begin_uix
+&lt;pre class="example" id="org44f9615"&gt;#+begin_uix
 ($ :div {:class &amp;quot;bg-stone-50 pl-4 py-2 border-l-3 border-sky-500&amp;quot;} (str (keys props)))
 #+end_uix
 &lt;/pre&gt;
@@ -1980,7 +1980,7 @@ Like with MDX, we can use other orgx files as components.
 First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as contents, note the &lt;code&gt;#+UNLISTED&lt;/code&gt; property.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orga1ee7fc"&gt;#+ORGX: true
+&lt;pre class="example" id="org55f5cdd"&gt;#+ORGX: true
 #+UNLISTED: true
 #+begin_uix
 ($ :div
@@ -1994,14 +1994,14 @@ First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as con
 When we want to use this OrgX file as a components, we need to add a &lt;code&gt;require&lt;/code&gt; declaration first.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org4acdccb"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
+&lt;pre class="example" id="org80233d5"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
 &lt;/pre&gt;
 
 &lt;p&gt;
 Then we could use it like this
 &lt;/p&gt;
 
-&lt;pre class="example" id="org65326eb"&gt;#+begin_uix
+&lt;pre class="example" id="orgec3d096"&gt;#+begin_uix
 ($ note/component  &amp;quot;This is a note&amp;quot;)
 #+end_uix
 &lt;/pre&gt;
