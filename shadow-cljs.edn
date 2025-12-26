@@ -7,11 +7,13 @@
            :runtime :browser
            :modules {:default {:entries
                                [net.coruscation.cerulean.utils]}
+                     :shared {:depends-on #{:default}}
                      :main {:entries
                             [net.coruscation.cerulean.common.pages
                              net.coruscation.cerulean.client]
                             :init-fn net.coruscation.cerulean.client/init
-                            :depends-on #{:default}}}
+                            :depends-on #{:default :shared}}}
+
            :devtools {:preloads [preload devtools.preload]}
            :compiler-options {:source-map true}
            :build-hooks [(net.coruscation.cerulean.build/build-css-hook)
