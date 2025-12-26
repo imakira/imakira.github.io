@@ -9,6 +9,10 @@
 
 (defonce ^:dynamic *blogs* (atom []))
 
+(defn fetch-all [& rest]
+  (p.eql/process-one env
+                     :blog.query/all))
+
 (defn fetch-all-blogs [& rest]
   (p.eql/process-one env
                      :blog.query/all-visible-desc))

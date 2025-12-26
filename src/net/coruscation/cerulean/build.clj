@@ -6,12 +6,13 @@
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.orgx.orgx :as orgx]
    [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
-   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all-blogs]]
+   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all
+                                                              fetch-all-blogs]]
    [net.coruscation.cerulean.server.watch-service :as watch-service]
    [shadow.build.targets.esm :as esm]))
 
 (defn generate-all-orgx! []
-  (doseq [blog (fetch-all-blogs)]
+  (doseq [blog (fetch-all)]
     (when (:blog/orgx blog)
       (orgx/generate-cljc-from-blog blog))))
 
@@ -52,7 +53,7 @@
                                        [(keyword blog-ns)
                                         {:entries
                                          [(symbol blog-ns)]
-                                         :depends-on #{:default}
+                                         :depends-on #{:default :shared}
                                          :exports {(symbol "default")
                                                    qualified-component-sym
                                                    orgx-commons/orgx-default-component-name

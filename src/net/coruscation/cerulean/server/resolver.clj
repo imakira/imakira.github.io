@@ -159,6 +159,7 @@
                      blog-by-id
                      blog-table
                      all-blogs-desc
+                     all-including-unlisted
                      home-page-blogs-desc
                      blog-ids
                      ])
