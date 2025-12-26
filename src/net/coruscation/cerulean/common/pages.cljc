@@ -246,8 +246,16 @@
             ($ :div.text-base.grid.items-center.text-gray-700 {:class "pl-[1px] grid-cols-[7rem_1fr]"}
                ($ :div.text-sky-700.border-l-2.pl-2.text-lg
                   (str category))
-               ($ :div.text-base
-                  (date-time-to-readable-string (commons/parse-iso8601 modified-date)))))
+               ($ :span.flex.items-center.gap-4
+                  ($ :span.flex.items-center.gap-2
+                     ($ :span.text-gray-600 "Pub.")
+                     ($ :span.text-base.text-gray-700
+                        (date-time-to-readable-string (commons/parse-iso8601 published-date))))
+                  (when (not (= published-date modified-date))
+                    ($ :span.flex.items-center.gap-2
+                       ($ :span.text-gray-600 "Upd.")
+                       ($ :span.text-base.text-gray-700
+                          (date-time-to-readable-string (commons/parse-iso8601 modified-date))))))))
          (when show-toc?
            ($ toc-mobile {:class ""
                           :toc-content toc-content
