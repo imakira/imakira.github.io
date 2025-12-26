@@ -1,0 +1,6 @@
+(ns orgx.note (:require [uix.core :as uix :refer [defui use-state use-effect use-context $]]))
+(defui _comp [props] ($ :<> ($ :div
+    ($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-rose-500"}
+      ($ :div {:class "font-semibold mb-1 text-neutral-600"} "TIP")
+      ($ :div (:children props))))))
+(defui component [props] ($ _comp (merge (quote {:blog/orgx true, :blog/tags [], :blog/unlisted true, :blog/title nil, :blog/show-toc? true, :blog/file-path "/home/void/Projects/imakira.github.io/blogs/note.org", :blog/author nil, :blog/email nil, :blog/description "($ :div\n    ($ :div {:class \"bg-stone-50 pl-4 py-2 border-l-3 border-rose-500\"}\n      ($ :div {:class \"font-semibold mb-1 text-neutral-600\"} \"TIP\")\n      (...", :blog/id "note", :blog/category nil, :blog/language "en_US", :blog/published-date "2025-12-26T13:57:41+08:00", :blog/content "<pre class=\"uix\">($ :div\n    ($ :div {:class &quot;bg-stone-50 pl-4 py-2 border-l-3 border-rose-500&quot;}\n      ($ :div {:class &quot;font-semibold mb-1 text-neutral-600&quot;} &quot;TIP&quot;)\n      ($ :div (:children props))))\n\n</pre>\n", :blog/orgx-require nil, :blog/modified-date "2025-12-26T13:57:41+08:00"}) props)))
