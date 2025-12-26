@@ -11,7 +11,7 @@
 
 (defn fetch-all-blogs [& rest]
   (p.eql/process-one env
-                     :blog.query/all-blogs-desc))
+                     :blog.query/all-visible-desc))
 
 (defn fetch-blog [{{id :blog/id} :path-params}]
   (p.eql/process env
@@ -20,11 +20,11 @@
 
 (defn fetch-blogs [& rest]
   (p.eql/process-one env
-                     :blog.query/home-page-blogs-desc))
+                     :blog.query/home-page-desc))
 
 (defn fetch-blog-ids [& rest]
   (p.eql/process-one env
-                     {:blog.query/all-blogs-desc
+                     {:blog.query/all-visible-desc
                       [:blog/id]}))
 
 (def json-assets-route

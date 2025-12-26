@@ -178,7 +178,7 @@
 
 (defn org-file->html [path]
   (eipc/init-emacs!)
-  (let [{:keys [content title category tags email language author description orgx orgx_require] :as result}
+  (let [{:keys [content title category tags email language author description orgx orgx_require unlisted] :as result}
         (eipc/elisp-funcall! :org->html path)
 
         hickory-blocks (->> content
@@ -213,7 +213,8 @@
                                (if (> (count text)
                                       155)
                                  (str (subs text 0 155) "...")
-                                 (subs text 0 (min (count text) 153)))))}]
+                                 (subs text 0 (min (count text) 153)))))
+              :unlisted (boolean unlisted)}]
     blog))
 
 
