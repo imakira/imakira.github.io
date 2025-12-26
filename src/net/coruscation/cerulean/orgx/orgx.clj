@@ -41,10 +41,12 @@
             (and (seq? node)
                  (= (first node)
                     '$)
-                 (= (second node)
-                    :pre)
+                 (or (= (second node)
+                        :pre)
+                     (= (second node)
+                        :code))
                  (= (:class (nth node 2))
-                    "uix"))
+                    "orgx"))
           (recur
            (zip/next (zip/replace loc
                                   (CljCode. (str/trim (last node))))))

@@ -77,13 +77,20 @@
         (kill-buffer (current-buffer))))))
 
 (defun cerulean--export-uix-advice (oldfun special-block contents info)
-  (if (string= (upcase (org-element-property :type special-block)) "UIX")
-      (format "<pre class=\"uix\">\n%s\n</pre>"
+  (if (string= (upcase (org-element-property :type special-block)) "ORGX")
+      (format "<pre class=\"orgx\">\n%s\n</pre>"
               (buffer-substring (org-element-property :contents-begin special-block)
                                 (org-element-property :contents-end special-block)))
     (funcall oldfun special-block contents info)))
 
+(defun cerulean--export-snippet-uix-advice (oldfun export-snippet _contents _info)
+  (if (eq (org-export-snippet-backend export-snippet) 'orgx)
+	  (format "<code class=\"orgx\">\n%s\n</code>"
+              (org-element-property :value export-snippet))
+    (funcall oldfun export-snippet _contents _info)))
+
 (advice-add 'org-html-special-block :around #'cerulean--export-uix-advice)
+(advice-add 'org-html-export-snippet :around #'cerulean--export-snippet-uix-advice)
 
 (defun main ()
   (cl-loop
