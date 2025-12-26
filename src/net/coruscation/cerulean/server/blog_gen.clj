@@ -48,7 +48,7 @@
                                  (hs/class :src))
                          (hs/and (hs/tag :pre)
                                  (hs/not (hs/class :cr-highlighted))
-                                 (hs/not (hs/class :uix))))]
+                                 (hs/not (hs/class :orgx))))]
     (if-let [loc (hs/select-next-loc select-fn
                                      (hz/hickory-zip hickory-tree))]
       (loop [loc loc]
