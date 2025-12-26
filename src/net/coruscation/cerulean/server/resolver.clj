@@ -5,14 +5,14 @@
    [com.wsscode.pathom3.connect.built-in.resolvers :as pbir]
    [com.wsscode.pathom3.connect.indexes :as pci]
    [com.wsscode.pathom3.connect.operation :as pco]
-   [com.wsscode.pathom3.interface.eql :as p.eql]
    [net.coruscation.cerulean.common.commons :as commons]
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.server.blog-gen :as blog-gen]
    [net.coruscation.cerulean.server.blogs :refer [file-first-commit-date
                                                   file-last-commit-date
                                                   file-last-modified-date
-                                                  special-page?]])
+                                                  special-page?]]
+   [net.coruscation.cerulean.user-config :as user-config])
   (:import
    [com.google.common.io Files]))
 
@@ -35,6 +35,7 @@
    :blog/published-date
    :blog/modified-date
    :blog/category
+   :blog/unlisted
    ])
 
 (def blog-eql (->> (concat
@@ -57,7 +58,7 @@
                                    file-last-modified-time]}]
   {::pco/cache-store ::blog-from-file-cache
    ::pco/output
-   [:blog.fetch/by-path]}
+   [{:blog.fetch/by-path blog-eql}]}
 
   {:blog.fetch/by-path
    (wrapped-keys-in-ns
@@ -96,6 +97,11 @@
        (mapv (fn [file]
                {:file/file-path file}) files)))})
 
+(pco/defresolver blog-special-page? [{:blog/keys [id]}]
+  {:blog/special-page? (boolean (some (fn [name]
+                                        (= name id))
+                                      user-config/special-pages))})
+
 (pco/defresolver file-last-modified-time [{:file/keys [file-path]}]
   {::pco/output
    [:file/file-last-modified-time]}
@@ -104,41 +110,51 @@
 
 (pco/defresolver blog-table [{:blog/keys [blog-files]}]
   {::pco/input [{:blog/blog-files
-                 [:blog.fetch/by-path]}]}
+                 [:blog.fetch/by-path]}]
+   ::pco/output [{:blog.query/tables blog-eql}]}
   {:blog.query/tables
    (into {} (map (fn [{:blog.fetch/keys [by-path]}]
                    [(:blog/id by-path)
                     by-path])
                  blog-files))})
 
+(pco/defresolver all-including-unlisted [{:blog.query/keys [tables]}]
+  {::pco/output [{:blog.query/all blog-eql}]}
+  {:blog.query/all (->> (vals tables)
+                        (into []))})
+
 (pco/defresolver all-blogs-desc [{:blog.query/keys [tables]}]
-  {:blog.query/all-blogs-desc
+  {::pco/output [{:blog.query/all-visible-desc blog-eql}]}
+  {:blog.query/all-visible-desc
    (->> (vals tables)
+        (filter (fn [blog] (not (:blog/unlisted blog))))
         (sort (fn [a b]
                 (zoned-date-time/compare-to
                  (commons/parse-iso8601 (:blog/published-date a))
                  (commons/parse-iso8601 (:blog/published-date b)))))
-        (reverse))})
+        (reverse)
+        (into []))})
 
-(pco/defresolver home-page-blogs-desc [{:blog.query/keys [all-blogs-desc]}]
-  {:blog.query/home-page-blogs-desc
+(pco/defresolver home-page-blogs-desc [{:blog.query/keys [all-visible-desc]}]
+  {::pco/output [{:blog.query/home-page-desc (into [] (concat [:blog/special-page?] blog-eql))}]}
+  {:blog.query/home-page-desc
    (into []
-         (filter (comp not special-page?)
-                 all-blogs-desc))})
+         (filter (fn [blog] (not (:blog/special-page? blog)))
+                 all-visible-desc))})
 
-(pco/defresolver blog-ids [{:blog.query/keys [all-blogs-desc]}]
+(pco/defresolver blog-ids [{:blog.query/keys [all-visible-desc]}]
   {:blog.query/blog-ids
-   (mapv :blog/id all-blogs-desc)})
+   (mapv :blog/id all-visible-desc)})
 
 (def blog-by-id
   (pbir/attribute-table-resolver :blog.query/tables
                                  :blog/id
                                  blog-eql))
 
-
 (def env
   (-> (pci/register [blog-files
                      blog-from-path
+                     blog-special-page?
                      file-last-modified-time
                      blog-by-id
                      blog-table
