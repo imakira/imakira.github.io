@@ -15,12 +15,12 @@
          (.build))))
 
 #?(:clj
-   (def ^:dynamic *module* (.eval *js-context* "js" "require('../wrapper')")))
+   (def ^:dynamic *module* (locking *js-context* (.eval *js-context* "js" "require('../wrapper')"))))
 
 #?(:clj (defn add-language-alias! [alias code]
-          (.execute (.getMember *module* "language_alias_wrapper")
-                    (into-array Object [alias code]))))
+          (locking *js-context* (.execute (.getMember *module* "language_alias_wrapper")
+                                          (into-array Object [alias code])))))
 
 #?(:clj
    (defn highlight [code lang]
-     (.asString (.execute (.getMember *module*  "highlight_wrapper") (into-array Object [code lang])))))
+     (locking *js-context* (.asString (.execute (.getMember *module*  "highlight_wrapper") (into-array Object [code lang]))))))
