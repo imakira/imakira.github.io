@@ -58,7 +58,6 @@
      (let [[module set-module!] (use-state nil)
            saved  (and use? (aget js/window
                                   (render-context-commons/extra-script-global-this-name module-name)))]
-       (tap> [module saved])
        (use-effect (fn []
                      (when (and use?
                                 (seq module-name))
