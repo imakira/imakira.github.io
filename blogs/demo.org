@@ -3,7 +3,7 @@
 #+CATEGORY: Coding
 #+OPTIONS: tex:dvisvgm
 #+ORGX: true
-#+ORGX_REQUIRE: [[net.coruscation.cerulean.components :as comp]]
+#+ORGX_REQUIRE: [[net.coruscation.cerulean.components :as comp] [orgx.note :as note]]
 #+DESCRIPTION: This is a demonstration of this static blog generator
 #+LATEX_HEADER: \usepackage{pgfplots}
 #+LATEX_HEADER: \usepackage{svg}
@@ -203,7 +203,7 @@ Some text in between
 :END:
 
 
-* Inline CLJC Code
+* Inline CLJC Code (OrgX)
 :PROPERTIES:
 :custom_id: inline-cljc-code
 :END:
@@ -246,3 +246,39 @@ We can access the blog page's meta data using ~props~ variable.
 ($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys props)))
 #+end_uix
 
+** Using Other OrgX files as components
+
+Like with MDX, we can use other orgx files as components.
+
+First we make a ~note.org~ file with the following as contents, note the ~#+UNLISTED~ property.
+
+#+begin_example
+#+ORGX: true
+#+UNLISTED: true
+#+begin_uix
+($ :div
+    ($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-rose-500"}
+      ($ :div {:class "font-semibold mb-1 text-neutral-600"} "TIP")
+      ($ :div (:children props))))
+#+end_uix
+#+end_example
+
+When we want to use this OrgX file as a components, we need to add a ~require~ declaration first.
+
+#+begin_example
+#+ORGX_REQUIRE: [[orgx.note :as note]]
+#+end_example
+
+Then we could use it like this
+
+#+begin_example
+#+begin_uix
+($ note/component  "This is a note")
+#+end_uix
+#+end_example
+
+It will be rendered as:
+
+#+begin_uix
+($ note/component  "This is a note")
+#+end_uix
