@@ -44,7 +44,12 @@
           {:rel "alternate",
            :type "application/rss+xml",
            :title user-config/title,
-           :href (str user-config/root-url "/atom.xml")}]]
+           :href (str user-config/root-url "/atom.xml")}]
+         [:link {:rel "modulepreload" :href "/js/main.js"}]
+         (map (fn [{:keys [_ module]}]
+                [:link {:rel "modulepreload"
+                        :href (str "/js/" module)}])
+              extra-scripts)]
         [:body
          [:div#root (raw-string inner)]
          [:script (raw-string (str "window.__server_path = \"" server-url \"))]
@@ -57,12 +62,12 @@
                                                           ";"))
                                                    serialized-assets)))]))
          (map (fn [{:keys [id module]}]
-                (list [:script {:src (str "/js/" module) :type "module"} ]
-                      [:script {:type "module"}
-                       (raw-string "import * as exps  from '/js/" module "';\n")
-                       (raw-string "window['" (extra-script-global-this-name id) "'] = exps;")]))
+                (list [:script {:src (str "/js/" module) :type "module" :defer true} ]
+                      [:script {:src (str "data:text/javascript," "import * as exps  from '/js/" module "';" "window['" (extra-script-global-this-name id) "'] = exps;")
+                                :type "module"
+                                :defer true}]))
               extra-scripts)
-         [:script {:src "/js/main.js" :type "module"}]]])))
+         [:script {:src "/js/main.js" :type "module" :defer true}]]])))
 
 (def ^:dynamic *serialized-assets* (atom {}))
 
