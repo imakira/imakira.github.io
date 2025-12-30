@@ -30,6 +30,23 @@
                              (StringEscapeUtils/unescapeHtml4 (zip/node zip))
                              (zip/node zip))))))))
 
+(defn use-comp [comp-name children]
+  (CljCode. (str "($ " comp-name " "
+                 (str/join " " (map pr-str children))
+                 ")")))
+
+(def registered-wrappers {:use-comp use-comp})
+
+(defn expand-orgx [orgx-node]
+  (cond
+    (:data-wrapper (nth orgx-node 2))
+    (((keyword (:data-wrapper (nth orgx-node 2)))
+      registered-wrappers)
+     (:data-wrapper-data (nth orgx-node 2))
+     (drop 3 orgx-node ))
+
+    :else (CljCode. (str/trim (last orgx-node)))))
+
 (defn unwrap-clj-code [uix-sexp]
   (loop [loc (zip/seq-zip uix-sexp)]
     (if (zip/end? loc)
@@ -47,7 +64,7 @@
                     "orgx"))
           (recur
            (zip/next (zip/replace loc
-                                  (CljCode. (str/trim (last node))))))
+                                  (expand-orgx node))))
           (recur (zip/next loc)))))))
 
 (defn remove-extra-newline [hiccup]

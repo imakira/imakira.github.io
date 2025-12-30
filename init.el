@@ -77,11 +77,17 @@
         (kill-buffer (current-buffer))))))
 
 (defun cerulean--export-uix-advice (oldfun special-block contents info)
-  (if (string= (upcase (org-element-property :type special-block)) "ORGX")
-      (format "<pre class=\"orgx\">\n%s\n</pre>"
-              (buffer-substring (org-element-property :contents-begin special-block)
-                                (org-element-property :contents-end special-block)))
-    (funcall oldfun special-block contents info)))
+  (cond ((string= (upcase (org-element-property :type special-block)) "ORGX")
+         (format "<pre class=\"orgx\">\n%s\n</pre>"
+                 (buffer-substring (org-element-property :contents-begin special-block)
+                                   (org-element-property :contents-end special-block))))
+        ((string-match-p "\\`ORGX_[^z-a]"
+                         (upcase (org-element-property :type special-block)))
+         (format "<pre class=\"orgx\" data-wrapper=\"use-comp\" data-wrapper-data=\"%s\">\n%s\n</pre>"
+                 (substring (downcase (org-element-property :type special-block))
+                            5)
+                 contents))
+        (t (funcall oldfun special-block contents info))))
 
 (defun cerulean--export-snippet-uix-advice (oldfun export-snippet _contents _info)
   (if (eq (org-export-snippet-backend export-snippet) 'orgx)
