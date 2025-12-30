@@ -1,12 +1,10 @@
 (ns net.coruscation.cerulean.orgx.orgx
   (:require
-   [clojure.edn :as edn]
    [clojure.string :as str]
    [clojure.zip :as zip]
-   [com.wsscode.pathom3.interface.eql :refer [process-one]]
    [hickory.core :refer [as-hiccup]]
+   [net.coruscation.cerulean.common.components :refer [default-exports]]
    [net.coruscation.cerulean.orgx.orgx-commons :refer :all]
-   [net.coruscation.cerulean.server.resolver :refer [env]]
    [uix.dev :refer [from-hiccup]])
   (:import
    [java.nio.file Path]
@@ -77,6 +75,7 @@
         `((~'ns ~(symbol (str orgx-base-ns "." id))
            (:require [uix.core :as ~'uix :refer
                       [~'defui ~'use-state ~'use-effect ~'use-context ~'$]]
+                     [net.coruscation.cerulean.common.components :refer [~@default-exports]]
                      ~@orgx-require)))
         `((~'defui ~'_comp [~'props]
            (~'$ :<> ~@(from-html content))))
