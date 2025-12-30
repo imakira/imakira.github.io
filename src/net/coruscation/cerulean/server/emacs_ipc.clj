@@ -158,3 +158,8 @@
                         resp)
              error-chan ([error]
                          (throw error)))))
+
+(defn emacs-reload-init
+  "For develop purpose only"
+  []
+  (elisp-funcall! "cerulean--reload-init"))

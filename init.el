@@ -118,4 +118,11 @@
              (princ "\n")))
        (error (message (prin1-to-string e) )
               (message "\n"))))))
+
+(defun cerulean--reload-init ()
+  "For develop purpose only"
+  (find-file (concat (getenv "PWD") "/init.el"))
+  (unwind-protect
+      (eval-buffer (current-buffer))
+    (kill-buffer (current-buffer))))
 ;; (org->html-to-stdout (concat default-directory "blogs/demo.org"))
