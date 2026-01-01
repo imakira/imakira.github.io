@@ -13,7 +13,7 @@
    [clojure.zip :as zip]
    [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
    [net.coruscation.cerulean.render.context-commons :as render-context-commons])
-  #?(:cljs (:require-macros [net.coruscation.cerulean.utils :refer [use-context context-binding defcontext if-cljs]]))
+  #?(:cljs (:require-macros [net.coruscation.cerulean.utils :refer [use-context context-binding defcontext if-cljs cljc-case]]))
   #?(:cljs (:import
             [goog.async Debouncer Throttle])))
 
@@ -105,6 +105,15 @@
   "Take the &env from a macro, and tell whether we are expanding into cljs."
   [env]
   (boolean (:ns env)))
+
+#?(:clj (defmacro cljc-case
+          "(cljc-case :cljs (ClojureScript Expression)
+  :clj (Clojure Expression))"
+          [& cases]
+          (let [{:keys [clj cljs]} (into {} (map vec (partition 2 cases)))]
+            (if (cljs-env? &env)
+              cljs
+              clj))))
 
 #?(:clj (defmacro if-cljs
           "Return then if we are generating cljs code and else for Clojure code.
