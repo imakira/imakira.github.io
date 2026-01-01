@@ -77,17 +77,26 @@
         (kill-buffer (current-buffer))))))
 
 (defun cerulean--export-uix-advice (oldfun special-block contents info)
-  (cond ((string= (upcase (org-element-property :type special-block)) "ORGX")
-         (format "<pre class=\"orgx\">\n%s\n</pre>"
-                 (buffer-substring (org-element-property :contents-begin special-block)
-                                   (org-element-property :contents-end special-block))))
-        ((string-match-p "\\`ORGX_[^z-a]"
-                         (upcase (org-element-property :type special-block)))
-         (format "<pre class=\"orgx\" data-wrapper=\"use-comp\" data-wrapper-data=\"%s\">\n%s\n</pre>"
-                 (substring (downcase (org-element-property :type special-block))
-                            5)
-                 contents))
-        (t (funcall oldfun special-block contents info))))
+  (let ((block-type (upcase (org-element-property :type special-block))))
+    (cond ((string= block-type "ORGX")
+           (format "<pre class=\"orgx\" %s>\n%s\n</pre>"
+                   (if (org-element-property :attr_orgx_toplevel special-block)
+                       "data-toplevel"
+                     "")
+                   (buffer-substring (org-element-property :contents-begin special-block)
+                                     (org-element-property :contents-end special-block))))
+          ((string-match-p "\\`ORGX_[^z-a]"
+                           block-type)
+           (if (org-element-property :attr_orgx_defui special-block)
+               (format "<pre class=\"orgx\" data-wrapper=\"use-defui\" data-wrapper-data=\"%s\">\n%s\n</pre>"
+                       (substring (downcase block-type)
+                                  5)
+                       contents)
+             (format "<pre class=\"orgx\" data-wrapper=\"use-comp\" data-wrapper-data=\"%s\">\n%s\n</pre>"
+                     (substring (downcase block-type)
+                                5)
+                     contents)))
+          (t (funcall oldfun special-block contents info)))))
 
 (defun cerulean--export-snippet-uix-advice (oldfun export-snippet _contents _info)
   (if (eq (org-export-snippet-backend export-snippet) 'orgx)

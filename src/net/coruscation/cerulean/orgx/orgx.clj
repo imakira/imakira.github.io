@@ -5,6 +5,7 @@
    [hickory.core :refer [as-hiccup]]
    [net.coruscation.cerulean.common.components :refer [default-exports]]
    [net.coruscation.cerulean.orgx.orgx-commons :refer :all]
+   [net.coruscation.cerulean.server.assets :refer [fetch-all]]
    [uix.dev :refer [from-hiccup]])
   (:import
    [java.nio.file Path]
@@ -31,29 +32,35 @@
                              (zip/node zip))))))))
 
 (defn use-comp [comp-name children]
-  (CljCode. (str "($ " comp-name " "
-                 (str/join " " (map pr-str children))
-                 ")")))
+  [`(~'$ ~(symbol comp-name) ~@children)])
 
-(def registered-wrappers {:use-comp use-comp})
+(defn use-defui [comp-name children]
+  [nil `(~'defui ~(symbol comp-name) [~'props] ~@children)])
+
+(def registered-wrappers {:use-comp use-comp
+                          :use-defui use-defui})
 
 (defn expand-orgx [orgx-node]
-  (cond
-    (:data-wrapper (nth orgx-node 2))
-    (((keyword (:data-wrapper (nth orgx-node 2)))
-      registered-wrappers)
-     (:data-wrapper-data (nth orgx-node 2))
-     (drop 3 orgx-node ))
+  (let [properties (nth orgx-node 2)]
+    (cond
+      (:data-wrapper properties)
+      (((keyword (:data-wrapper properties))
+        registered-wrappers)
+       (:data-wrapper-data properties)
+       (drop 3 orgx-node))
 
-    :else (CljCode. (str/trim (last orgx-node)))))
+      :else (if (:data-toplevel properties)
+              [nil (CljCode. (str/trim (last orgx-node)))]
+              [(CljCode. (str/trim (last orgx-node)))]))))
 
 (defn unwrap-clj-code [uix-sexp]
-  (loop [loc (zip/seq-zip uix-sexp)]
+  (loop [loc (zip/seq-zip uix-sexp)
+         toplevels nil]
     (if (zip/end? loc)
-      (zip/node loc)
+      [(zip/node loc)
+       (reverse toplevels)]
       (let [node (zip/node loc)]
-        (if
-            (and (seq? node)
+        (if (and (seq? node)
                  (= (first node)
                     '$)
                  (or (= (second node)
@@ -62,10 +69,15 @@
                         :code))
                  (= (:class (nth node 2))
                     "orgx"))
-          (recur
-           (zip/next (zip/replace loc
-                                  (expand-orgx node))))
-          (recur (zip/next loc)))))))
+          (let [[inplace toplevel] (expand-orgx node)]
+            (recur
+             (zip/next (zip/replace loc
+                                    inplace))
+             (if toplevel
+               (cons toplevel toplevels)
+               toplevels)))
+          (recur (zip/next loc)
+                 toplevels))))))
 
 (defn remove-extra-newline [hiccup]
   (loop [loc (zip/vector-zip hiccup)]
@@ -79,28 +91,33 @@
                 loc))))))
 
 (defn from-html [html]
-  (->> (hickory.core/parse-fragment html)
-       (map as-hiccup)
-       (into [])
-       remove-extra-newline
-       (map unescape-contents)
-       (map from-hiccup)
-       (mapv unwrap-clj-code)))
+  (let [results (->> (hickory.core/parse-fragment html)
+                     (map as-hiccup)
+                     (into [])
+                     remove-extra-newline
+                     (map unescape-contents)
+                     (map from-hiccup)
+                     (map unwrap-clj-code))]
+    [(remove nil? (map first results))
+     (apply concat (map second results))]))
 
 (defn blog->cljc [{:blog/keys [id content orgx-require] :as blog-asset}]
-  (->> (concat
-        `((~'ns ~(symbol (str orgx-base-ns "." id))
-           (:require [uix.core :as ~'uix :refer
-                      [~'defui ~'use-state ~'use-effect ~'use-context ~'$]]
-                     [net.coruscation.cerulean.common.components :refer [~@default-exports]]
-                     ~@orgx-require)))
-        `((~'defui ~'_comp [~'props]
-           (~'$ :<> ~@(from-html content))))
-        `((~'defui ~(symbol orgx-default-component-name) [~'props]
-           (~'$ ~'_comp (~'merge (~'quote ~blog-asset)
-                         ~'props)))))
-       (map str)
-       (str/join "\n")))
+  (let [[inplace toplevels] (from-html content)]
+    (->> (concat
+          `((~'ns ~(symbol (str orgx-base-ns "." id))
+             (:require [uix.core :as ~'uix :refer
+                        [~'defui ~'use-state ~'use-effect ~'use-context ~'$]]
+                       [net.coruscation.cerulean.utils :refer [~'cljc-case]]
+                       [net.coruscation.cerulean.common.components :refer [~@default-exports]]
+                       ~@orgx-require)))
+          `(~@toplevels)
+          `((~'defui ~'_comp [~'post-props]
+             (~'$ :<> ~@inplace)))
+          `((~'defui ~(symbol orgx-default-component-name) [~'props]
+             (~'$ ~'_comp (~'merge (~'quote ~blog-asset)
+                           ~'props)))))
+         (map str)
+         (str/join "\n"))))
 
 (defn generate-cljc-from-blog [{:blog/keys [id] :as blog}]
   (binding [*print-namespace-maps* false]
