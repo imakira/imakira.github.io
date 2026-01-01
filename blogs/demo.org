@@ -234,16 +234,16 @@ We can get a clickable button in the generated page:
 
 Since the code is in CLJC, this feature works very well with static page generation / server side rendering. However, you must wrap plaform specified code in read macros like we do in a normal CLJC file.
 
-We can access the blog page's meta data using ~props~ variable.
+We can access the blog page's meta data using ~post-props~ variable.
 
 #+begin_example
 #+begin_orgx
-($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys props)))
+($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys post-props)))
 #+end_orgx
 #+end_example
 
 #+begin_orgx
-($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys props)))
+($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys post-props)))
 #+end_orgx
 
 ** Inline Clojure Snippet
@@ -269,7 +269,7 @@ First we make a ~note.org~ file with the following as contents, note the ~#+UNLI
 ($ :div
     ($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-rose-500"}
       ($ :div {:class "font-semibold mb-1 text-neutral-600"} "TIP")
-      ($ :div (:children props))))
+      ($ :div (:children post-props))))
 #+end_orgx
 #+end_example
 
@@ -293,3 +293,192 @@ It will be rendered as:
 ($ note/component  "This is a note")
 #+end_orgx
 
+** Builtin Components
+
+*** Simple Remarks
+
+It has several builtin components, notebly, the following snippet:
+
+#+begin_example
+#+begin_orgx
+($ info "This is an info")
+($ note "This is a note")
+($ warn "This is a warn")
+($ error "This is an error")
+#+end_orgx
+#+end_example
+
+Will be rendered as:
+
+#+begin_orgx
+($ info "This is an info")
+($ note "This is a note")
+($ warn "This is a warn")
+($ error "This is an error")
+#+end_orgx
+
+*** Tabs
+
+#+attr_orgx_defui: true
+#+begin_orgx_code_org
+#+begin_example
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_code_clj
+  ,#+begin_src clojure
+  (defui tabs [{:keys [tab-list default-table class]}]
+    (let [[selected-tab set-selected-tab!] (use-state (or default-table
+                                                          (:name (first tab-list))))]
+      ($ :div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100 {:class class}
+         ($ :div.my-0.flex.relative.bg-neutral-100
+            (map (fn [{:keys [name]}]
+                   ($ :button.font-medium.text-neutral-700.bg-neutral-50.py-1.px-2.border-t-2.border-neutral-50.min-w-28.bg-neutral-50.border-t-neutral-100
+                      {:key name
+                       :class (when (= name selected-tab)
+                                " text-sky-800 border-sky-400 bg-sky-100 border-t-sky-400")
+                       :on-click (fn []
+                                   #?(:cljs
+                                      (set-selected-tab! name)))}
+                      name))
+                 tab-list))
+         ($ :div.my-0.bg-neutral-50.overflow-hidden.px-2.h-full
+            (:content (first (filter (fn [{:keys [name]}]
+                                       (= name selected-tab))
+                                     tab-list)))))))
+
+  ,#+end_src
+  ,#+end_orgx_code_clj
+
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_code_org
+  ,#+begin_example
+  Well we can't display the contents recurisvely
+  ,#+end_example
+  ,#+end_orgx_code_org
+
+
+  ,#+begin_orgx
+  ($ tabs {:tab-list [{:name "tab_demo.org" :content ($ code_org)} {:name "tabs.clj" :content ($ code_clj)}]})
+  ,#+end_orgx
+#+end_example
+#+end_orgx_code_org
+
+#+attr_orgx_defui: true
+#+begin_orgx_code_clj
+#+begin_src clojure
+  (defui tabs [{:keys [tab-list default-table class]}]
+    (let [[selected-tab set-selected-tab!] (use-state (or default-table
+                                                          (:name (first tab-list))))]
+      ($ :div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100 {:class class}
+         ($ :div.my-0.flex.relative.bg-neutral-100
+            (map (fn [{:keys [name]}]
+                   ($ :button.font-medium.text-neutral-700.bg-neutral-50.py-1.px-2.border-t-2.border-neutral-50.min-w-28.bg-neutral-50.border-t-neutral-100
+                      {:key name
+                       :class (when (= name selected-tab)
+                                " text-sky-800 border-sky-400 bg-sky-100 border-t-sky-400")
+                       :on-click (fn []
+                                   #?(:cljs
+                                      (set-selected-tab! name)))}
+                      name))
+                 tab-list))
+         ($ :div.my-0.bg-neutral-50.overflow-hidden.px-2.h-full
+            (:content (first (filter (fn [{:keys [name]}]
+                                       (= name selected-tab))
+                                     tab-list)))))))
+#+end_src
+#+end_orgx_code_clj
+
+#+begin_orgx
+($ tabs {:tab-list [{:name "tab_demo.org" :content ($ code_org)} {:name "tabs.clj" :content ($ code_clj)}]})
+#+end_orgx
+
+
+*** Split Layout
+
+Split layout lets you show two things side by side:
+
+#+begin_example
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_split_1
+  ,#+begin_src clojure
+    ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+                :on-click (fn [& _]
+                            #?(:cljs (js/alert "clicked!")))}
+       "Click Me")
+  ,#+end_src
+  ,#+end_orgx_split_1
+
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_split_2
+  ,#+begin_orgx
+    ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+                :on-click (fn [& _]
+                            #?(:cljs (js/alert "clicked!")))}
+       "Click Me")
+  ,#+end_orgx
+  ,#+end_orgx_split_2
+
+  ,#+begin_orgx
+  ($ split-layout
+  ($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+  ($ tabs {:tab-list [{:name "showcase" :content ($ split_2)}]}))
+  ,#+end_orgx
+#+end_example
+
+Will be rendered as:
+
+
+#+attr_orgx_defui: true
+#+begin_orgx_split_1
+#+begin_src clojure
+  ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+              :on-click (fn [& _]
+                          #?(:cljs (js/alert "clicked!")))}
+     "Click Me")
+#+end_src
+#+end_orgx_split_1
+
+#+attr_orgx_defui: true
+#+begin_orgx_split_2
+#+begin_orgx
+  ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+              :on-click (fn [& _]
+                          #?(:cljs (js/alert "clicked!")))}
+     "Click Me")
+#+end_orgx
+#+end_orgx_split_2
+
+#+begin_orgx
+($ split-layout
+($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+($ tabs {:tab-list [{:name "showcase" :content ($ split_2)}]}))
+#+end_orgx
+
+
+*** Showcase
+
+Showcase is a simple wrapper over ~split-layout~.
+
+#+attr_orgx_defui: true
+#+begin_orgx_showcase_1
+#+begin_example
+#+begin_orgx
+($ showcase
+  ($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+  ($ split_2))
+#+end_orgx
+#+end_example
+#+end_orgx_showcase_1
+
+#+begin_orgx
+($ showcase
+  ($ tabs {:tab-list [{:name "showcase demo" :content ($ showcase_1)}
+                      {:name "button" :content ($ split_1)}]})
+  ($ split_2))
+#+end_orgx
+
+
+** Use uix components with org-mode markups
+
+#+begin_orgx_note
+Hello
+#+end_orgx_note
