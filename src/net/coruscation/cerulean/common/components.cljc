@@ -43,10 +43,10 @@
      left
      right))
 
-(defui showcase [{[left right] :children class :class}]
-  ($ split-layout
+(defui showcase [{[left right] :children class :class showcase-name :showcase-name}]
+  ($ split-layout {:class class}
      left
-     ($ tabs {:tab-list [{:name "Showcase"
+     ($ tabs {:tab-list [{:name (or showcase-name "Result")
                           :content right}]})))
 
 (def default-exports '[note info warn error tabs split-layout showcase])
