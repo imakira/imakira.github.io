@@ -16,17 +16,19 @@
     (when (:blog/orgx blog)
       (orgx/generate-cljc-from-blog blog))))
 
-(def maybe-init-orgx-watch!
+(defonce maybe-init-orgx-watch!
   (memoize
    (fn []
-     (future
-       (let [[resp cancel] (watch-service/watch config/*blog-dir*)]
-         (loop [event (a/<!! resp)]
-           (when (not (nil? event))
-             (try (generate-all-orgx!)
-                  (catch Throwable t
-                    (logging/warn "Generated orgx file failed" t)))
-             (recur (a/<!! resp)))))))))
+     (let [service (watch-service/watch config/*blog-dir*)
+           [resp cancel] service]
+       {:service service
+        :future (future
+                  (loop [event (a/<!! resp)]
+                    (when (not (nil? event))
+                      (try (generate-all-orgx!)
+                           (catch Throwable t
+                             (logging/warn "Generated orgx file failed" t)))
+                      (recur (a/<!! resp)))))}))))
 
 (defn build-css-hook {:shadow.build/stage :compile-prepare}
   [build-state & _]
