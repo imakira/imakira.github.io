@@ -31,6 +31,8 @@
                              (StringEscapeUtils/unescapeHtml4 (zip/node zip))
                              (zip/node zip))))))))
 
+(declare unwrap-clj-code)
+
 (defn use-comp [comp-name children]
   [`(~'$ ~(symbol comp-name) ~@children)])
 
@@ -41,15 +43,23 @@
                           :use-defui use-defui})
 
 (defn expand-orgx [orgx-node]
-  (let [properties (nth orgx-node 2)]
+  (let [children (drop 3 orgx-node)
+        [children-inplace children-toplevel]
+        (unwrap-clj-code `(~'$ :<> ~@children))
+        {:keys [data-wrapper
+                data-wrapper-data
+                data-toplevel]}
+        (nth orgx-node 2)]
     (cond
-      (:data-wrapper properties)
-      (((keyword (:data-wrapper properties))
-        registered-wrappers)
-       (:data-wrapper-data properties)
-       (drop 3 orgx-node))
+      data-wrapper
 
-      :else (if (:data-toplevel properties)
+      (let [[inplace toplevel] (((keyword data-wrapper)
+                                 registered-wrappers)
+                                data-wrapper-data
+                                (list children-inplace))]
+        [inplace toplevel])
+
+      :else (if data-toplevel
               [nil (CljCode. (str/trim (last orgx-node)))]
               [(CljCode. (str/trim (last orgx-node)))]))))
 
