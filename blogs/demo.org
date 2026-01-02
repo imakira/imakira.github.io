@@ -296,6 +296,10 @@ It will be rendered as:
 ** Builtin Components
 
 *** Simple Remarks
+:PROPERTIES:
+:CUSTOM_ID: simple-remarks
+:END:
+
 
 It has several builtin components, notebly, the following snippet:
 
