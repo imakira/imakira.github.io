@@ -16,7 +16,8 @@
 
 (define-markup info "border-lime-500" "Info")
 (define-markup note "border-sky-500" "Note")
-(define-markup warn "border-rose-500" "Warn")
+(define-markup warn "border-rose-500" "Warning")
+(define-markup warning "border-rose-500" "Warning")
 (define-markup error "border-red-600" "Error")
 
 (defui tabs [{:keys [tab-list default-table class]}]
@@ -49,4 +50,4 @@
      ($ tabs {:tab-list [{:name (or showcase-name "Result")
                           :content right}]})))
 
-(def default-exports '[note info warn error tabs split-layout showcase])
+(def default-exports '[note info warn warning error tabs split-layout showcase])
