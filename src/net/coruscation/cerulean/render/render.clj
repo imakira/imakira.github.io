@@ -62,10 +62,10 @@
                                                           ";"))
                                                    serialized-assets)))]))
          (map (fn [{:keys [id module]}]
-                (list [:script {:src (str "/js/" module) :type "module" :defer true} ]
-                      [:script {:src (str "data:text/javascript," "import * as exps  from '/js/" module "';" "window['" (extra-script-global-this-name id) "'] = exps;")
-                                :type "module"
-                                :defer true}]))
+                (list [:script {:src (str "/js/" module) :type "module"} ]
+                      [:script {:type "module"}
+                       (raw-string "import * as exps  from '/js/" module "';\n")
+                       (raw-string "window['" (extra-script-global-this-name id) "'] = exps;")]))
               extra-scripts)
          [:script {:src "/js/main.js" :type "module" :defer true}]]])))
 
