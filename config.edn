@@ -4,7 +4,9 @@
  :author "imakira"
  :links {:rss {:href "/atom.xml"
                :external? true}
-         :github {:href "https://github.com/imakira/cerulean"}}
+         :github {:href "https://github.com/imakira/cerulean"}
+         :email {:path "me"
+                 :domain "coruscation.net"}}
  :navigation {:home {:text "HOME"
                      :href "/"}
               :about {:text "ABOUT"
