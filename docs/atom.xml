@@ -9,53 +9,23 @@
     <link href="https://coruscation.net/blogs/something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i.html"/>
     <updated>2026-01-03T15:10:59+08:00</updated>
     <id>https://coruscation.net/blogs/something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i.html</id>
-    <content type="html">&lt;p&gt;
-&lt;a href="https://mdxjs.com/"&gt;MDX&lt;/a&gt; is a tool lets you write JavaScript and JSX in a Markdown file. It will then compile the Markdown file into a JavaScript file, so that we can use it from other JavaScript code. I always wanted something similar for my personal blog. For some background, the blogging program is written in Clojure/ClojureScript. The blogging program runs on the JVM, it works by statically generating all the HTML and other files so that the result could be hosted on platforms like Github Pages. Posts of my blog are written in &lt;a href="https://orgmode.org"&gt;org-mode&lt;/a&gt;. As the blog program runs on the JVM, directly using MDX is theoratically possible, but probably would create a lot of frictions.
-&lt;/p&gt;
-
-&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;&lt;a href="https://mdxjs.com/"&gt;MDX&lt;/a&gt; is a tool lets you write JavaScript and JSX in a Markdown file. It will then compile the Markdown file into a JavaScript file, so that we can use it from other JavaScript code. I always wanted something similar for my personal blog. For some background, the blogging program is written in Clojure/ClojureScript. The blogging program runs on the JVM, it works by statically generating all the HTML and other files so that the result could be hosted on platforms like Github Pages. Posts of my blog are written in &lt;a href="https://orgmode.org"&gt;org-mode&lt;/a&gt;. As the blog program runs on the JVM, directly using MDX is theoratically possible, but probably would create a lot of frictions.
+&lt;/p&gt;&lt;p&gt;
 Therefore I took some time to implement something similar. Albeit it is not fully tested, the result is quite satisfactory: I can embed Clojure code directly in an Org file, or use React components defined in Clojure code with native Org syntax. The Org file can then be converted into a Cljc file and used from other Clojure code.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 In the following sections I will call it &lt;code&gt;OrgX&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="info"&gt;&lt;p&gt;
-&lt;i&gt;This is part &lt;b&gt;one&lt;/b&gt; of the series, in this post I will show the features and in the next post I will describe the process of implementing it&lt;/i&gt;
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;div id="outline-container-how-orgx-works" class="outline-2"&gt;
-&lt;a href="#how-orgx-works"&gt;&lt;h2 id="how-orgx-works" class="cr-self-reference "&gt;How OrgX Works&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-how-orgx-works"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-lime-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;&lt;i&gt;This is part &lt;b&gt;one&lt;/b&gt; of the series, in this post I will show the features and in the next post I will describe the process of implementing it&lt;/i&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div id="outline-container-how-orgx-works" class="outline-2"&gt;&lt;a href="#how-orgx-works"&gt;&lt;h2 id="how-orgx-works" class="cr-self-reference "&gt;How OrgX Works&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-how-orgx-works" class="outline-text-2"&gt;&lt;p&gt;
 Similar to MDX, OrgX works by compiling the OrgX file into a &lt;a href="https://clojure.org/guides/reader_conditionals"&gt;Cljc&lt;/a&gt; file. A basic OrgX file would look like this:
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx-example"&gt;&lt;pre class="example" id="org70a7698"&gt;#+ORGX: true
+&lt;/p&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;example.org:&lt;/i&gt;&lt;pre id="orga0a547b" class="example"&gt;#+ORGX: true
 
 /*Hello* from @@orgx:($ :span &amp;quot;OrgX&amp;quot;)@@/
 
 #+begin_orgx
 ($ :div (str &amp;quot;Hello&amp;quot; &amp;quot; World!&amp;quot;))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-
-&lt;pre class="orgx"&gt;($ tabs {:tab-list [{:name &amp;quot;example.org&amp;quot; :content ($ orgx-example)}]})
-
-&lt;/pre&gt;
-
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;p&gt;
 It will be converted into something similar to the following Clojure snippet.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx-cljc"&gt;&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;ns&lt;/span&gt;&lt;/span&gt; orgx.example
+&lt;/p&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;orgx/example.cljc:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;ns&lt;/span&gt;&lt;/span&gt; orgx.example
   (&lt;span class="hljs-symbol"&gt;:require&lt;/span&gt; [uix.core &lt;span class="hljs-symbol"&gt;:as&lt;/span&gt; uix &lt;span class="hljs-symbol"&gt;:refer&lt;/span&gt;
              [defui use-state use-effect use-context $]]))
 
@@ -69,90 +39,34 @@ It will be converted into something similar to the following Clojure snippet.
 
 (&lt;span class="hljs-name"&gt;defui&lt;/span&gt; component [props]
   ($ _comp (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;merge&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;quote&lt;/span&gt;&lt;/span&gt; {#_&lt;span class="hljs-string"&gt;&amp;quot;default properties&amp;quot;&lt;/span&gt;}) props)))
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ tabs {:tab-list [{:name &amp;quot;orgx/example.cljc&amp;quot; :content ($ orgx-cljc)}]})
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 The blogging program uses &lt;a href="https://github.com/pitch-io/uix?tab=readme-ov-file"&gt;uix&lt;/a&gt; as its React wrapper, thus the generated Clojure code is using uix. Some uix functions like &lt;code&gt;$&lt;/code&gt; are also imported by default. 
-&lt;/p&gt;
-
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;p&gt;
 As you can see from this example:
-&lt;/p&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;We can &lt;code&gt;@@orgx:@@&lt;/code&gt; for inline Clojure code and &lt;code&gt;#+begin_orgx&lt;/code&gt; for Clojure blocks.&lt;/li&gt;
-&lt;li&gt;The embedded Clojure code are put in a component called &lt;code&gt;_comp&lt;/code&gt;, along with other contents in the Org file.&lt;/li&gt;
-&lt;li&gt;The outer &lt;code&gt;component&lt;/code&gt; wraps the &lt;code&gt;_comp&lt;/code&gt; component, its provides some metadata about this post related to the blogging program. More about this on the following sections.&lt;/li&gt;
-&lt;li&gt;We can use the &lt;code&gt;component&lt;/code&gt; component from other Clojure code.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-basic-usage" class="outline-2"&gt;
-&lt;a href="#basic-usage"&gt;&lt;h2 id="basic-usage" class="cr-self-reference "&gt;Basic Usage&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-basic-usage"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;We can &lt;code&gt;@@orgx:@@&lt;/code&gt; for inline Clojure code and &lt;code&gt;#+begin_orgx&lt;/code&gt; for Clojure blocks.&lt;/li&gt;&lt;li&gt;The embedded Clojure code are put in a component called &lt;code&gt;_comp&lt;/code&gt;, along with other contents in the Org file.&lt;/li&gt;&lt;li&gt;The outer &lt;code&gt;component&lt;/code&gt; wraps the &lt;code&gt;_comp&lt;/code&gt; component, its provides some metadata about this post related to the blogging program. More about this on the following sections.&lt;/li&gt;&lt;li&gt;We can use the &lt;code&gt;component&lt;/code&gt; component from other Clojure code.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-basic-usage" class="outline-2"&gt;&lt;a href="#basic-usage"&gt;&lt;h2 id="basic-usage" class="cr-self-reference "&gt;Basic Usage&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-basic-usage" class="outline-text-2"&gt;&lt;p&gt;
 As we have seen from the earily example, &lt;code&gt;#+begin_orgx&lt;/code&gt; and &lt;code&gt;@@orgx:@@&lt;/code&gt; are the most basic structure for standalone and inline Clojure code, respectively.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 We can have a clickable button with the following code.
-&lt;/p&gt;
-
-&lt;pre class="example" id="org23ffc44"&gt;#+begin_orgx
+&lt;/p&gt;&lt;pre id="orgdcfb742" class="example"&gt;#+begin_orgx
   ;; you can style it using tailwindcss
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
      :on-click (fn [&amp;amp; _]
                    #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))}
   &amp;quot;click me&amp;quot;)
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 That will be rendered as:
-&lt;/p&gt;
-
-&lt;pre class="orgx"&gt;  ($ :button {:class &amp;quot;my-2 bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
-
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;button class="my-2 bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;p&gt;
 Notice the &lt;a href="https://clojure.org/guides/reader_conditionals"&gt;reader conditional macro&lt;/a&gt; &lt;code&gt;#?(:cljs)&lt;/code&gt;  . The generated Clojure code is in a Cljc file, therefore it pairs well with the server side rendering or static generation. However, it also means we need to put the platform specified code in the corresponding reader conditionals.
-&lt;/p&gt;
-
-&lt;pre class="example" id="orgf10406e"&gt;We can also use the button inline this way: @@orgx:($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)@@
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;pre id="org9c19703" class="example"&gt;We can also use the button inline this way: @@orgx:($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)@@
+&lt;/pre&gt;&lt;p&gt;
 The above snippet will be rendered as:
-&lt;/p&gt;
-
-&lt;p&gt;
-We can also use the button inline this way: &lt;code class="orgx"&gt;
-($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
-&lt;/code&gt;
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-toplevel-clojure-code" class="outline-3"&gt;
-&lt;a href="#toplevel-clojure-code"&gt;&lt;h3 id="toplevel-clojure-code" class="cr-self-reference "&gt;Toplevel Clojure Code&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-toplevel-clojure-code"&gt;
-&lt;p&gt;
-You may have noticed that, all the Clojure code being put in a component means that we can't use Clojure code that only works on the top level like &lt;code&gt;defn&lt;/code&gt; or &lt;code&gt;require&lt;/code&gt;. To solve this, we can use &lt;code&gt;#+attr_orgx_toplevel: true&lt;/code&gt; to mark a OrgX block and make its contents appear in toplevel of the generated Clojure file.
-&lt;/p&gt;
-
-&lt;p&gt;
-Let's go back to the button example, we can define a &lt;code&gt;my-button&lt;/code&gt; component with the following code:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org21532b3"&gt;#+attr_orgx_toplevel: true
+&lt;/p&gt;&lt;p&gt;
+We can also use the button inline this way: &lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;/p&gt;&lt;/div&gt;&lt;div id="outline-container-toplevel-clojure-code" class="outline-3"&gt;&lt;a href="#toplevel-clojure-code"&gt;&lt;h3 id="toplevel-clojure-code" class="cr-self-reference "&gt;Toplevel Clojure Code&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-toplevel-clojure-code" class="outline-text-3"&gt;&lt;p&gt;
+You may have noticed that, all the Clojure code being put in a component means that we can&amp;#x27;t use Clojure code that only works on the top level like &lt;code&gt;defn&lt;/code&gt; or &lt;code&gt;require&lt;/code&gt;. To solve this, we can use &lt;code&gt;#+attr_orgx_toplevel: true&lt;/code&gt; to mark a OrgX block and make its contents appear in toplevel of the generated Clojure file.
+&lt;/p&gt;&lt;p&gt;
+Let&amp;#x27;s go back to the button example, we can define a &lt;code&gt;my-button&lt;/code&gt; component with the following code:
+&lt;/p&gt;&lt;pre id="orgc857293" class="example"&gt;#+attr_orgx_toplevel: true
 #+begin_orgx
 (defui my-button [{:keys [children callback]}]
     ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -160,22 +74,9 @@ Let's go back to the button example, we can define a &lt;code&gt;my-button&lt;/c
                    (if callback (callback)))}
     children))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-toplevel=""&gt;  (defui my-button [{:keys [children callback]}]
-      ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
-         :on-click (fn [&amp;amp; _]
-                     (if callback (callback)))}
-      children))
-
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 The &lt;code&gt;defui&lt;/code&gt; will be put on the top level in the generated Clojure code, along side something like &lt;code&gt;_comp&lt;/code&gt;:
-&lt;/p&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;ns&lt;/span&gt;&lt;/span&gt; ...)
+&lt;/p&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;ns&lt;/span&gt;&lt;/span&gt; ...)
 (&lt;span class="hljs-name"&gt;defui&lt;/span&gt; my-button [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [children callback]}]
   ($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
               &lt;span class="hljs-symbol"&gt;:on-click&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [&amp;amp; _]
@@ -183,281 +84,109 @@ The &lt;code&gt;defui&lt;/code&gt; will be put on the top level in the generated
      children))
 
 (&lt;span class="hljs-name"&gt;defui&lt;/span&gt; _comp ...)
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;
 We can then easily use the &lt;code&gt;my-button&lt;/code&gt; component with either inline or standalone OrgX block.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="mybutton_example"&gt;&lt;pre class="example" id="org3c5750f"&gt;Inline OrgX block:
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Example Usage:&lt;/i&gt;&lt;pre id="org5dd92f2" class="example"&gt;Inline OrgX block:
 @@orgx:($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;quot;Hello From inline OrgX&amp;quot;)))} &amp;quot;From inline OrgX&amp;quot;)@@
 #+begin_orgx
 ($ :div &amp;quot;We can also use it in a orgx block&amp;quot;
     ($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;quot;Hello from OrgX block!&amp;quot;)))}
          &amp;quot;From OrgX block&amp;quot;))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="mybutton_result"&gt;&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;p&gt;
 Inline OrgX block:
-&lt;code class="orgx"&gt;
-($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;quot;Hello From inline OrgX&amp;quot;)))} &amp;quot;From inline OrgX&amp;quot;)
-&lt;/code&gt;
-&lt;/p&gt;
-&lt;pre class="orgx"&gt;($ :div &amp;quot;We can also use it in a orgx block&amp;quot;
-    ($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;quot;Hello from OrgX block!&amp;quot;)))}
-         &amp;quot;From OrgX block&amp;quot;))
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;Example Usage&amp;quot; :content ($ mybutton_example)}]})
-  ($ mybutton_result))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-import-modules" class="outline-3"&gt;
-&lt;a href="#import-modules"&gt;&lt;h3 id="import-modules" class="cr-self-reference "&gt;Import Modules&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-import-modules"&gt;
-&lt;p&gt;
+&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;From inline OrgX&lt;/button&gt;&lt;/p&gt;&lt;div&gt;We can also use it in a orgx block&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;From OrgX block&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-import-modules" class="outline-3"&gt;&lt;a href="#import-modules"&gt;&lt;h3 id="import-modules" class="cr-self-reference "&gt;Import Modules&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-import-modules" class="outline-text-3"&gt;&lt;p&gt;
 In MDX, we can import modules with normal &lt;code&gt;import&lt;/code&gt; statements. In OrgX, we can do something similar with toplevel OrgX block and the &lt;code&gt;require&lt;/code&gt; function.
-&lt;/p&gt;
-
-&lt;pre class="example" id="org85b5ef3"&gt;#+attr_orgx_toplevel: true
+&lt;/p&gt;&lt;pre id="org780be7b" class="example"&gt;#+attr_orgx_toplevel: true
 #+begin_orgx
-(require '[clojure.string :as string])
+(require &amp;#x27;[clojure.string :as string])
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 We can also do this with keyword metadata at the beginning of an Org file.
-&lt;/p&gt;
-
-&lt;pre class="example" id="orgfa8dc8c"&gt;#+ORGX_REQUIRE: [[clojure.string :as string]]
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
-Settings in keyword metadata currently doesn't support reader macros.
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-access-component-properties" class="outline-3"&gt;
-&lt;a href="#access-component-properties"&gt;&lt;h3 id="access-component-properties" class="cr-self-reference "&gt;Access Component Properties&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-access-component-properties"&gt;
-&lt;p&gt;
-Similar to MDX, we can access the component's properties with the &lt;code&gt;post-props&lt;/code&gt; variable. Some metadata are also provided in the &lt;code&gt;post-props&lt;/code&gt; variable.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="metadata-example"&gt;&lt;pre class="example" id="orgca57a5e"&gt;($ :pre
+&lt;/p&gt;&lt;pre id="orgac03763" class="example"&gt;#+ORGX_REQUIRE: [[clojure.string :as string]]
+&lt;/pre&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
+Settings in keyword metadata currently doesn&amp;#x27;t support reader macros.
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-access-component-properties" class="outline-3"&gt;&lt;a href="#access-component-properties"&gt;&lt;h3 id="access-component-properties" class="cr-self-reference "&gt;Access Component Properties&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-access-component-properties" class="outline-text-3"&gt;&lt;p&gt;
+Similar to MDX, we can access the component&amp;#x27;s properties with the &lt;code&gt;post-props&lt;/code&gt; variable. Some metadata are also provided in the &lt;code&gt;post-props&lt;/code&gt; variable.
+&lt;/p&gt;&lt;p&gt;
+The following metadata are provided by default:
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Example:&lt;/i&gt;&lt;pre id="orga3b180b" class="example"&gt;($ :pre
   (binding [*print-namespace-maps* true]
     (with-out-str (pprint/pprint post-props))))
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;p&gt;
-The following metadata are provided by default:
-&lt;/p&gt;
-
-&lt;pre class="orgx"&gt;($ showcase ($ tabs {:tab-list [{:name &amp;quot;Example&amp;quot; :content ($ metadata-example)}]}) ($ :pre (binding [*print-namespace-maps* true] (with-out-str (pprint/pprint post-props)))))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-use-other-orgx-files-as-components" class="outline-3"&gt;
-&lt;a href="#use-other-orgx-files-as-components"&gt;&lt;h3 id="use-other-orgx-files-as-components" class="cr-self-reference "&gt;Use Other OrgX Files as Components&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-use-other-orgx-files-as-components"&gt;
-&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Result:&lt;/i&gt;&lt;pre&gt;#:blog{:orgx true,
+       :tags [],
+       :unlisted false,
+       :title
+       &amp;quot;Something Like MDX but with Clojure and Org-Mode for My Personal Blog: Part I&amp;quot;,
+       :show-toc? true,
+       :file-path
+       &amp;quot;/home/void/Projects/imakira.github.io/blogs/some-like-mdx-but-with-clojure-and-org-mode.org&amp;quot;,
+       :author nil,
+       :email nil,
+       :description
+       &amp;quot;MDX  is a tool lets you write JavaScript and JSX in a Markdown file. It will then compile the Markdown file into a JavaScript file, so that we can use it f...&amp;quot;,
+       :id
+       &amp;quot;something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i&amp;quot;,
+       :category &amp;quot;Coding&amp;quot;,
+       :language &amp;quot;en_US&amp;quot;,
+       :published-date &amp;quot;2026-01-03T01:47:09+08:00&amp;quot;,
+       :content
+       &amp;quot;&amp;lt;p&amp;gt;\n&amp;lt;a href=\&amp;quot;https://mdxjs.com/\&amp;quot;&amp;gt;MDX&amp;lt;/a&amp;gt; is a tool lets you write JavaScript and JSX in a Markdown file. It will then compile the Markdown file into a JavaScript file, so that we can use it from other JavaScript code. I always wanted something similar for my personal blog. For some background, the blogging program is written in Clojure/ClojureScript. The blogging program runs on the JVM, it works by statically generating all the HTML and other files so that the result could be hosted on platforms like Github Pages. Posts of my blog are written in &amp;lt;a href=\&amp;quot;https://orgmode.org\&amp;quot;&amp;gt;org-mode&amp;lt;/a&amp;gt;. As the blog program runs on the JVM, directly using MDX is theoratically possible, but probably would create a lot of frictions.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nTherefore I took some time to implement something similar. Albeit it is not fully tested, the result is quite satisfactory: I can embed Clojure code directly in an Org file, or use React components defined in Clojure code with native Org syntax. The Org file can then be converted into a Cljc file and used from other Clojure code.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nIn the following sections I will call it &amp;lt;code&amp;gt;OrgX&amp;lt;/code&amp;gt;.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;info\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\n&amp;lt;i&amp;gt;This is part &amp;lt;b&amp;gt;one&amp;lt;/b&amp;gt; of the series, in this post I will show the features and in the next post I will describe the process of implementing it&amp;lt;/i&amp;gt;\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-how-orgx-works\&amp;quot; class=\&amp;quot;outline-2\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#how-orgx-works\&amp;quot;&amp;gt;&amp;lt;h2 id=\&amp;quot;how-orgx-works\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;How OrgX Works&amp;lt;/h2&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-2\&amp;quot; id=\&amp;quot;text-how-orgx-works\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nSimilar to MDX, OrgX works by compiling the OrgX file into a &amp;lt;a href=\&amp;quot;https://clojure.org/guides/reader_conditionals\&amp;quot;&amp;gt;Cljc&amp;lt;/a&amp;gt; file. A basic OrgX file would look like this:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;orgx-example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orga0a547b\&amp;quot;&amp;gt;#+ORGX: true\n\n/*Hello* from @@orgx:($ :span &amp;amp;quot;OrgX&amp;amp;quot;)@@/\n\n#+begin_orgx\n($ :div (str &amp;amp;quot;Hello&amp;amp;quot; &amp;amp;quot; World!&amp;amp;quot;))\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ tabs {:tab-list [{:name &amp;amp;quot;example.org&amp;amp;quot; :content ($ orgx-example)}]})\n\n&amp;lt;/pre&amp;gt;\n\n\n&amp;lt;p&amp;gt;\nIt will be converted into something similar to the following Clojure snippet.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;orgx-cljc\&amp;quot;&amp;gt;&amp;lt;div class=\&amp;quot;org-src-container\&amp;quot;&amp;gt;\n&amp;lt;pre class=\&amp;quot;cr-highlighted\&amp;quot;&amp;gt;&amp;lt;code class=\&amp;quot;lang-clojure\&amp;quot;&amp;gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;ns&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; orgx.example\n  (&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:require&amp;lt;/span&amp;gt; [uix.core &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:as&amp;lt;/span&amp;gt; uix &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:refer&amp;lt;/span&amp;gt;\n             [defui use-state use-effect use-context $]]))\n\n(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;defui&amp;lt;/span&amp;gt; _comp [post-props]\n  ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:&amp;amp;lt;&amp;amp;gt;&amp;lt;/span&amp;gt;\n     ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:p&amp;lt;/span&amp;gt; {} ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:i&amp;lt;/span&amp;gt; {}\n                 ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:b&amp;lt;/span&amp;gt; {} &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;Hello&amp;amp;quot;&amp;lt;/span&amp;gt;)\n                 &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot; from &amp;amp;quot;&amp;lt;/span&amp;gt;\n                 ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:span&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;OrgX&amp;amp;quot;&amp;lt;/span&amp;gt;)))\n     ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:div&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;str&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;Hello&amp;amp;quot;&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot; World!&amp;amp;quot;&amp;lt;/span&amp;gt;))))\n\n(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;defui&amp;lt;/span&amp;gt; component [props]\n  ($ _comp (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;merge&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;quote&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; {#_&amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;default properties&amp;amp;quot;&amp;lt;/span&amp;gt;}) props)))\n&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ tabs {:tab-list [{:name &amp;amp;quot;orgx/example.cljc&amp;amp;quot; :content ($ orgx-cljc)}]})\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThe blogging program uses &amp;lt;a href=\&amp;quot;https://github.com/pitch-io/uix?tab=readme-ov-file\&amp;quot;&amp;gt;uix&amp;lt;/a&amp;gt; as its React wrapper, thus the generated Clojure code is using uix. Some uix functions like &amp;lt;code&amp;gt;$&amp;lt;/code&amp;gt; are also imported by default. \n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nAs you can see from this example:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;ul class=\&amp;quot;org-ul\&amp;quot;&amp;gt;\n&amp;lt;li&amp;gt;We can &amp;lt;code&amp;gt;@@orgx:@@&amp;lt;/code&amp;gt; for inline Clojure code and &amp;lt;code&amp;gt;#+begin_orgx&amp;lt;/code&amp;gt; for Clojure blocks.&amp;lt;/li&amp;gt;\n&amp;lt;li&amp;gt;The embedded Clojure code are put in a component called &amp;lt;code&amp;gt;_comp&amp;lt;/code&amp;gt;, along with other contents in the Org file.&amp;lt;/li&amp;gt;\n&amp;lt;li&amp;gt;The outer &amp;lt;code&amp;gt;component&amp;lt;/code&amp;gt; wraps the &amp;lt;code&amp;gt;_comp&amp;lt;/code&amp;gt; component, its provides some metadata about this post related to the blogging program. More about this on the following sections.&amp;lt;/li&amp;gt;\n&amp;lt;li&amp;gt;We can use the &amp;lt;code&amp;gt;component&amp;lt;/code&amp;gt; component from other Clojure code.&amp;lt;/li&amp;gt;\n&amp;lt;/ul&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-basic-usage\&amp;quot; class=\&amp;quot;outline-2\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#basic-usage\&amp;quot;&amp;gt;&amp;lt;h2 id=\&amp;quot;basic-usage\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Basic Usage&amp;lt;/h2&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-2\&amp;quot; id=\&amp;quot;text-basic-usage\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nAs we have seen from the earily example, &amp;lt;code&amp;gt;#+begin_orgx&amp;lt;/code&amp;gt; and &amp;lt;code&amp;gt;@@orgx:@@&amp;lt;/code&amp;gt; are the most basic structure for standalone and inline Clojure code, respectively.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nWe can have a clickable button with the following code.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orgdcfb742\&amp;quot;&amp;gt;#+begin_orgx\n  ;; you can style it using tailwindcss\n  ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n     :on-click (fn [&amp;amp;amp; _]\n                   #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))}\n  &amp;amp;quot;click me&amp;amp;quot;)\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nThat will be rendered as:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;  ($ :button {:class &amp;amp;quot;my-2 bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot; :on-click (fn [&amp;amp;amp; _] #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))} &amp;amp;quot;Click Me&amp;amp;quot;)\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nNotice the &amp;lt;a href=\&amp;quot;https://clojure.org/guides/reader_conditionals\&amp;quot;&amp;gt;reader conditional macro&amp;lt;/a&amp;gt; &amp;lt;code&amp;gt;#?(:cljs)&amp;lt;/code&amp;gt;  . The generated Clojure code is in a Cljc file, therefore it pairs well with the server side rendering or static generation. However, it also means we need to put the platform specified code in the corresponding reader conditionals.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org9c19703\&amp;quot;&amp;gt;We can also use the button inline this way: @@orgx:($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot; :on-click (fn [&amp;amp;amp; _] #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))} &amp;amp;quot;Click Me&amp;amp;quot;)@@\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nThe above snippet will be rendered as:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nWe can also use the button inline this way: &amp;lt;code class=\&amp;quot;orgx\&amp;quot;&amp;gt;\n($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot; :on-click (fn [&amp;amp;amp; _] #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))} &amp;amp;quot;Click Me&amp;amp;quot;)\n&amp;lt;/code&amp;gt;\n&amp;lt;/p&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-toplevel-clojure-code\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#toplevel-clojure-code\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;toplevel-clojure-code\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Toplevel Clojure Code&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-toplevel-clojure-code\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nYou may have noticed that, all the Clojure code being put in a component means that we can&amp;#x27;t use Clojure code that only works on the top level like &amp;lt;code&amp;gt;defn&amp;lt;/code&amp;gt; or &amp;lt;code&amp;gt;require&amp;lt;/code&amp;gt;. To solve this, we can use &amp;lt;code&amp;gt;#+attr_orgx_toplevel: true&amp;lt;/code&amp;gt; to mark a OrgX block and make its contents appear in toplevel of the generated Clojure file.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nLet&amp;#x27;s go back to the button example, we can define a &amp;lt;code&amp;gt;my-button&amp;lt;/code&amp;gt; component with the following code:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orgc857293\&amp;quot;&amp;gt;#+attr_orgx_toplevel: true\n#+begin_orgx\n(defui my-button [{:keys [children callback]}]\n    ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n       :on-click (fn [&amp;amp;amp; _]\n                   (if callback (callback)))}\n    children))\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-toplevel=\&amp;quot;\&amp;quot;&amp;gt;  (defui my-button [{:keys [children callback]}]\n      ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n         :on-click (fn [&amp;amp;amp; _]\n                     (if callback (callback)))}\n      children))\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nThe &amp;lt;code&amp;gt;defui&amp;lt;/code&amp;gt; will be put on the top level in the generated Clojure code, along side something like &amp;lt;code&amp;gt;_comp&amp;lt;/code&amp;gt;:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;div class=\&amp;quot;org-src-container\&amp;quot;&amp;gt;\n&amp;lt;pre class=\&amp;quot;cr-highlighted\&amp;quot;&amp;gt;&amp;lt;code class=\&amp;quot;lang-clojure\&amp;quot;&amp;gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;ns&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; ...)\n(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;defui&amp;lt;/span&amp;gt; my-button [{&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:keys&amp;lt;/span&amp;gt; [children callback]}]\n  ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:button&amp;lt;/span&amp;gt; {&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:class&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;&amp;lt;/span&amp;gt;\n              &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:on-click&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;fn&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; [&amp;amp;amp; _]\n                          #?(&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:cljs&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;callback&amp;lt;/span&amp;gt;)))}\n     children))\n\n(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;defui&amp;lt;/span&amp;gt; _comp ...)\n&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n\n&amp;lt;p&amp;gt;\nWe can then easily use the &amp;lt;code&amp;gt;my-button&amp;lt;/code&amp;gt; component with either inline or standalone OrgX block.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;mybutton_example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org5dd92f2\&amp;quot;&amp;gt;Inline OrgX block:\n@@orgx:($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;amp;quot;Hello From inline OrgX&amp;amp;quot;)))} &amp;amp;quot;From inline OrgX&amp;amp;quot;)@@\n#+begin_orgx\n($ :div &amp;amp;quot;We can also use it in a orgx block&amp;amp;quot;\n    ($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;amp;quot;Hello from OrgX block!&amp;amp;quot;)))}\n         &amp;amp;quot;From OrgX block&amp;amp;quot;))\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;mybutton_result\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nInline OrgX block:\n&amp;lt;code class=\&amp;quot;orgx\&amp;quot;&amp;gt;\n($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;amp;quot;Hello From inline OrgX&amp;amp;quot;)))} &amp;amp;quot;From inline OrgX&amp;amp;quot;)\n&amp;lt;/code&amp;gt;\n&amp;lt;/p&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ :div &amp;amp;quot;We can also use it in a orgx block&amp;amp;quot;\n    ($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;amp;quot;Hello from OrgX block!&amp;amp;quot;)))}\n         &amp;amp;quot;From OrgX block&amp;amp;quot;))\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Example Usage&amp;amp;quot; :content ($ mybutton_example)}]})\n  ($ mybutton_result))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-import-modules\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#import-modules\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;import-modules\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Import Modules&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-import-modules\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nIn MDX, we can import modules with normal &amp;lt;code&amp;gt;import&amp;lt;/code&amp;gt; statements. In OrgX, we can do something similar with toplevel OrgX block and the &amp;lt;code&amp;gt;require&amp;lt;/code&amp;gt; function.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org780be7b\&amp;quot;&amp;gt;#+attr_orgx_toplevel: true\n#+begin_orgx\n(require &amp;#x27;[clojure.string :as string])\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nWe can also do this with keyword metadata at the beginning of an Org file.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orgac03763\&amp;quot;&amp;gt;#+ORGX_REQUIRE: [[clojure.string :as string]]\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nSettings in keyword metadata currently doesn&amp;#x27;t support reader macros.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-access-component-properties\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#access-component-properties\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;access-component-properties\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Access Component Properties&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-access-component-properties\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nSimilar to MDX, we can access the component&amp;#x27;s properties with the &amp;lt;code&amp;gt;post-props&amp;lt;/code&amp;gt; variable. Some metadata are also provided in the &amp;lt;code&amp;gt;post-props&amp;lt;/code&amp;gt; variable.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;metadata-example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orga3b180b\&amp;quot;&amp;gt;($ :pre\n  (binding [*print-namespace-maps* true]\n    (with-out-str (pprint/pprint post-props))))\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nThe following metadata are provided by default:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase ($ tabs {:tab-list [{:name &amp;amp;quot;Example&amp;amp;quot; :content ($ metadata-example)}]}) ($ :pre (binding [*print-namespace-maps* true] (with-out-str (pprint/pprint post-props)))))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-use-other-orgx-files-as-components\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#use-other-orgx-files-as-components\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;use-other-orgx-files-as-components\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Use Other OrgX Files as Components&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-use-other-orgx-files-as-components\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nBy default, OrgX files are compiled as Cljc files and will be put in the &amp;lt;code&amp;gt;orgx&amp;lt;/code&amp;gt; namespace. You can import them as described in &amp;lt;a href=\&amp;quot;#import-modules\&amp;quot;&amp;gt;Import Modules&amp;lt;/a&amp;gt;.\n&amp;lt;/p&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-use-orgx-with-native-org-syntax\&amp;quot; class=\&amp;quot;outline-2\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#use-orgx-with-native-org-syntax\&amp;quot;&amp;gt;&amp;lt;h2 id=\&amp;quot;use-orgx-with-native-org-syntax\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Use OrgX With Native Org Syntax&amp;lt;/h2&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-2\&amp;quot; id=\&amp;quot;text-use-orgx-with-native-org-syntax\&amp;quot;&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-use-components\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#use-components\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;use-components\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Use Components&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-use-components\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nWriting &amp;lt;code&amp;gt;#+begin_orgx&amp;lt;/code&amp;gt; and Clojure code must be very tedious every time we want to use a simple component, like &amp;lt;code&amp;gt;note&amp;lt;/code&amp;gt; or &amp;lt;code&amp;gt;warning&amp;lt;/code&amp;gt; notice blocks.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nTo solve this problem, a new syntax &amp;lt;code&amp;gt;#+orgx_{comp-name}&amp;lt;/code&amp;gt; has been introduced.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nFor example:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;orgx_syntax_example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org79ce77c\&amp;quot;&amp;gt;#+begin_orgx_note\nThis is a note\n\n+ /Normal/ Org markups *can* be used inside it\n\n@@orgx:($ :span &amp;amp;quot;You can even nest OrgX syntax in it&amp;amp;quot;)@@\n#+end_orgx_note\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;orgx_syntax_result\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is a note\n&amp;lt;/p&amp;gt;\n\n&amp;lt;ul class=\&amp;quot;org-ul\&amp;quot;&amp;gt;\n&amp;lt;li&amp;gt;&amp;lt;i&amp;gt;Normal&amp;lt;/i&amp;gt; Org markups &amp;lt;b&amp;gt;can&amp;lt;/b&amp;gt; be used inside it&amp;lt;/li&amp;gt;\n&amp;lt;/ul&amp;gt;\n\n&amp;lt;p&amp;gt;\n&amp;lt;code class=\&amp;quot;orgx\&amp;quot;&amp;gt;\n($ :span &amp;amp;quot;You can even nest OrgX syntax in it&amp;amp;quot;)\n&amp;lt;/code&amp;gt;\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Use Component With Org Syntax&amp;amp;quot; :content ($  orgx_syntax_example)}]})\n  ($ orgx_syntax_result))\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nIt works by passing the rendered content to the component &amp;lt;code&amp;gt;note&amp;lt;/code&amp;gt; as &amp;lt;code&amp;gt;children&amp;lt;/code&amp;gt;. All other Org markups or structures that can be used in an Org environment can also be used here. You can also nested other OrgX structures in it, except for top level Clojure definition and component building, which are not supported.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nCurrently we can&amp;#x27;t pass other properties to the component using this syntax, but that might change in the future.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-build-components\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#build-components\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;build-components\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Build Components&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-build-components\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nSomething we may want to build a React component out of some Org blocks. Like we may want to pass two Org mode source blocks as arguments to a &amp;lt;code&amp;gt;tabs&amp;lt;/code&amp;gt; components.\nTo do this, we just need to add an annotation to the existing &amp;lt;code&amp;gt;#+begin_orgx_{comp-name}&amp;lt;/code&amp;gt; syntax:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org7074bbc\&amp;quot;&amp;gt;#+attr_orgx_defui: true\n#+begin_orgx_my-note\n*@@orgx:(or (:note-text props) &amp;amp;quot;Tip&amp;amp;quot;)@@*\n#+begin_orgx\n(:children props)\n#+end_orgx\n#+end_orgx_my-note\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;my-note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\n&amp;lt;b&amp;gt;&amp;lt;code class=\&amp;quot;orgx\&amp;quot;&amp;gt;\n(or (:note-text props) &amp;amp;quot;Tip&amp;amp;quot;)\n&amp;lt;/code&amp;gt;&amp;lt;/b&amp;gt;\n&amp;lt;/p&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;(:children props)\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n\n&amp;lt;p&amp;gt;\nAs shown in the example, we can use normal Org syntax along with OrgX snippets. We can also access the properties with the &amp;lt;code&amp;gt;props&amp;lt;/code&amp;gt; variable.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;p&amp;gt;\nIn the above example we have defined a &amp;lt;code&amp;gt;my-note&amp;lt;/code&amp;gt; component, we can then use it with any aforementioned methods.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;my-note-example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org2ab8358\&amp;quot;&amp;gt;#+begin_orgx_my-note\nThis is a note!\n#+end_orgx_my-note\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;my-note-result\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;my-note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is a note!\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Example Usage&amp;amp;quot; :content ($ my-note-example)}]})\n  ($ my-note-result))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-inline-orgx-with-macros\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#inline-orgx-with-macros\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;inline-orgx-with-macros\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Inline OrgX with Macros&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-inline-orgx-with-macros\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nCurrently no similar syntax for inline OrgX is supported, however, it is fairly easy to make life easier with macros. Let&amp;#x27;s go back to use &amp;lt;code&amp;gt;my-button&amp;lt;/code&amp;gt; as the example.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;macro-example\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nWe can define a macro like:\n&amp;lt;/p&amp;gt;\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org4358fc3\&amp;quot;&amp;gt;#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@\n&amp;lt;/pre&amp;gt;\n\n\n&amp;lt;p&amp;gt;\nAnd then use it with:\n&amp;lt;/p&amp;gt;\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orgfef8d9e\&amp;quot;&amp;gt;{{{my-button(&amp;amp;quot;Using Macro&amp;amp;quot;, #?(:cljs (fn [] (js/alert &amp;amp;quot;Hello From Macro!&amp;amp;quot;))))}}}\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;macro-result\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\n&amp;lt;code class=\&amp;quot;orgx\&amp;quot;&amp;gt;\n($ my-button {:callback (or  #?(:cljs (fn [] (js/alert &amp;amp;quot;Hello From Macro!&amp;amp;quot;))) nil)} &amp;amp;quot;Using Macro&amp;amp;quot;)\n&amp;lt;/code&amp;gt;\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot; :class &amp;amp;quot;lg:grid-cols-[minmax(0,1fr)_minmax(0,0.5fr)]&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Inline OrgX with Macro&amp;amp;quot; :content ($ macro-example)}]})\n  ($ macro-result))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-builtin-components\&amp;quot; class=\&amp;quot;outline-2\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#builtin-components\&amp;quot;&amp;gt;&amp;lt;h2 id=\&amp;quot;builtin-components\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Builtin Components&amp;lt;/h2&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-2\&amp;quot; id=\&amp;quot;text-builtin-components\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nThe blogging program provides several builtin components, I will briefly describe their features.\n&amp;lt;/p&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-simple-remarks\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#simple-remarks\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;simple-remarks\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Simple Notice Blocks&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-simple-remarks\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nIt provides most commons blocks like &amp;lt;code&amp;gt;info&amp;lt;/code&amp;gt;, &amp;lt;code&amp;gt;note&amp;lt;/code&amp;gt;, &amp;lt;code&amp;gt;warn&amp;lt;/code&amp;gt; and &amp;lt;code&amp;gt;error&amp;lt;/code&amp;gt;.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;remarks_example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org4cc9c53\&amp;quot;&amp;gt;#+begin_orgx_info\nThis is an info\n#+end_orgx_info\n\n#+begin_orgx_note\nThis is a note\n#+end_orgx_note\n\n#+begin_orgx_warn\nThis is a warn\n#+end_orgx_warn\n\n#+begin_orgx_error\nThis is an error\n#+end_orgx_error\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;remarks_result\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;info\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is an info\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;note\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is a note\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;warn\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is a warn\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-comp\&amp;quot; data-wrapper-data=\&amp;quot;error\&amp;quot;&amp;gt;&amp;lt;p&amp;gt;\nThis is an error\n&amp;lt;/p&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Remarks&amp;amp;quot; :content ($ remarks_example)}]})\n  ($ remarks_result))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-tabs\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#tabs\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;tabs\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Tabs&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-tabs\&amp;quot;&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;code_tabs\&amp;quot;&amp;gt;&amp;lt;div class=\&amp;quot;org-src-container\&amp;quot;&amp;gt;\n&amp;lt;pre class=\&amp;quot;cr-highlighted\&amp;quot;&amp;gt;&amp;lt;code class=\&amp;quot;lang-clojure\&amp;quot;&amp;gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;(&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;defui&amp;lt;/span&amp;gt; tabs [{&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:keys&amp;lt;/span&amp;gt; [tab-list default-table class]}]\n  (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;let&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; [[selected-tab set-selected-tab!] (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;use-state&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;or&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; default-table\n                                                        (&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:name&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;first&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; tab-list))))]\n    ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100&amp;lt;/span&amp;gt; {&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:class&amp;lt;/span&amp;gt; class}\n       ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:div.my-0.flex.relative.bg-neutral-100&amp;lt;/span&amp;gt;\n          (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;map&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;fn&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; [{&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:keys&amp;lt;/span&amp;gt; [name]}]\n                 ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:button.font-medium.text-neutral-700.bg-neutral-50.py-1.px-2.border-t-2.border-neutral-50.min-w-28.bg-neutral-50.border-t-neutral-100&amp;lt;/span&amp;gt;\n                    {&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:key&amp;lt;/span&amp;gt; name\n                     &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:class&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;when&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;=&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; name selected-tab)\n                              &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot; text-sky-800 border-sky-400 bg-sky-100 border-t-sky-400&amp;amp;quot;&amp;lt;/span&amp;gt;)\n                     &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:on-click&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;fn&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; []\n                                 #?(&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:cljs&amp;lt;/span&amp;gt;\n                                    (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;set-selected-tab!&amp;lt;/span&amp;gt; name)))}\n                    name))\n               tab-list))\n       ($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:div.my-0.bg-neutral-50.overflow-hidden.px-2.h-full&amp;lt;/span&amp;gt;\n          (&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:content&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;first&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;filter&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;fn&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; [{&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:keys&amp;lt;/span&amp;gt; [name]}]\n                                     (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;=&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; name selected-tab))\n                                   tab-list)))))))\n&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;tabs_example\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org7829f5f\&amp;quot;&amp;gt;#+begin_orgx\n($ tabs {:tab-list [{:name &amp;amp;quot;tabs.clj&amp;amp;quot; :content ($ code_tabs)}\n                    {:name &amp;amp;quot;tabs usage&amp;amp;quot; :content ($ tabs_example)}]})\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;tabs_result\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ tabs {:tab-list [{:name &amp;amp;quot;tabs.clj&amp;amp;quot; :content ($ code_tabs)}\n                      {:name &amp;amp;quot;tabs usage&amp;amp;quot; :content ($ tabs_example)}]})\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\n&amp;lt;code&amp;gt;tabs&amp;lt;/code&amp;gt; is like tabs in a browser or a text editor.\n&amp;lt;/p&amp;gt;\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;tabs usage&amp;amp;quot; :content ($ tabs_example)}]})\n  ($ tabs_result))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-split-layout\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#split-layout\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;split-layout\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Split Layout&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-split-layout\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nSplit layout lets you show two things side by side:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;orgf336a71\&amp;quot;&amp;gt;#+attr_orgx_defui: true\n#+begin_orgx_split_1\n#+begin_src clojure\n  ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n              :on-click (fn [&amp;amp;amp; _]\n                          #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))}\n     &amp;amp;quot;Click Me&amp;amp;quot;)\n#+end_src\n#+end_orgx_split_1\n\n#+attr_orgx_defui: true\n#+begin_orgx_split_2\n#+begin_orgx\n  ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n              :on-click (fn [&amp;amp;amp; _]\n                          #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))}\n     &amp;amp;quot;Click Me&amp;amp;quot;)\n#+end_orgx\n#+end_orgx_split_2\n\n#+begin_orgx\n($ split-layout\n($ tabs {:tab-list [{:name &amp;amp;quot;button&amp;amp;quot; :content ($ split_1)}]})\n($ tabs {:tab-list [{:name &amp;amp;quot;showcase&amp;amp;quot; :content ($ split_2)}]}))\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;p&amp;gt;\nWill be rendered as:\n&amp;lt;/p&amp;gt;\n\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;split_1\&amp;quot;&amp;gt;&amp;lt;div class=\&amp;quot;org-src-container\&amp;quot;&amp;gt;\n&amp;lt;pre class=\&amp;quot;cr-highlighted\&amp;quot;&amp;gt;&amp;lt;code class=\&amp;quot;lang-clojure\&amp;quot;&amp;gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;($ &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:button&amp;lt;/span&amp;gt; {&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:class&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;&amp;lt;/span&amp;gt;\n            &amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:on-click&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;&amp;lt;span class=\&amp;quot;hljs-built_in\&amp;quot;&amp;gt;fn&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt; [&amp;amp;amp; _]\n                        #?(&amp;lt;span class=\&amp;quot;hljs-symbol\&amp;quot;&amp;gt;:cljs&amp;lt;/span&amp;gt; (&amp;lt;span class=\&amp;quot;hljs-name\&amp;quot;&amp;gt;js/alert&amp;lt;/span&amp;gt; &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;clicked!&amp;amp;quot;&amp;lt;/span&amp;gt;)))}\n   &amp;lt;span class=\&amp;quot;hljs-string\&amp;quot;&amp;gt;&amp;amp;quot;Click Me&amp;amp;quot;&amp;lt;/span&amp;gt;)\n&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot; data-wrapper=\&amp;quot;use-defui\&amp;quot; data-wrapper-data=\&amp;quot;split_2\&amp;quot;&amp;gt;&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;  ($ :button {:class &amp;amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;amp;quot;\n              :on-click (fn [&amp;amp;amp; _]\n                          #?(:cljs (js/alert &amp;amp;quot;clicked!&amp;amp;quot;)))}\n     &amp;amp;quot;Click Me&amp;amp;quot;)\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;/pre&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;orgx\&amp;quot;&amp;gt;($ split-layout\n($ tabs {:tab-list [{:name &amp;amp;quot;button&amp;amp;quot; :content ($ split_1)}]})\n($ tabs {:tab-list [{:name &amp;amp;quot;showcase&amp;amp;quot; :content ($ split_2)}]}))\n\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-showcase\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#showcase\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;showcase\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Showcase&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-showcase\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nShowcase is a simple wrapper over &amp;lt;code&amp;gt;split-layout&amp;lt;/code&amp;gt; and &amp;lt;code&amp;gt;tabs&amp;lt;/code&amp;gt;. The &amp;lt;code&amp;gt;showcase&amp;lt;/code&amp;gt; component is used extensive in this post, such as the example in &amp;lt;a href=\&amp;quot;#simple-remarks\&amp;quot;&amp;gt;Simple Notice Blocks&amp;lt;/a&amp;gt; is coded as:\n&amp;lt;/p&amp;gt;\n\n&amp;lt;pre class=\&amp;quot;example\&amp;quot; id=\&amp;quot;org95fa02d\&amp;quot;&amp;gt;#+attr_orgx_defui: true\n#+begin_orgx_remarks_example\n#+begin_example\n#+begin_orgx_info\nThis is an info\n#+end_orgx_info\n\n#+begin_orgx_note\nThis is a note\n#+end_orgx_note\n\n#+begin_orgx_warn\nThis is a warn\n#+end_orgx_warn\n\n#+begin_orgx_error\nThis is an error\n#+end_orgx_error\n\n#+end_example\n#+end_orgx_remarks_example\n\n#+attr_orgx_defui: true\n#+begin_orgx_remarks_result\n#+begin_orgx_info\nThis is an info\n#+end_orgx_info\n#+begin_orgx_note\nThis is a note\n#+end_orgx_note\n#+begin_orgx_warn\nThis is a warn\n#+end_orgx_warn\n#+begin_orgx_error\nThis is an error\n#+end_orgx_error\n#+end_orgx_remarks_result\n\n#+begin_orgx\n($ showcase {:showcase-name &amp;amp;quot;Rendering&amp;amp;quot;}\n  ($ tabs {:tab-list [{:name &amp;amp;quot;Remarks&amp;amp;quot; :content ($ remarks_example)}]})\n  ($ remarks_result))\n#+end_orgx\n&amp;lt;/pre&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-conclusions\&amp;quot; class=\&amp;quot;outline-2\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#conclusions\&amp;quot;&amp;gt;&amp;lt;h2 id=\&amp;quot;conclusions\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Conclusions&amp;lt;/h2&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-2\&amp;quot; id=\&amp;quot;text-conclusions\&amp;quot;&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-caveats\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#caveats\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;caveats\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Caveats&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-caveats\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nAlthough I have extensively used it in this demostration and will definitely use it in the future, there are some notably deficiency with the current implementation.\n&amp;lt;/p&amp;gt;\n\n&amp;lt;ul class=\&amp;quot;org-ul\&amp;quot;&amp;gt;\n&amp;lt;li&amp;gt;You need to read the logging to understand the problem if anything goes wrong. If you want to do SSR or SSG, the fact that the same code must be run on the JVM and the browser and produce the same result adds complexity.&amp;lt;/li&amp;gt;\n&amp;lt;li&amp;gt;The syntax still feels cumbersome in many cases, but that might be improved in the future.&amp;lt;/li&amp;gt;\n&amp;lt;li&amp;gt;The current implementation requires Emacs itself to convert the Org files into HTML, and Clojure code will then process the HTML. The most notably advantage of this method is that we can use the (basically) the full power of Org mode. However, it is also a lot of moving parts.&amp;lt;/li&amp;gt;\n&amp;lt;/ul&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;div id=\&amp;quot;outline-container-future-plans\&amp;quot; class=\&amp;quot;outline-3\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;#future-plans\&amp;quot;&amp;gt;&amp;lt;h3 id=\&amp;quot;future-plans\&amp;quot; class=\&amp;quot;cr-self-reference \&amp;quot;&amp;gt;Future Plans&amp;lt;/h3&amp;gt;&amp;lt;/a&amp;gt;\n&amp;lt;div class=\&amp;quot;outline-text-3\&amp;quot; id=\&amp;quot;text-future-plans\&amp;quot;&amp;gt;\n&amp;lt;p&amp;gt;\nI will describe the process of implement it in the next post of this series. Current the code is still coupled with my blogging program. I&amp;#x27;m planning on make it a separate library in the future.\n&amp;lt;/p&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;lt;/div&amp;gt;\n&amp;quot;,
+       :orgx-require [[clojure.pprint :as pprint]],
+       :modified-date &amp;quot;2026-01-03T15:10:59+08:00&amp;quot;}
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-use-other-orgx-files-as-components" class="outline-3"&gt;&lt;a href="#use-other-orgx-files-as-components"&gt;&lt;h3 id="use-other-orgx-files-as-components" class="cr-self-reference "&gt;Use Other OrgX Files as Components&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-use-other-orgx-files-as-components" class="outline-text-3"&gt;&lt;p&gt;
 By default, OrgX files are compiled as Cljc files and will be put in the &lt;code&gt;orgx&lt;/code&gt; namespace. You can import them as described in &lt;a href="#import-modules"&gt;Import Modules&lt;/a&gt;.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-use-orgx-with-native-org-syntax" class="outline-2"&gt;
-&lt;a href="#use-orgx-with-native-org-syntax"&gt;&lt;h2 id="use-orgx-with-native-org-syntax" class="cr-self-reference "&gt;Use OrgX With Native Org Syntax&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-use-orgx-with-native-org-syntax"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-use-components" class="outline-3"&gt;
-&lt;a href="#use-components"&gt;&lt;h3 id="use-components" class="cr-self-reference "&gt;Use Components&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-use-components"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-use-orgx-with-native-org-syntax" class="outline-2"&gt;&lt;a href="#use-orgx-with-native-org-syntax"&gt;&lt;h2 id="use-orgx-with-native-org-syntax" class="cr-self-reference "&gt;Use OrgX With Native Org Syntax&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-use-orgx-with-native-org-syntax" class="outline-text-2"&gt;&lt;/div&gt;&lt;div id="outline-container-use-components" class="outline-3"&gt;&lt;a href="#use-components"&gt;&lt;h3 id="use-components" class="cr-self-reference "&gt;Use Components&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-use-components" class="outline-text-3"&gt;&lt;p&gt;
 Writing &lt;code&gt;#+begin_orgx&lt;/code&gt; and Clojure code must be very tedious every time we want to use a simple component, like &lt;code&gt;note&lt;/code&gt; or &lt;code&gt;warning&lt;/code&gt; notice blocks.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 To solve this problem, a new syntax &lt;code&gt;#+orgx_{comp-name}&lt;/code&gt; has been introduced.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 For example:
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx_syntax_example"&gt;&lt;pre class="example" id="org60071d3"&gt;#+begin_orgx_note
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Use Component With Org Syntax:&lt;/i&gt;&lt;pre id="org79ce77c" class="example"&gt;#+begin_orgx_note
 This is a note
 
 + /Normal/ Org markups *can* be used inside it
 
 @@orgx:($ :span &amp;quot;You can even nest OrgX syntax in it&amp;quot;)@@
 #+end_orgx_note
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx_syntax_result"&gt;&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 This is a note
-&lt;/p&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;&lt;i&gt;Normal&lt;/i&gt; Org markups &lt;b&gt;can&lt;/b&gt; be used inside it&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;
-&lt;code class="orgx"&gt;
-($ :span &amp;quot;You can even nest OrgX syntax in it&amp;quot;)
-&lt;/code&gt;
-&lt;/p&gt;
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;Use Component With Org Syntax&amp;quot; :content ($  orgx_syntax_example)}]})
-  ($ orgx_syntax_result))
-
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;i&gt;Normal&lt;/i&gt; Org markups &lt;b&gt;can&lt;/b&gt; be used inside it&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;span&gt;You can even nest OrgX syntax in it&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;p&gt;
 It works by passing the rendered content to the component &lt;code&gt;note&lt;/code&gt; as &lt;code&gt;children&lt;/code&gt;. All other Org markups or structures that can be used in an Org environment can also be used here. You can also nested other OrgX structures in it, except for top level Clojure definition and component building, which are not supported.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
-Currently we can't pass other properties to the component using this syntax, but that might change in the future.
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-build-components" class="outline-3"&gt;
-&lt;a href="#build-components"&gt;&lt;h3 id="build-components" class="cr-self-reference "&gt;Build Components&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-build-components"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
+Currently we can&amp;#x27;t pass other properties to the component using this syntax, but that might change in the future.
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-build-components" class="outline-3"&gt;&lt;a href="#build-components"&gt;&lt;h3 id="build-components" class="cr-self-reference "&gt;Build Components&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-build-components" class="outline-text-3"&gt;&lt;p&gt;
 Something we may want to build a React component out of some Org blocks. Like we may want to pass two Org mode source blocks as arguments to a &lt;code&gt;tabs&lt;/code&gt; components.
 To do this, we just need to add an annotation to the existing &lt;code&gt;#+begin_orgx_{comp-name}&lt;/code&gt; syntax:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org62062bf"&gt;#+attr_orgx_defui: true
+&lt;/p&gt;&lt;pre id="org7074bbc" class="example"&gt;#+attr_orgx_defui: true
 #+begin_orgx_my-note
 *@@orgx:(or (:note-text props) &amp;quot;Tip&amp;quot;)@@*
 #+begin_orgx
 (:children props)
 #+end_orgx
 #+end_orgx_my-note
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="my-note"&gt;&lt;p&gt;
-&lt;b&gt;&lt;code class="orgx"&gt;
-(or (:note-text props) &amp;quot;Tip&amp;quot;)
-&lt;/code&gt;&lt;/b&gt;
-&lt;/p&gt;
-&lt;pre class="orgx"&gt;(:children props)
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 As shown in the example, we can use normal Org syntax along with OrgX snippets. We can also access the properties with the &lt;code&gt;props&lt;/code&gt; variable.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 In the above example we have defined a &lt;code&gt;my-note&lt;/code&gt; component, we can then use it with any aforementioned methods.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="my-note-example"&gt;&lt;pre class="example" id="org17aea0c"&gt;#+begin_orgx_my-note
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Example Usage:&lt;/i&gt;&lt;pre id="org2ab8358" class="example"&gt;#+begin_orgx_my-note
 This is a note!
 #+end_orgx_my-note
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="my-note-result"&gt;&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="my-note"&gt;&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;&lt;/p&gt;&lt;p&gt;
 This is a note!
-&lt;/p&gt;
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;Example Usage&amp;quot; :content ($ my-note-example)}]})
-  ($ my-note-result))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-inline-orgx-with-macros" class="outline-3"&gt;
-&lt;a href="#inline-orgx-with-macros"&gt;&lt;h3 id="inline-orgx-with-macros" class="cr-self-reference "&gt;Inline OrgX with Macros&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-inline-orgx-with-macros"&gt;
-&lt;p&gt;
-Currently no similar syntax for inline OrgX is supported, however, it is fairly easy to make life easier with macros. Let's go back to use &lt;code&gt;my-button&lt;/code&gt; as the example.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="macro-example"&gt;&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-inline-orgx-with-macros" class="outline-3"&gt;&lt;a href="#inline-orgx-with-macros"&gt;&lt;h3 id="inline-orgx-with-macros" class="cr-self-reference "&gt;Inline OrgX with Macros&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-inline-orgx-with-macros" class="outline-text-3"&gt;&lt;p&gt;
+Currently no similar syntax for inline OrgX is supported, however, it is fairly easy to make life easier with macros. Let&amp;#x27;s go back to use &lt;code&gt;my-button&lt;/code&gt; as the example.
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.5fr)]"&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Inline OrgX with Macro:&lt;/i&gt;&lt;p&gt;
 We can define a macro like:
-&lt;/p&gt;
-&lt;pre class="example" id="org115df65"&gt;#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
-&lt;/pre&gt;
-
-
-&lt;p&gt;
+&lt;/p&gt;&lt;pre id="org4358fc3" class="example"&gt;#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
+&lt;/pre&gt;&lt;p&gt;
 And then use it with:
-&lt;/p&gt;
-&lt;pre class="example" id="org9072699"&gt;{{{my-button(&amp;quot;Using Macro&amp;quot;, #?(:cljs (fn [] (js/alert &amp;quot;Hello From Macro!&amp;quot;))))}}}
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="macro-result"&gt;&lt;p&gt;
-&lt;code class="orgx"&gt;
-($ my-button {:callback (or  #?(:cljs (fn [] (js/alert &amp;quot;Hello From Macro!&amp;quot;))) nil)} &amp;quot;Using Macro&amp;quot;)
-&lt;/code&gt;
-&lt;/p&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot; :class &amp;quot;lg:grid-cols-[minmax(0,1fr)_minmax(0,0.5fr)]&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;Inline OrgX with Macro&amp;quot; :content ($ macro-example)}]})
-  ($ macro-result))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-builtin-components" class="outline-2"&gt;
-&lt;a href="#builtin-components"&gt;&lt;h2 id="builtin-components" class="cr-self-reference "&gt;Builtin Components&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-builtin-components"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;pre id="orgfef8d9e" class="example"&gt;{{{my-button(&amp;quot;Using Macro&amp;quot;, #?(:cljs (fn [] (js/alert &amp;quot;Hello From Macro!&amp;quot;))))}}}
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;p&gt;&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Using Macro&lt;/button&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-builtin-components" class="outline-2"&gt;&lt;a href="#builtin-components"&gt;&lt;h2 id="builtin-components" class="cr-self-reference "&gt;Builtin Components&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-builtin-components" class="outline-text-2"&gt;&lt;p&gt;
 The blogging program provides several builtin components, I will briefly describe their features.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-simple-remarks" class="outline-3"&gt;
-&lt;a href="#simple-remarks"&gt;&lt;h3 id="simple-remarks" class="cr-self-reference "&gt;Simple Notice Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-simple-remarks"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;div id="outline-container-simple-remarks" class="outline-3"&gt;&lt;a href="#simple-remarks"&gt;&lt;h3 id="simple-remarks" class="cr-self-reference "&gt;Simple Notice Blocks&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-simple-remarks" class="outline-text-3"&gt;&lt;p&gt;
 It provides most commons blocks like &lt;code&gt;info&lt;/code&gt;, &lt;code&gt;note&lt;/code&gt;, &lt;code&gt;warn&lt;/code&gt; and &lt;code&gt;error&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="remarks_example"&gt;&lt;pre class="example" id="org7720930"&gt;#+begin_orgx_info
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Remarks:&lt;/i&gt;&lt;pre id="org4cc9c53" class="example"&gt;#+begin_orgx_info
 This is an info
 #+end_orgx_info
 
@@ -473,45 +202,20 @@ This is a warn
 This is an error
 #+end_orgx_error
 
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="remarks_result"&gt;&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="info"&gt;&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-lime-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 This is an info
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 This is a note
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="warn"&gt;&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-rose-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 This is a warn
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="error"&gt;&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-red-600"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 This is an error
-&lt;/p&gt;
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;Remarks&amp;quot; :content ($ remarks_example)}]})
-  ($ remarks_result))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-tabs" class="outline-3"&gt;
-&lt;a href="#tabs"&gt;&lt;h3 id="tabs" class="cr-self-reference "&gt;Tabs&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-tabs"&gt;
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="code_tabs"&gt;&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; tabs [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [tab-list default-table class]}]
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-tabs" class="outline-3"&gt;&lt;a href="#tabs"&gt;&lt;h3 id="tabs" class="cr-self-reference "&gt;Tabs&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-tabs" class="outline-text-3"&gt;&lt;p&gt;&lt;code&gt;tabs&lt;/code&gt; is like tabs in a browser or a text editor.
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;tabs usage:&lt;/i&gt;&lt;pre id="org7829f5f" class="example"&gt;#+begin_orgx
+($ tabs {:tab-list [{:name &amp;quot;tabs.clj&amp;quot; :content ($ code_tabs)}
+                    {:name &amp;quot;tabs usage&amp;quot; :content ($ tabs_example)}]})
+#+end_orgx
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Rendering:&lt;/i&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;tabs.clj:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; tabs [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [tab-list default-table class]}]
   (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [[selected-tab set-selected-tab!] (&lt;span class="hljs-name"&gt;use-state&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; default-table
                                                         (&lt;span class="hljs-symbol"&gt;:name&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; tab-list))))]
     ($ &lt;span class="hljs-symbol"&gt;:div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; class}
@@ -530,45 +234,13 @@ This is an error
           (&lt;span class="hljs-symbol"&gt;:content&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;filter&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [name]}]
                                      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; name selected-tab))
                                    tab-list)))))))
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="tabs_example"&gt;&lt;pre class="example" id="org64802a9"&gt;#+begin_orgx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hidden"&gt;&lt;i&gt;tabs usage:&lt;/i&gt;&lt;pre id="org7829f5f" class="example"&gt;#+begin_orgx
 ($ tabs {:tab-list [{:name &amp;quot;tabs.clj&amp;quot; :content ($ code_tabs)}
                     {:name &amp;quot;tabs usage&amp;quot; :content ($ tabs_example)}]})
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="tabs_result"&gt;&lt;pre class="orgx"&gt;($ tabs {:tab-list [{:name &amp;quot;tabs.clj&amp;quot; :content ($ code_tabs)}
-                      {:name &amp;quot;tabs usage&amp;quot; :content ($ tabs_example)}]})
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;p&gt;
-&lt;code&gt;tabs&lt;/code&gt; is like tabs in a browser or a text editor.
-&lt;/p&gt;
-&lt;pre class="orgx"&gt;($ showcase {:showcase-name &amp;quot;Rendering&amp;quot;}
-  ($ tabs {:tab-list [{:name &amp;quot;tabs usage&amp;quot; :content ($ tabs_example)}]})
-  ($ tabs_result))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-split-layout" class="outline-3"&gt;
-&lt;a href="#split-layout"&gt;&lt;h3 id="split-layout" class="cr-self-reference "&gt;Split Layout&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-split-layout"&gt;
-&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-split-layout" class="outline-3"&gt;&lt;a href="#split-layout"&gt;&lt;h3 id="split-layout" class="cr-self-reference "&gt;Split Layout&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-split-layout" class="outline-text-3"&gt;&lt;p&gt;
 Split layout lets you show two things side by side:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org50f437b"&gt;#+attr_orgx_defui: true
+&lt;/p&gt;&lt;pre id="orgf336a71" class="example"&gt;#+attr_orgx_defui: true
 #+begin_orgx_split_1
 #+begin_src clojure
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -593,47 +265,15 @@ Split layout lets you show two things side by side:
 ($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
 ($ tabs {:tab-list [{:name &amp;quot;showcase&amp;quot; :content ($ split_2)}]}))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 Will be rendered as:
-&lt;/p&gt;
-
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="split_1"&gt;&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;button:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
             &lt;span class="hljs-symbol"&gt;:on-click&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [&amp;amp; _]
                         #?(&lt;span class="hljs-symbol"&gt;:cljs&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/alert&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;clicked!&amp;quot;&lt;/span&gt;)))}
    &lt;span class="hljs-string"&gt;&amp;quot;Click Me&amp;quot;&lt;/span&gt;)
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="split_2"&gt;&lt;pre class="orgx"&gt;  ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
-              :on-click (fn [&amp;amp; _]
-                          #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))}
-     &amp;quot;Click Me&amp;quot;)
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ split-layout
-($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
-($ tabs {:tab-list [{:name &amp;quot;showcase&amp;quot; :content ($ split_2)}]}))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-showcase" class="outline-3"&gt;
-&lt;a href="#showcase"&gt;&lt;h3 id="showcase" class="cr-self-reference "&gt;Showcase&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-showcase"&gt;
-&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;showcase:&lt;/i&gt;&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-showcase" class="outline-3"&gt;&lt;a href="#showcase"&gt;&lt;h3 id="showcase" class="cr-self-reference "&gt;Showcase&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-showcase" class="outline-text-3"&gt;&lt;p&gt;
 Showcase is a simple wrapper over &lt;code&gt;split-layout&lt;/code&gt; and &lt;code&gt;tabs&lt;/code&gt;. The &lt;code&gt;showcase&lt;/code&gt; component is used extensive in this post, such as the example in &lt;a href="#simple-remarks"&gt;Simple Notice Blocks&lt;/a&gt; is coded as:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org9f712b2"&gt;#+attr_orgx_defui: true
+&lt;/p&gt;&lt;pre id="org95fa02d" class="example"&gt;#+attr_orgx_defui: true
 #+begin_orgx_remarks_example
 #+begin_example
 #+begin_orgx_info
@@ -676,45 +316,18 @@ This is an error
   ($ tabs {:tab-list [{:name &amp;quot;Remarks&amp;quot; :content ($ remarks_example)}]})
   ($ remarks_result))
 #+end_orgx
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-conclusions" class="outline-2"&gt;
-&lt;a href="#conclusions"&gt;&lt;h2 id="conclusions" class="cr-self-reference "&gt;Conclusions&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-conclusions"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-caveats" class="outline-3"&gt;
-&lt;a href="#caveats"&gt;&lt;h3 id="caveats" class="cr-self-reference "&gt;Caveats&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-caveats"&gt;
-&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-conclusions" class="outline-2"&gt;&lt;a href="#conclusions"&gt;&lt;h2 id="conclusions" class="cr-self-reference "&gt;Conclusions&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-conclusions" class="outline-text-2"&gt;&lt;/div&gt;&lt;div id="outline-container-caveats" class="outline-3"&gt;&lt;a href="#caveats"&gt;&lt;h3 id="caveats" class="cr-self-reference "&gt;Caveats&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-caveats" class="outline-text-3"&gt;&lt;p&gt;
 Although I have extensively used it in this demostration and will definitely use it in the future, there are some notably deficiency with the current implementation.
-&lt;/p&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;You need to read the logging to understand the problem if anything goes wrong. If you want to do SSR or SSG, the fact that the same code must be run on the JVM and the browser and produce the same result adds complexity.&lt;/li&gt;
-&lt;li&gt;The syntax still feels cumbersome in many cases, but that might be improved in the future.&lt;/li&gt;
-&lt;li&gt;The current implementation requires Emacs itself to convert the Org files into HTML, and Clojure code will then process the HTML. The most notably advantage of this method is that we can use the (basically) the full power of Org mode. However, it is also a lot of moving parts.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-future-plans" class="outline-3"&gt;
-&lt;a href="#future-plans"&gt;&lt;h3 id="future-plans" class="cr-self-reference "&gt;Future Plans&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-future-plans"&gt;
-&lt;p&gt;
-I will describe the process of implement it in the next post of this series. Current the code is still coupled with my blogging program. I'm planning on make it a separate library in the future.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-</content>
+&lt;/p&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;You need to read the logging to understand the problem if anything goes wrong. If you want to do SSR or SSG, the fact that the same code must be run on the JVM and the browser and produce the same result adds complexity.&lt;/li&gt;&lt;li&gt;The syntax still feels cumbersome in many cases, but that might be improved in the future.&lt;/li&gt;&lt;li&gt;The current implementation requires Emacs itself to convert the Org files into HTML, and Clojure code will then process the HTML. The most notably advantage of this method is that we can use the (basically) the full power of Org mode. However, it is also a lot of moving parts.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-future-plans" class="outline-3"&gt;&lt;a href="#future-plans"&gt;&lt;h3 id="future-plans" class="cr-self-reference "&gt;Future Plans&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-future-plans" class="outline-text-3"&gt;&lt;p&gt;
+I will describe the process of implement it in the next post of this series. Current the code is still coupled with my blogging program. I&amp;#x27;m planning on make it a separate library in the future.
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">Watching Files with java.nio.file.WatchService and Clojure</title>
     <link href="https://coruscation.net/blogs/watching-files-with-java-nio-file-watchservice-and-clojure.html"/>
     <updated>2025-12-14T00:36:14+08:00</updated>
     <id>https://coruscation.net/blogs/watching-files-with-java-nio-file-watchservice-and-clojure.html</id>
-    <content type="html">&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;
 Recently I want to have a utility in Clojure that can notify me when there is a change happened in some specified directory. Fortunately Java seems to natively support it by providing a &lt;code&gt;java.nio.file.WatchService&lt;/code&gt;. It seems trivial so I want to use it directly in Clojure instead of adding another dependency to my project. It turns out to be sightly more complicated than I expected. Let me explain.
 &lt;/p&gt;
 &lt;div id="outline-container-the-problem" class="outline-2"&gt;
@@ -804,7 +417,7 @@ The initial implementation looks like this, which is fairly straightforward. We 
 However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org79888e6"&gt;+---------------+
+&lt;pre class="example" id="org9164fac"&gt;+---------------+
 | worker thread |
 +-------+-------+
         +                 +---------------+
@@ -850,7 +463,7 @@ We can have a workaround of this by emitting an event of each file in the newly 
 However, it introduces a new problem. If a file is created in a subdirectory after be subdirectory is regsitered, but before the subdirectories scanning is finished. The event of the file may be emitted twice.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org12b5203"&gt;  +---------------+
+&lt;pre class="example" id="orgb53adab"&gt;  +---------------+
   | worker thread |
   +-------+-------+
           +                +----------------+
@@ -1053,14 +666,14 @@ You can also find the source code and some unit tests &lt;a href="https://gist.g
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</content>
+&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">My Experience with lsp-bridge</title>
     <link href="https://coruscation.net/blogs/my-experience-with-lsp-bridge.html"/>
     <updated>2025-11-25T16:23:27+08:00</updated>
     <id>https://coruscation.net/blogs/my-experience-with-lsp-bridge.html</id>
-    <content type="html">&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;
 The experience of using &lt;code&gt;lsp-mode&lt;/code&gt; or &lt;code&gt;elgot&lt;/code&gt; depends heavily on the lsp server you are using and the project you are working on. With the newly added JSON parser in Emacs 30 and the garbage collecting improvements in the &lt;a href="https://github.com/emacs-mirror/emacs/blob/feature/igc/README-IGC"&gt;igc branch&lt;/a&gt;, the experience of &lt;code&gt;lsp-mode&lt;/code&gt; or &lt;code&gt;eglot&lt;/code&gt; can be more than good enough. Still, if you are using the more demanding lsp server (like some language servers for frontend development) or working on a larger-size project, the experience could still be unsatisfying or even super frustrating. If you have ever experienced Emacs freezing after checkout to another git branch or big gc lag when using &lt;code&gt;gcmh-mode&lt;/code&gt;, you could still consider giving &lt;code&gt;lsp-bridge&lt;/code&gt; a try.
 &lt;/p&gt;
 
@@ -1299,14 +912,14 @@ Overall I would say I'm satisfied with what lsp-bridge provides and amazed at it
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</content>
+&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">Experiment with GraalVM, Clojure, and JavaScript</title>
     <link href="https://coruscation.net/blogs/experiment-with-graalvm--clojure--and-javascript.html"/>
     <updated>2025-11-18T15:03:31+08:00</updated>
     <id>https://coruscation.net/blogs/experiment-with-graalvm--clojure--and-javascript.html</id>
-    <content type="html">&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;
 A common challenge when making a fullstack website using Clojure/ClojureScript is that, we are often required to use a JavaScript library on the server side when doing Server Side Rendering (SSR). GraalVM/GraalJS provides a solution to run JavaScript code on the JVM. If only we could harness that power…
 &lt;/p&gt;
 
@@ -2106,14 +1719,14 @@ Despite the limitations, I still believe this approach is something worth explor
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</content>
+&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">Build a ClojureScript Application Running on Node Using Nix</title>
     <link href="https://coruscation.net/blogs/build-a-clojurescript-application-running-on-node-using-nix.html"/>
     <updated>2025-11-03T17:25:27+08:00</updated>
     <id>https://coruscation.net/blogs/build-a-clojurescript-application-running-on-node-using-nix.html</id>
-    <content type="html">&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;
 To build a ClojureScript application, we need to pull dependencies from two package managers. That is, JavaScript packages from &lt;code&gt;npm&lt;/code&gt; and Clojure packages from &lt;code&gt;deps.edn&lt;/code&gt;. After pulling the dependencies, we can then let &lt;code&gt;shadow-cljs&lt;/code&gt; compiles the ClojureScript files into a single javascript and make the result a npm package. In this post, we rely on &lt;code&gt;nixpkgs&lt;/code&gt;'s builtin &lt;code&gt;fetchNpmDeps&lt;/code&gt; and &lt;code&gt;buildNpmPackage&lt;/code&gt; for the npm side, and &lt;a href="https://github.com/jlesquembre/clj-nix"&gt;clj-nix&lt;/a&gt; for the nix side.
 &lt;/p&gt;
 &lt;div id="outline-container-prerequisites" class="outline-2"&gt;
@@ -2226,14 +1839,14 @@ The hack in &lt;code&gt;preBuild&lt;/code&gt; only deals with dependencies pulle
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</content>
+&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">Develop and Build a Common Lisp Project using Nix</title>
     <link href="https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html"/>
     <updated>2025-10-27T17:50:17+08:00</updated>
     <id>https://coruscation.net/blogs/develop-and-build-a-common-lisp-project-using-nix.html</id>
-    <content type="html">&lt;p&gt;
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;p&gt;
 I recently tried to build a Common Lisp project using Nix and found it is quite easy with just the &lt;code&gt;buildASDFSystem&lt;/code&gt; function in nixpkgs and ASDF alone. I will share how I have done it here in case someone else finds it useful.
 &lt;/p&gt;
 &lt;div id="outline-container-simple-configuration-when-developing" class="outline-2"&gt;
@@ -2368,48 +1981,22 @@ I have a &lt;a href="https://github.com/imakira/awesomes"&gt;little project&lt;/
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</content>
+&lt;/div&gt;</content>
   </entry>
   <entry>
     <title type="html">Demonstration</title>
     <link href="https://coruscation.net/blogs/demonstration.html"/>
     <updated>2026-01-03T01:45:44+08:00</updated>
     <id>https://coruscation.net/blogs/demonstration.html</id>
-    <content type="html">&lt;div id="outline-container-code-blocks" class="outline-2"&gt;
-&lt;a href="#code-blocks"&gt;&lt;h2 id="code-blocks" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-code-blocks"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-inline-code-block" class="outline-3"&gt;
-&lt;a href="#inline-code-block"&gt;&lt;h3 id="inline-code-block" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-inline-code-block"&gt;
-&lt;p&gt;
-Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;/body&gt;&lt;/html&gt; the inline code block.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-code-blocks3" class="outline-3"&gt;
-&lt;a href="#code-blocks3"&gt;&lt;h3 id="code-blocks3" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-code-blocks3"&gt;
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Java&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-java"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;span class="hljs-keyword"&gt;public&lt;/span&gt; &lt;span class="hljs-keyword"&gt;static&lt;/span&gt; &lt;span class="hljs-type"&gt;int&lt;/span&gt; &lt;span class="hljs-title function_"&gt;fib&lt;/span&gt;&lt;span class="hljs-params"&gt;(&lt;span class="hljs-type"&gt;int&lt;/span&gt; n)&lt;/span&gt; { 
+    <content type="html">&lt;div class="cr-document md:mt-1"&gt;&lt;div id="outline-container-code-blocks" class="outline-2"&gt;&lt;a href="#code-blocks"&gt;&lt;h2 id="code-blocks" class="cr-self-reference "&gt;Code Blocks&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-code-blocks" class="outline-text-2"&gt;&lt;/div&gt;&lt;div id="outline-container-inline-code-block" class="outline-3"&gt;&lt;a href="#inline-code-block"&gt;&lt;h3 id="inline-code-block" class="cr-self-reference "&gt;Inline Code Block&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-inline-code-block" class="outline-text-3"&gt;&lt;p&gt;
+Text around &lt;!-- --&gt;(&lt;span class="hljs-name"&gt;uix.dom/create-root&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/document.getElementById&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;))&lt;!-- --&gt; the inline code block.
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-code-blocks3" class="outline-3"&gt;&lt;a href="#code-blocks3"&gt;&lt;h3 id="code-blocks3" class="cr-self-reference "&gt;Code Blocks&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-code-blocks3" class="outline-text-3"&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;Java&lt;/li&gt;&lt;/ul&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-java"&gt;&lt;span class="hljs-keyword"&gt;public&lt;/span&gt; &lt;span class="hljs-keyword"&gt;static&lt;/span&gt; &lt;span class="hljs-type"&gt;int&lt;/span&gt; &lt;span class="hljs-title function_"&gt;fib&lt;/span&gt;&lt;span class="hljs-params"&gt;(&lt;span class="hljs-type"&gt;int&lt;/span&gt; n)&lt;/span&gt; { 
     &lt;span class="hljs-keyword"&gt;if&lt;/span&gt; (n &amp;lt;= &lt;span class="hljs-number"&gt;1&lt;/span&gt;) {
         &lt;span class="hljs-keyword"&gt;return&lt;/span&gt; n;
     }
     &lt;span class="hljs-keyword"&gt;return&lt;/span&gt; fib(n - &lt;span class="hljs-number"&gt;1&lt;/span&gt;) + fib(n - &lt;span class="hljs-number"&gt;2&lt;/span&gt;);
 }
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Clojure&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; app [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [initial-route]}]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;Clojure&lt;/li&gt;&lt;/ul&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; app [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [initial-route]}]
   (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [[show-header? set-header!]
         (&lt;span class="hljs-name"&gt;use-state&lt;/span&gt;
          (&lt;span class="hljs-name"&gt;some&lt;/span&gt; #(&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; % initial-route)
@@ -2418,21 +2005,9 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
     (&lt;span class="hljs-name"&gt;context-binding&lt;/span&gt; [*header-context* [show-header? set-header!]]
       ($ router/router {&lt;span class="hljs-symbol"&gt;:routes&lt;/span&gt; routes &lt;span class="hljs-symbol"&gt;:initial-route&lt;/span&gt; initial-route}
          ($ main {})))))
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Emacs Lisp&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;save-excursion&lt;/span&gt;                 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;Emacs Lisp&lt;/li&gt;&lt;/ul&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;(&lt;span class="hljs-name"&gt;save-excursion&lt;/span&gt;                 
     (&lt;span class="hljs-name"&gt;goto-char&lt;/span&gt; (&lt;span class="hljs-name"&gt;point-min&lt;/span&gt;))    
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;with-current-buffer&lt;/span&gt; (&lt;span class="hljs-name"&gt;current-buffer&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-emacs-lisp"&gt;(&lt;span class="hljs-name"&gt;with-current-buffer&lt;/span&gt; (&lt;span class="hljs-name"&gt;current-buffer&lt;/span&gt;)
   (&lt;span class="hljs-name"&gt;let&lt;/span&gt; ((&lt;span class="hljs-name"&gt;ids&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-map-entries&lt;/span&gt; (&lt;span class="hljs-name"&gt;lambda&lt;/span&gt; ()
                                 (&lt;span class="hljs-name"&gt;org-entry-get&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt;)))))
     (&lt;span class="hljs-name"&gt;org-map-entries&lt;/span&gt; (&lt;span class="hljs-name"&gt;lambda&lt;/span&gt; ()
@@ -2443,266 +2018,49 @@ Text around &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hl
                                                                   (&lt;span class="hljs-name"&gt;prin1-to-string&lt;/span&gt; (&lt;span class="hljs-name"&gt;+&lt;/span&gt; &lt;span class="hljs-number"&gt;1&lt;/span&gt; duplicates))))))
                        (&lt;span class="hljs-name"&gt;setq&lt;/span&gt; ids (&lt;span class="hljs-name"&gt;cons&lt;/span&gt; (&lt;span class="hljs-name"&gt;org-entry-get&lt;/span&gt; &lt;span class="hljs-literal"&gt;nil&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;custom_id&amp;quot;&lt;/span&gt;)
                                        ids))))))
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-h2-sample-text" class="outline-2"&gt;
-&lt;a href="#h2-sample-text"&gt;&lt;h2 id="h2-sample-text" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-h2-sample-text"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-h3-sample-text-sample-text" class="outline-3"&gt;
-&lt;a href="#h3-sample-text-sample-text"&gt;&lt;h3 id="h3-sample-text-sample-text" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-h3-sample-text-sample-text"&gt;
-&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-h2-sample-text" class="outline-2"&gt;&lt;a href="#h2-sample-text"&gt;&lt;h2 id="h2-sample-text" class="cr-self-reference "&gt;H2 Sample Text&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-h2-sample-text" class="outline-text-2"&gt;&lt;/div&gt;&lt;div id="outline-container-h3-sample-text-sample-text" class="outline-3"&gt;&lt;a href="#h3-sample-text-sample-text"&gt;&lt;h3 id="h3-sample-text-sample-text" class="cr-self-reference "&gt;H3 Sample Text Sample Text&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-h3-sample-text-sample-text" class="outline-text-3"&gt;&lt;p&gt;
 Some text in between
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-h4-sample-text-sample-text" class="outline-4"&gt;
-&lt;a href="#h4-sample-text-sample-text"&gt;&lt;h4 id="h4-sample-text-sample-text" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-h4-sample-text-sample-text"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;div id="outline-container-h4-sample-text-sample-text" class="outline-4"&gt;&lt;a href="#h4-sample-text-sample-text"&gt;&lt;h4 id="h4-sample-text-sample-text" class="cr-self-reference "&gt;H4 Sample Text Sample Text&lt;/h4&gt;&lt;/a&gt;&lt;div id="text-h4-sample-text-sample-text" class="outline-text-4"&gt;&lt;p&gt;
 Some text in between
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-h5-sample-text-sample-text" class="outline-5"&gt;
-&lt;a href="#h5-sample-text-sample-text"&gt;&lt;h5 id="h5-sample-text-sample-text" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-h5-sample-text-sample-text"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;div id="outline-container-h5-sample-text-sample-text" class="outline-5"&gt;&lt;a href="#h5-sample-text-sample-text"&gt;&lt;h5 id="h5-sample-text-sample-text" class="cr-self-reference "&gt;H5 Sample Text Sample Text&lt;/h5&gt;&lt;/a&gt;&lt;div id="text-h5-sample-text-sample-text" class="outline-text-5"&gt;&lt;p&gt;
 Some text in between
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-common-elements" class="outline-2"&gt;
-&lt;a href="#common-elements"&gt;&lt;h2 id="common-elements" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-common-elements"&gt;
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class="underline"&gt;underline&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;verbatim&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;code&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;del&gt;strike-through&lt;/del&gt;&lt;/li&gt;
-&lt;li&gt;Horizontal Rule&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;code&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-other-elements" class="outline-2"&gt;
-&lt;a href="#other-elements"&gt;&lt;h2 id="other-elements" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-other-elements"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-table" class="outline-3"&gt;
-&lt;a href="#table"&gt;&lt;h3 id="table" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-table"&gt;
-&lt;table&gt;
-
-
-&lt;colgroup&gt;
-&lt;col class="org-left"&gt;
-
-&lt;col class="org-right"&gt;
-
-&lt;col class="org-right"&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope="col" class="org-left"&gt;Name&lt;/th&gt;
-&lt;th scope="col" class="org-right"&gt;Phone&lt;/th&gt;
-&lt;th scope="col" class="org-right"&gt;Age&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class="org-left"&gt;Peter&lt;/td&gt;
-&lt;td class="org-right"&gt;1234&lt;/td&gt;
-&lt;td class="org-right"&gt;17&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td class="org-left"&gt;Anna&lt;/td&gt;
-&lt;td class="org-right"&gt;4321&lt;/td&gt;
-&lt;td class="org-right"&gt;25&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-reference" class="outline-3"&gt;
-&lt;a href="#reference"&gt;&lt;h3 id="reference" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-reference"&gt;
-&lt;blockquote&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-common-elements" class="outline-2"&gt;&lt;a href="#common-elements"&gt;&lt;h2 id="common-elements" class="cr-self-reference "&gt;Common Elements&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-common-elements" class="outline-text-2"&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;i&gt;italic&lt;/i&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;bold&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;span class="underline"&gt;underline&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;verbatim&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;code&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;del&gt;strike-through&lt;/del&gt;&lt;/li&gt;&lt;li&gt;Horizontal Rule&lt;/li&gt;&lt;li&gt;&lt;code&gt;code&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;hr/&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-other-elements" class="outline-2"&gt;&lt;a href="#other-elements"&gt;&lt;h2 id="other-elements" class="cr-self-reference "&gt;Other Elements&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-other-elements" class="outline-text-2"&gt;&lt;/div&gt;&lt;div id="outline-container-table" class="outline-3"&gt;&lt;a href="#table"&gt;&lt;h3 id="table" class="cr-self-reference "&gt;Table&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-table" class="outline-text-3"&gt;&lt;table&gt;&lt;colgroup&gt;&lt;col class="org-left"/&gt;&lt;col class="org-right"/&gt;&lt;col class="org-right"/&gt;&lt;/colgroup&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="org-left" scope="col"&gt;Name&lt;/th&gt;&lt;th class="org-right" scope="col"&gt;Phone&lt;/th&gt;&lt;th class="org-right" scope="col"&gt;Age&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="org-left"&gt;Peter&lt;/td&gt;&lt;td class="org-right"&gt;1234&lt;/td&gt;&lt;td class="org-right"&gt;17&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="org-left"&gt;Anna&lt;/td&gt;&lt;td class="org-right"&gt;4321&lt;/td&gt;&lt;td class="org-right"&gt;25&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-reference" class="outline-3"&gt;&lt;a href="#reference"&gt;&lt;h3 id="reference" class="cr-self-reference "&gt;Reference&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-reference" class="outline-text-3"&gt;&lt;blockquote&gt;&lt;p&gt;
 Everything should be made as simple as possible,
 but not any simpler – Albert Einstein
-&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-unordered-list" class="outline-3"&gt;
-&lt;a href="#unordered-list"&gt;&lt;h3 id="unordered-list" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-unordered-list"&gt;
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Item 1&lt;/li&gt;
-&lt;li&gt;Item 2
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Level 2
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Level 3
-&lt;ul class="org-ul"&gt;
-&lt;li&gt;Level 4&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Another Mark&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Item 3&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-ordered-list" class="outline-5"&gt;
-&lt;a href="#ordered-list"&gt;&lt;h5 id="ordered-list" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;
-&lt;div class="outline-text-5" id="text-ordered-list"&gt;
-&lt;ol class="org-ol"&gt;
-&lt;li&gt;Item 1&lt;/li&gt;
-&lt;li&gt;Item 2&lt;/li&gt;
-&lt;li&gt;Item 3&lt;/li&gt;
-&lt;li&gt;Item 4&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-description-list" class="outline-3"&gt;
-&lt;a href="#description-list"&gt;&lt;h3 id="description-list" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-description-list"&gt;
-&lt;dl class="org-dl"&gt;
-&lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
-&lt;dl class="org-dl"&gt;
-&lt;dt&gt;Nested&lt;/dt&gt;&lt;dd&gt;Nested Description&lt;/dd&gt;
-&lt;/dl&gt;&lt;/dd&gt;
-&lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description&lt;/dd&gt;
-&lt;/dl&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-sample-image" class="outline-3"&gt;
-&lt;a href="#sample-image"&gt;&lt;h3 id="sample-image" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-sample-image"&gt;
-
-&lt;figure id="org2becfa8"&gt;
-&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
-
-&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/figcaption&gt;
-&lt;/figure&gt;
-
-
-&lt;figure id="org4f14e57"&gt;
-&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
-
-&lt;/figure&gt;
-
-
-&lt;figure id="orgdf689ea"&gt;
-&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
-
-&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/figcaption&gt;
-&lt;/figure&gt;
-
-
-&lt;figure id="org672fe0a"&gt;
-&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
-
-&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/figcaption&gt;
-&lt;/figure&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-verbatim" class="outline-3"&gt;
-&lt;a href="#verbatim"&gt;&lt;h3 id="verbatim" class="cr-self-reference "&gt;Verbatim&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-verbatim"&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-inline-cljc-code" class="outline-2"&gt;
-&lt;a href="#inline-cljc-code"&gt;&lt;h2 id="inline-cljc-code" class="cr-self-reference "&gt;Inline CLJC Code (OrgX)&lt;/h2&gt;&lt;/a&gt;
-&lt;div class="outline-text-2" id="text-inline-cljc-code"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-unordered-list" class="outline-3"&gt;&lt;a href="#unordered-list"&gt;&lt;h3 id="unordered-list" class="cr-self-reference "&gt;Unordered List&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-unordered-list" class="outline-text-3"&gt;&lt;ul class="org-ul"&gt;&lt;li&gt;Item 1&lt;/li&gt;&lt;li&gt;Item 2
+&lt;ul class="org-ul"&gt;&lt;li&gt;Level 2
+&lt;ul class="org-ul"&gt;&lt;li&gt;Level 3
+&lt;ul class="org-ul"&gt;&lt;li&gt;Level 4&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;Another Mark&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;Item 3&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;div id="outline-container-ordered-list" class="outline-5"&gt;&lt;a href="#ordered-list"&gt;&lt;h5 id="ordered-list" class="cr-self-reference "&gt;Ordered List&lt;/h5&gt;&lt;/a&gt;&lt;div id="text-ordered-list" class="outline-text-5"&gt;&lt;ol class="org-ol"&gt;&lt;li&gt;Item 1&lt;/li&gt;&lt;li&gt;Item 2&lt;/li&gt;&lt;li&gt;Item 3&lt;/li&gt;&lt;li&gt;Item 4&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-description-list" class="outline-3"&gt;&lt;a href="#description-list"&gt;&lt;h3 id="description-list" class="cr-self-reference "&gt;Description List&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-description-list" class="outline-text-3"&gt;&lt;dl class="org-dl"&gt;&lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description
+&lt;dl class="org-dl"&gt;&lt;dt&gt;Nested&lt;/dt&gt;&lt;dd&gt;Nested Description&lt;/dd&gt;&lt;/dl&gt;&lt;/dd&gt;&lt;dt&gt;Name&lt;/dt&gt;&lt;dd&gt;Description&lt;/dd&gt;&lt;/dl&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-sample-image" class="outline-3"&gt;&lt;a href="#sample-image"&gt;&lt;h3 id="sample-image" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-sample-image" class="outline-text-3"&gt;&lt;figure id="orgc40532e"&gt;&lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"/&gt;&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/figcaption&gt;&lt;/figure&gt;&lt;figure id="org618243a"&gt;&lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"/&gt;&lt;/figure&gt;&lt;figure id="org6289fd4"&gt;&lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"/&gt;&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/figcaption&gt;&lt;/figure&gt;&lt;figure id="org21d8d0e"&gt;&lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"/&gt;&lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/figcaption&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-verbatim" class="outline-3"&gt;&lt;a href="#verbatim"&gt;&lt;h3 id="verbatim" class="cr-self-reference "&gt;Verbatim&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-verbatim" class="outline-text-3"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-inline-cljc-code" class="outline-2"&gt;&lt;a href="#inline-cljc-code"&gt;&lt;h2 id="inline-cljc-code" class="cr-self-reference "&gt;Inline CLJC Code (OrgX)&lt;/h2&gt;&lt;/a&gt;&lt;div id="text-inline-cljc-code" class="outline-text-2"&gt;&lt;p&gt;
 You can embedded Clojure code inside a blog file using &lt;code&gt;#+begin_orgx&lt;/code&gt; blocks.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 Enable this feature first in the org metadata:
-&lt;/p&gt;
-
-&lt;pre class="example" id="orgce4bd5a"&gt;#+ORGX: true
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;pre id="org511a0fb" class="example"&gt;#+ORGX: true
+&lt;/pre&gt;&lt;p&gt;
 With the following snippet embedded in a org file.
-&lt;/p&gt;
-
-&lt;pre class="example" id="orgd2f20c9"&gt;#+begin_orgx
+&lt;/p&gt;&lt;pre id="org253e2d4" class="example"&gt;#+begin_orgx
   ;; You can style it using tailwindcss
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 We can get a clickable button in the generated page:
-&lt;/p&gt;
-
-&lt;pre class="orgx"&gt;  ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
-
-&lt;/pre&gt;
-
-
-&lt;p&gt;
+&lt;/p&gt;&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;p&gt;
 Since the code is in CLJC, this feature works very well with static page generation / server side rendering. However, you must wrap plaform specified code in read macros like we do in a normal CLJC file.
-&lt;/p&gt;
-
-&lt;p&gt;
-We can access the blog page's meta data using &lt;code&gt;post-props&lt;/code&gt; variable.
-&lt;/p&gt;
-
-&lt;pre class="example" id="org9944dbe"&gt;#+begin_orgx
+&lt;/p&gt;&lt;p&gt;
+We can access the blog page&amp;#x27;s meta data using &lt;code&gt;post-props&lt;/code&gt; variable.
+&lt;/p&gt;&lt;pre id="org3d0a84b" class="example"&gt;#+begin_orgx
 ($ :div {:class &amp;quot;bg-stone-50 pl-4 py-2 border-l-3 border-sky-500&amp;quot;} (str (keys post-props)))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ :div {:class &amp;quot;bg-stone-50 pl-4 py-2 border-l-3 border-sky-500&amp;quot;} (str (keys post-props)))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-inline-clojure-snippet" class="outline-3"&gt;
-&lt;a href="#inline-clojure-snippet"&gt;&lt;h3 id="inline-clojure-snippet" class="cr-self-reference "&gt;Inline Clojure Snippet&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-inline-clojure-snippet"&gt;
-&lt;pre class="example" id="orgf627539"&gt;We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-1.border-l-3.border-sky-500 &amp;quot;also have inline Clojure snippets&amp;quot;)@@ like this.
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;div class="bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"&gt;(:blog/orgx :blog/tags :blog/unlisted :blog/title :blog/show-toc? :blog/file-path :blog/author :blog/email :blog/description :blog/id :blog/category :blog/language :blog/published-date :blog/content :blog/orgx-require :blog/modified-date)&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-inline-clojure-snippet" class="outline-3"&gt;&lt;a href="#inline-clojure-snippet"&gt;&lt;h3 id="inline-clojure-snippet" class="cr-self-reference "&gt;Inline Clojure Snippet&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-inline-clojure-snippet" class="outline-text-3"&gt;&lt;pre id="org1984714" class="example"&gt;We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-1.border-l-3.border-sky-500 &amp;quot;also have inline Clojure snippets&amp;quot;)@@ like this.
+&lt;/pre&gt;&lt;p&gt;
 Will be render as
-&lt;/p&gt;
-
-&lt;p&gt;
-We can &lt;code class="orgx"&gt;
-($ :span.bg-cyan-50.mt-2.pl-2.py-2.border-l-3.border-sky-500 &amp;quot;also have inline Clojure snippets&amp;quot;)
-&lt;/code&gt; like this.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-using-other-orgx-files-as-components" class="outline-3"&gt;
-&lt;a href="#using-other-orgx-files-as-components"&gt;&lt;h3 id="using-other-orgx-files-as-components" class="cr-self-reference "&gt;Using Other OrgX files as components&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-using-other-orgx-files-as-components"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
+We can &lt;span class="bg-cyan-50 mt-2 pl-2 py-2 border-l-3 border-sky-500"&gt;also have inline Clojure snippets&lt;/span&gt; like this.
+&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-using-other-orgx-files-as-components" class="outline-3"&gt;&lt;a href="#using-other-orgx-files-as-components"&gt;&lt;h3 id="using-other-orgx-files-as-components" class="cr-self-reference "&gt;Using Other OrgX files as components&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-using-other-orgx-files-as-components" class="outline-text-3"&gt;&lt;p&gt;
 Like with MDX, we can use other orgx files as components.
-&lt;/p&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;p&gt;
 First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as contents, note the &lt;code&gt;#+UNLISTED&lt;/code&gt; property.
-&lt;/p&gt;
-
-&lt;pre class="example" id="org8a539d5"&gt;#+ORGX: true
+&lt;/p&gt;&lt;pre id="org6147fcd" class="example"&gt;#+ORGX: true
 #+UNLISTED: true
 #+begin_orgx
 ($ :div
@@ -2710,68 +2068,27 @@ First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as con
       ($ :div {:class &amp;quot;font-semibold mb-1 text-neutral-600&amp;quot;} &amp;quot;TIP&amp;quot;)
       ($ :div (:children post-props))))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 When we want to use this OrgX file as a components, we need to add a &lt;code&gt;require&lt;/code&gt; declaration first.
-&lt;/p&gt;
-
-&lt;pre class="example" id="org279601a"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/p&gt;&lt;pre id="org64406e7" class="example"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
+&lt;/pre&gt;&lt;p&gt;
 Then we could use it like this
-&lt;/p&gt;
-&lt;pre class="example" id="org5d3a62f"&gt;
-#+begin_orgx
+&lt;/p&gt;&lt;pre id="orgd3df082" class="example"&gt;#+begin_orgx
 ($ note/component  &amp;quot;This is a note&amp;quot;)
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 It will be rendered as:
-&lt;/p&gt;
-
-&lt;pre class="orgx"&gt;($ note/component  &amp;quot;This is a note&amp;quot;)
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-builtin-components" class="outline-3"&gt;
-&lt;a href="#builtin-components"&gt;&lt;h3 id="builtin-components" class="cr-self-reference "&gt;Builtin Components&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-builtin-components"&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-simple-remarks" class="outline-4"&gt;
-&lt;a href="#simple-remarks"&gt;&lt;h4 id="simple-remarks" class="cr-self-reference "&gt;Simple Remarks&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-simple-remarks"&gt;
-&lt;p&gt;
+&lt;/p&gt;&lt;div&gt;&lt;div class="bg-stone-50 pl-4 py-2 border-l-3 border-rose-500"&gt;&lt;div class="font-semibold mb-1 text-neutral-600"&gt;TIP&lt;/div&gt;&lt;div&gt;This is a note&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-builtin-components" class="outline-3"&gt;&lt;a href="#builtin-components"&gt;&lt;h3 id="builtin-components" class="cr-self-reference "&gt;Builtin Components&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-builtin-components" class="outline-text-3"&gt;&lt;/div&gt;&lt;div id="outline-container-simple-remarks" class="outline-4"&gt;&lt;a href="#simple-remarks"&gt;&lt;h4 id="simple-remarks" class="cr-self-reference "&gt;Simple Remarks&lt;/h4&gt;&lt;/a&gt;&lt;div id="text-simple-remarks" class="outline-text-4"&gt;&lt;p&gt;
 It has several builtin components, notebly, the following snippet:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org7a7a3db"&gt;#+begin_orgx
+&lt;/p&gt;&lt;pre id="org91433dc" class="example"&gt;#+begin_orgx
 ($ info &amp;quot;This is an info&amp;quot;)
 ($ note &amp;quot;This is a note&amp;quot;)
 ($ warn &amp;quot;This is a warn&amp;quot;)
 ($ error &amp;quot;This is an error&amp;quot;)
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 Will be rendered as:
-&lt;/p&gt;
-
-&lt;pre class="orgx"&gt;($ info &amp;quot;This is an info&amp;quot;)
-($ note &amp;quot;This is a note&amp;quot;)
-($ warn &amp;quot;This is a warn&amp;quot;)
-($ error &amp;quot;This is an error&amp;quot;)
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-tabs" class="outline-4"&gt;
-&lt;a href="#tabs"&gt;&lt;h4 id="tabs" class="cr-self-reference "&gt;Tabs&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-tabs"&gt;
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="code_org"&gt;&lt;pre class="example" id="org0cded42"&gt;#+attr_orgx_defui: true
+&lt;/p&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-lime-500"&gt;&lt;div class="not-italic"&gt;This is an info&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;This is a note&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-rose-500"&gt;&lt;div class="not-italic"&gt;This is a warn&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-red-600"&gt;&lt;div class="not-italic"&gt;This is an error&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-tabs" class="outline-4"&gt;&lt;a href="#tabs"&gt;&lt;h4 id="tabs" class="cr-self-reference "&gt;Tabs&lt;/h4&gt;&lt;/a&gt;&lt;div id="text-tabs" class="outline-text-4"&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;tab_demo.org:&lt;/i&gt;&lt;pre id="org0c09bcf" class="example"&gt;#+attr_orgx_defui: true
 #+begin_orgx_code_clj
 #+begin_src clojure
 (defui tabs [{:keys [tab-list default-table class]}]
@@ -2800,7 +2117,7 @@ Will be rendered as:
 #+attr_orgx_defui: true
 #+begin_orgx_code_org
 #+begin_example
-Well we can't display the contents recurisvely
+Well we can&amp;#x27;t display the contents recurisvely
 #+end_example
 #+end_orgx_code_org
 
@@ -2808,12 +2125,7 @@ Well we can't display the contents recurisvely
 #+begin_orgx
 ($ tabs {:tab-list [{:name &amp;quot;tab_demo.org&amp;quot; :content ($ code_org)} {:name &amp;quot;tabs.clj&amp;quot; :content ($ code_clj)}]})
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="code_clj"&gt;&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; tabs [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [tab-list default-table class]}]
+&lt;/pre&gt;&lt;/div&gt;&lt;div class="hidden"&gt;&lt;i&gt;tabs.clj:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;(&lt;span class="hljs-name"&gt;defui&lt;/span&gt; tabs [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [tab-list default-table class]}]
   (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;let&lt;/span&gt;&lt;/span&gt; [[selected-tab set-selected-tab!] (&lt;span class="hljs-name"&gt;use-state&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;or&lt;/span&gt;&lt;/span&gt; default-table
                                                         (&lt;span class="hljs-symbol"&gt;:name&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; tab-list))))]
     ($ &lt;span class="hljs-symbol"&gt;:div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; class}
@@ -2832,24 +2144,9 @@ Well we can't display the contents recurisvely
           (&lt;span class="hljs-symbol"&gt;:content&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;first&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;filter&lt;/span&gt;&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [{&lt;span class="hljs-symbol"&gt;:keys&lt;/span&gt; [name]}]
                                      (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;=&lt;/span&gt;&lt;/span&gt; name selected-tab))
                                    tab-list)))))))
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ tabs {:tab-list [{:name &amp;quot;tab_demo.org&amp;quot; :content ($ code_org)} {:name &amp;quot;tabs.clj&amp;quot; :content ($ code_clj)}]})
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-split-layout" class="outline-4"&gt;
-&lt;a href="#split-layout"&gt;&lt;h4 id="split-layout" class="cr-self-reference "&gt;Split Layout&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-split-layout"&gt;
-&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-split-layout" class="outline-4"&gt;&lt;a href="#split-layout"&gt;&lt;h4 id="split-layout" class="cr-self-reference "&gt;Split Layout&lt;/h4&gt;&lt;/a&gt;&lt;div id="text-split-layout" class="outline-text-4"&gt;&lt;p&gt;
 Split layout lets you show two things side by side:
-&lt;/p&gt;
-
-&lt;pre class="example" id="org524d153"&gt;#+attr_orgx_defui: true
+&lt;/p&gt;&lt;pre id="org4dd7a17" class="example"&gt;#+attr_orgx_defui: true
 #+begin_orgx_split_1
 #+begin_src clojure
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -2874,75 +2171,25 @@ Split layout lets you show two things side by side:
 ($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
 ($ tabs {:tab-list [{:name &amp;quot;showcase&amp;quot; :content ($ split_2)}]}))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;p&gt;
+&lt;/pre&gt;&lt;p&gt;
 Will be rendered as:
-&lt;/p&gt;
-
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="split_1"&gt;&lt;div class="org-src-container"&gt;
-&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;button:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
             &lt;span class="hljs-symbol"&gt;:on-click&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [&amp;amp; _]
                         #?(&lt;span class="hljs-symbol"&gt;:cljs&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/alert&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;clicked!&amp;quot;&lt;/span&gt;)))}
    &lt;span class="hljs-string"&gt;&amp;quot;Click Me&amp;quot;&lt;/span&gt;)
-&lt;/body&gt;&lt;/html&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="split_2"&gt;&lt;pre class="orgx"&gt;  ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
-              :on-click (fn [&amp;amp; _]
-                          #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))}
-     &amp;quot;Click Me&amp;quot;)
-
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ split-layout
-($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
-($ tabs {:tab-list [{:name &amp;quot;showcase&amp;quot; :content ($ split_2)}]}))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-showcase" class="outline-4"&gt;
-&lt;a href="#showcase"&gt;&lt;h4 id="showcase" class="cr-self-reference "&gt;Showcase&lt;/h4&gt;&lt;/a&gt;
-&lt;div class="outline-text-4" id="text-showcase"&gt;
-&lt;p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;showcase:&lt;/i&gt;&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-showcase" class="outline-4"&gt;&lt;a href="#showcase"&gt;&lt;h4 id="showcase" class="cr-self-reference "&gt;Showcase&lt;/h4&gt;&lt;/a&gt;&lt;div id="text-showcase" class="outline-text-4"&gt;&lt;p&gt;
 Showcase is a simple wrapper over &lt;code&gt;split-layout&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="showcase_1"&gt;&lt;pre class="example" id="org68cc044"&gt;#+begin_orgx
+&lt;/p&gt;&lt;div class="grid overflow-hidden grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 "&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;showcase demo:&lt;/i&gt;&lt;pre id="orgf01bbf4" class="example"&gt;#+begin_orgx
 ($ showcase
   ($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
   ($ split_2))
 #+end_orgx
-&lt;/pre&gt;
-
-&lt;/pre&gt;
-
-&lt;pre class="orgx"&gt;($ showcase
-  ($ tabs {:tab-list [{:name &amp;quot;showcase demo&amp;quot; :content ($ showcase_1)}
-                      {:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
-  ($ split_2))
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id="outline-container-use-uix-components-with-org-mode-markups" class="outline-3"&gt;
-&lt;a href="#use-uix-components-with-org-mode-markups"&gt;&lt;h3 id="use-uix-components-with-org-mode-markups" class="cr-self-reference "&gt;Use uix components with org-mode markups&lt;/h3&gt;&lt;/a&gt;
-&lt;div class="outline-text-3" id="text-use-uix-components-with-org-mode-markups"&gt;
-&lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;div class="hidden"&gt;&lt;i&gt;button:&lt;/i&gt;&lt;div class="org-src-container"&gt;&lt;pre class="cr-highlighted"&gt;&lt;code class="lang-clojure"&gt;($ &lt;span class="hljs-symbol"&gt;:button&lt;/span&gt; {&lt;span class="hljs-symbol"&gt;:class&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;&lt;/span&gt;
+            &lt;span class="hljs-symbol"&gt;:on-click&lt;/span&gt; (&lt;span class="hljs-name"&gt;&lt;span class="hljs-built_in"&gt;fn&lt;/span&gt;&lt;/span&gt; [&amp;amp; _]
+                        #?(&lt;span class="hljs-symbol"&gt;:cljs&lt;/span&gt; (&lt;span class="hljs-name"&gt;js/alert&lt;/span&gt; &lt;span class="hljs-string"&gt;&amp;quot;clicked!&amp;quot;&lt;/span&gt;)))}
+   &lt;span class="hljs-string"&gt;&amp;quot;Click Me&amp;quot;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;section class="my-4 relative border-sky-300 border-l-2 border-l-neutral-100"&gt;&lt;div class="my-0 bg-neutral-50 overflow-hidden px-2 h-full"&gt;&lt;div&gt;&lt;i&gt;Result:&lt;/i&gt;&lt;button class="bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"&gt;Click Me&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="outline-container-use-uix-components-with-org-mode-markups" class="outline-3"&gt;&lt;a href="#use-uix-components-with-org-mode-markups"&gt;&lt;h3 id="use-uix-components-with-org-mode-markups" class="cr-self-reference "&gt;Use uix components with org-mode markups&lt;/h3&gt;&lt;/a&gt;&lt;div id="text-use-uix-components-with-org-mode-markups" class="outline-text-3"&gt;&lt;div&gt;&lt;blockquote class="not-italic bg-stone-50 pl-4 py-2 border-l-3  my-4 border-sky-500"&gt;&lt;div class="not-italic"&gt;&lt;p&gt;
 Hello
-&lt;/p&gt;
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-</content>
+&lt;/p&gt;&lt;/div&gt;&lt;/blockquote&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</content>
   </entry>
 </feed>
