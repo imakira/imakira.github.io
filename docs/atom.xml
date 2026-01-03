@@ -33,7 +33,7 @@ In the following sections I will call it &lt;code&gt;OrgX&lt;/code&gt;.
 Similar to MDX, OrgX works by compiling the OrgX file into a &lt;a href="https://clojure.org/guides/reader_conditionals"&gt;Cljc&lt;/a&gt; file. A basic OrgX file would look like this:
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx-example"&gt;&lt;pre class="example" id="orgc80a406"&gt;#+ORGX: true
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx-example"&gt;&lt;pre class="example" id="orgd7db68f"&gt;#+ORGX: true
 
 /*Hello* from @@orgx:($ :span &amp;quot;OrgX&amp;quot;)@@/
 
@@ -107,7 +107,7 @@ As we have seen from the earily example, &lt;code&gt;#+begin_orgx&lt;/code&gt; a
 We can have a clickable button with the following code.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgb49648b"&gt;#+begin_orgx
+&lt;pre class="example" id="org3a36ed1"&gt;#+begin_orgx
   ;; you can style it using tailwindcss
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
      :on-click (fn [&amp;amp; _]
@@ -128,7 +128,7 @@ That will be rendered as:
 Notice the &lt;a href="https://clojure.org/guides/reader_conditionals"&gt;reader conditional macro&lt;/a&gt; &lt;code&gt;#?(:cljs)&lt;/code&gt;  . The generated Clojure code is in a Cljc file, therefore it pairs well with the server side rendering or static generation. However, it also means we need to put the platform specified code in the corresponding reader conditionals.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgaf935be"&gt;We can also use the button inline this way: @@orgx:($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)@@
+&lt;pre class="example" id="org918094d"&gt;We can also use the button inline this way: @@orgx:($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)@@
 &lt;/pre&gt;
 
 &lt;p&gt;
@@ -152,7 +152,7 @@ You may have noticed that, all the Clojure code being put in a component means t
 Let's go back to the button example, we can define a &lt;code&gt;my-button&lt;/code&gt; component with the following code:
 &lt;/p&gt;
 
-&lt;pre class="example" id="org6a28e59"&gt;#+attr_orgx_toplevel: true
+&lt;pre class="example" id="org48c1d30"&gt;#+attr_orgx_toplevel: true
 #+begin_orgx
 (defui my-button [{:keys [children callback]}]
     ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -190,7 +190,7 @@ The &lt;code&gt;defui&lt;/code&gt; will be put on the top level in the generated
 We can then easily use the &lt;code&gt;my-button&lt;/code&gt; component with either inline or standalone OrgX block.
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="mybutton_example"&gt;&lt;pre class="example" id="org8a72509"&gt;Inline OrgX block:
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="mybutton_example"&gt;&lt;pre class="example" id="org7f66f58"&gt;Inline OrgX block:
 @@orgx:($ my-button {:callback (fn [] #?(:cljs (js/alert &amp;quot;Hello From inline OrgX&amp;quot;)))} &amp;quot;From inline OrgX&amp;quot;)@@
 #+begin_orgx
 ($ :div &amp;quot;We can also use it in a orgx block&amp;quot;
@@ -229,7 +229,7 @@ Inline OrgX block:
 In MDX, we can import modules with normal &lt;code&gt;import&lt;/code&gt; statements. In OrgX, we can do something similar with toplevel OrgX block and the &lt;code&gt;require&lt;/code&gt; function.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org55d31ae"&gt;#+attr_orgx_toplevel: true
+&lt;pre class="example" id="org22a8bdb"&gt;#+attr_orgx_toplevel: true
 #+begin_orgx
 (require '[clojure.string :as string])
 #+end_orgx
@@ -239,7 +239,7 @@ In MDX, we can import modules with normal &lt;code&gt;import&lt;/code&gt; statem
 We can also do this with keyword metadata at the beginning of an Org file.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgc93fd37"&gt;#+ORGX_REQUIRE: [[clojure.string :as string]]
+&lt;pre class="example" id="org4c35724"&gt;#+ORGX_REQUIRE: [[clojure.string :as string]]
 &lt;/pre&gt;
 
 &lt;pre class="orgx" data-wrapper="use-comp" data-wrapper-data="note"&gt;&lt;p&gt;
@@ -256,7 +256,7 @@ Settings in keyword metadata currently doesn't support reader macros.
 Similar to MDX, we can access the component's properties with the &lt;code&gt;post-props&lt;/code&gt; variable. Some metadata are also provided in the &lt;code&gt;post-props&lt;/code&gt; variable.
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="metadata-example"&gt;&lt;pre class="example" id="org3ac63eb"&gt;($ :pre
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="metadata-example"&gt;&lt;pre class="example" id="org55e8e06"&gt;($ :pre
   (binding [*print-namespace-maps* true]
     (with-out-str (pprint/pprint post-props))))
 &lt;/pre&gt;
@@ -300,7 +300,7 @@ To solve this problem, a new syntax &lt;code&gt;#+orgx_{comp-name}&lt;/code&gt; 
 For example:
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx_syntax_example"&gt;&lt;pre class="example" id="orgdd21898"&gt;#+begin_orgx_note
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="orgx_syntax_example"&gt;&lt;pre class="example" id="orgb0f4323"&gt;#+begin_orgx_note
 This is a note
 
 + /Normal/ Org markups *can* be used inside it
@@ -354,7 +354,7 @@ Something we may want to build a React component out of some Org blocks. Like we
 To do this, we just need to add an annotation to the existing &lt;code&gt;#+begin_orgx_{comp-name}&lt;/code&gt; syntax:
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgdb25f50"&gt;#+attr_orgx_defui: true
+&lt;pre class="example" id="org5523540"&gt;#+attr_orgx_defui: true
 #+begin_orgx_my-note
 *@@orgx:(or (:note-text props) &amp;quot;Tip&amp;quot;)@@*
 #+begin_orgx
@@ -383,7 +383,7 @@ As shown in the example, we can use normal Org syntax along with OrgX snippets. 
 In the above example we have defined a &lt;code&gt;my-note&lt;/code&gt; component, we can then use it with any aforementioned methods.
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="my-note-example"&gt;&lt;pre class="example" id="orgb28803a"&gt;#+begin_orgx_my-note
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="my-note-example"&gt;&lt;pre class="example" id="org9fc98e6"&gt;#+begin_orgx_my-note
 This is a note!
 #+end_orgx_my-note
 &lt;/pre&gt;
@@ -415,14 +415,14 @@ Currently no similar syntax for inline OrgX is supported, however, it is fairly 
 &lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="macro-example"&gt;&lt;p&gt;
 We can define a macro like:
 &lt;/p&gt;
-&lt;pre class="example" id="org2bb3303"&gt;#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
+&lt;pre class="example" id="orgb366ee0"&gt;#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
 &lt;/pre&gt;
 
 
 &lt;p&gt;
 And then use it with:
 &lt;/p&gt;
-&lt;pre class="example" id="org688b4cf"&gt;{{{my-button(&amp;quot;Using Macro&amp;quot;, #?(:cljs (fn [] (js/alert &amp;quot;Hello From Macro!&amp;quot;))))}}}
+&lt;pre class="example" id="org3f43cdb"&gt;{{{my-button(&amp;quot;Using Macro&amp;quot;, #?(:cljs (fn [] (js/alert &amp;quot;Hello From Macro!&amp;quot;))))}}}
 &lt;/pre&gt;
 
 &lt;/pre&gt;
@@ -457,7 +457,7 @@ The blogging program provides several builtin components, I will briefly describ
 It provides most commons blocks like &lt;code&gt;info&lt;/code&gt;, &lt;code&gt;note&lt;/code&gt;, &lt;code&gt;warn&lt;/code&gt; and &lt;code&gt;error&lt;/code&gt;.
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="remarks_example"&gt;&lt;pre class="example" id="org78e273a"&gt;#+begin_orgx_info
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="remarks_example"&gt;&lt;pre class="example" id="org898b450"&gt;#+begin_orgx_info
 This is an info
 #+end_orgx_info
 
@@ -535,7 +535,7 @@ This is an error
 
 &lt;/pre&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="tabs_example"&gt;&lt;pre class="example" id="orgdca6526"&gt;#+begin_orgx
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="tabs_example"&gt;&lt;pre class="example" id="org5ce1155"&gt;#+begin_orgx
 ($ tabs {:tab-list [{:name &amp;quot;tabs.clj&amp;quot; :content ($ code_tabs)}
                     {:name &amp;quot;tabs usage&amp;quot; :content ($ tabs_example)}]})
 #+end_orgx
@@ -568,7 +568,7 @@ This is an error
 Split layout lets you show two things side by side:
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgd354323"&gt;#+attr_orgx_defui: true
+&lt;pre class="example" id="orgcd0372c"&gt;#+attr_orgx_defui: true
 #+begin_orgx_split_1
 #+begin_src clojure
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -633,7 +633,7 @@ Will be rendered as:
 Showcase is a simple wrapper over &lt;code&gt;split-layout&lt;/code&gt; and &lt;code&gt;tabs&lt;/code&gt;. The &lt;code&gt;showcase&lt;/code&gt; component is used extensive in this post, such as the example in &lt;a href="#simple-remarks"&gt;Simple Notice Blocks&lt;/a&gt; is coded as:
 &lt;/p&gt;
 
-&lt;pre class="example" id="org2393c26"&gt;#+attr_orgx_defui: true
+&lt;pre class="example" id="org020c8a5"&gt;#+attr_orgx_defui: true
 #+begin_orgx_remarks_example
 #+begin_example
 #+begin_orgx_info
@@ -804,7 +804,7 @@ The initial implementation looks like this, which is fairly straightforward. We 
 However, there is only one issue: If a file is created in a subdirectory before the subdirectory got registered, the event won't be fired.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgdd88a47"&gt;+---------------+
+&lt;pre class="example" id="org92baa25"&gt;+---------------+
 | worker thread |
 +-------+-------+
         +                 +---------------+
@@ -850,7 +850,7 @@ We can have a workaround of this by emitting an event of each file in the newly 
 However, it introduces a new problem. If a file is created in a subdirectory after be subdirectory is regsitered, but before the subdirectories scanning is finished. The event of the file may be emitted twice.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgdbc8e01"&gt;  +---------------+
+&lt;pre class="example" id="orga4f07c2"&gt;  +---------------+
   | worker thread |
   +-------+-------+
           +                +----------------+
@@ -2591,27 +2591,27 @@ but not any simpler – Albert Einstein
 &lt;a href="#sample-image"&gt;&lt;h3 id="sample-image" class="cr-self-reference "&gt;Sample Image&lt;/h3&gt;&lt;/a&gt;
 &lt;div class="outline-text-3" id="text-sample-image"&gt;
 
-&lt;figure id="orgcdc3bbe"&gt;
+&lt;figure id="org0bd9b81"&gt;
 &lt;img width="550" height="368" src="imgs/1.jpg" alt="1.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 1: &lt;/span&gt;This is an image&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 
-&lt;figure id="org772b447"&gt;
+&lt;figure id="org4e16b7a"&gt;
 &lt;img width="550" height="368" src="imgs/1.webp" alt="1.webp"&gt;
 
 &lt;/figure&gt;
 
 
-&lt;figure id="org8a16d7d"&gt;
+&lt;figure id="org6f259d0"&gt;
 &lt;img width="2624" height="3936" src="https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg" alt="photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=natalia-grela-sFINbLpdfqw-unsplash.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 2: &lt;/span&gt;sample high resolution vertical image&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 
-&lt;figure id="orga43150b"&gt;
+&lt;figure id="org6d1e85f"&gt;
 &lt;img width="4928" height="3280" src="https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg" alt="photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&amp;amp;q=85&amp;amp;fm=jpg&amp;amp;crop=entropy&amp;amp;cs=srgb&amp;amp;dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg"&gt;
 
 &lt;figcaption&gt;&lt;span class="figure-number"&gt;Figure 3: &lt;/span&gt;sample high resolution horizontal iamge&lt;/figcaption&gt;
@@ -2635,14 +2635,14 @@ You can embedded Clojure code inside a blog file using &lt;code&gt;#+begin_orgx&
 Enable this feature first in the org metadata:
 &lt;/p&gt;
 
-&lt;pre class="example" id="org7710282"&gt;#+ORGX: true
+&lt;pre class="example" id="org80ab4db"&gt;#+ORGX: true
 &lt;/pre&gt;
 
 &lt;p&gt;
 With the following snippet embedded in a org file.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org08a95f6"&gt;#+begin_orgx
+&lt;pre class="example" id="org88cbde1"&gt;#+begin_orgx
   ;; You can style it using tailwindcss
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot; :on-click (fn [&amp;amp; _] #?(:cljs (js/alert &amp;quot;clicked!&amp;quot;)))} &amp;quot;Click Me&amp;quot;)
 #+end_orgx
@@ -2665,7 +2665,7 @@ Since the code is in CLJC, this feature works very well with static page generat
 We can access the blog page's meta data using &lt;code&gt;post-props&lt;/code&gt; variable.
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgd80d6cb"&gt;#+begin_orgx
+&lt;pre class="example" id="org2bff4fb"&gt;#+begin_orgx
 ($ :div {:class &amp;quot;bg-stone-50 pl-4 py-2 border-l-3 border-sky-500&amp;quot;} (str (keys post-props)))
 #+end_orgx
 &lt;/pre&gt;
@@ -2677,7 +2677,7 @@ We can access the blog page's meta data using &lt;code&gt;post-props&lt;/code&gt
 &lt;div id="outline-container-inline-clojure-snippet" class="outline-3"&gt;
 &lt;a href="#inline-clojure-snippet"&gt;&lt;h3 id="inline-clojure-snippet" class="cr-self-reference "&gt;Inline Clojure Snippet&lt;/h3&gt;&lt;/a&gt;
 &lt;div class="outline-text-3" id="text-inline-clojure-snippet"&gt;
-&lt;pre class="example" id="org92b0541"&gt;We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-1.border-l-3.border-sky-500 &amp;quot;also have inline Clojure snippets&amp;quot;)@@ like this.
+&lt;pre class="example" id="orgfdfbe02"&gt;We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-1.border-l-3.border-sky-500 &amp;quot;also have inline Clojure snippets&amp;quot;)@@ like this.
 &lt;/pre&gt;
 
 &lt;p&gt;
@@ -2702,7 +2702,7 @@ Like with MDX, we can use other orgx files as components.
 First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as contents, note the &lt;code&gt;#+UNLISTED&lt;/code&gt; property.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org9c89432"&gt;#+ORGX: true
+&lt;pre class="example" id="orga330000"&gt;#+ORGX: true
 #+UNLISTED: true
 #+begin_orgx
 ($ :div
@@ -2716,13 +2716,13 @@ First we make a &lt;code&gt;note.org&lt;/code&gt; file with the following as con
 When we want to use this OrgX file as a components, we need to add a &lt;code&gt;require&lt;/code&gt; declaration first.
 &lt;/p&gt;
 
-&lt;pre class="example" id="org1c71798"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
+&lt;pre class="example" id="orgf2903c5"&gt;#+ORGX_REQUIRE: [[orgx.note :as note]]
 &lt;/pre&gt;
 
 &lt;p&gt;
 Then we could use it like this
 &lt;/p&gt;
-&lt;pre class="example" id="orgd2d014a"&gt;
+&lt;pre class="example" id="org0a5fd25"&gt;
 #+begin_orgx
 ($ note/component  &amp;quot;This is a note&amp;quot;)
 #+end_orgx
@@ -2748,7 +2748,7 @@ It will be rendered as:
 It has several builtin components, notebly, the following snippet:
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgdf13ad0"&gt;#+begin_orgx
+&lt;pre class="example" id="org0bd8489"&gt;#+begin_orgx
 ($ info &amp;quot;This is an info&amp;quot;)
 ($ note &amp;quot;This is a note&amp;quot;)
 ($ warn &amp;quot;This is a warn&amp;quot;)
@@ -2771,7 +2771,7 @@ Will be rendered as:
 &lt;div id="outline-container-tabs" class="outline-4"&gt;
 &lt;a href="#tabs"&gt;&lt;h4 id="tabs" class="cr-self-reference "&gt;Tabs&lt;/h4&gt;&lt;/a&gt;
 &lt;div class="outline-text-4" id="text-tabs"&gt;
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="code_org"&gt;&lt;pre class="example" id="orgdd4b967"&gt;#+attr_orgx_defui: true
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="code_org"&gt;&lt;pre class="example" id="org71542ef"&gt;#+attr_orgx_defui: true
 #+begin_orgx_code_clj
 #+begin_src clojure
 (defui tabs [{:keys [tab-list default-table class]}]
@@ -2849,7 +2849,7 @@ Well we can't display the contents recurisvely
 Split layout lets you show two things side by side:
 &lt;/p&gt;
 
-&lt;pre class="example" id="orgd3131bb"&gt;#+attr_orgx_defui: true
+&lt;pre class="example" id="org857b203"&gt;#+attr_orgx_defui: true
 #+begin_orgx_split_1
 #+begin_src clojure
   ($ :button {:class &amp;quot;bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg&amp;quot;
@@ -2914,7 +2914,7 @@ Will be rendered as:
 Showcase is a simple wrapper over &lt;code&gt;split-layout&lt;/code&gt;.
 &lt;/p&gt;
 
-&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="showcase_1"&gt;&lt;pre class="example" id="org4641d64"&gt;#+begin_orgx
+&lt;pre class="orgx" data-wrapper="use-defui" data-wrapper-data="showcase_1"&gt;&lt;pre class="example" id="org917ebc9"&gt;#+begin_orgx
 ($ showcase
   ($ tabs {:tab-list [{:name &amp;quot;button&amp;quot; :content ($ split_1)}]})
   ($ split_2))
