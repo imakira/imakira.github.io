@@ -205,13 +205,24 @@
                          :href (str "#" id)}
                         ($ :span content))))))))))
 
+
+(defui blog-content [{:blog/keys [id orgx content] doc-ref :doc-ref}]
+  (let [orgx-comp (use-orgx id orgx)]
+    (if (not orgx)
+      ($ :div.cr-document {:class "md:mt-1"
+                           :ref doc-ref
+                           :dangerouslySetInnerHTML {:__html content}})
+      (when orgx-comp
+        ($ :div.cr-document {:class "md:mt-1"
+                             :ref doc-ref}
+           ($ orgx-comp))))))
+
 (defui blog [{{:blog/keys [id]} :path-params :as data}]
   (let [{:blog/keys [content title show-toc? category
                      tags modified-date
                      published-date description
                      orgx] :as blog-asset}
         (use-asset (str "blog/" id))
-        orgx-comp (use-orgx id orgx)
 
         toc-content (use-memo
                      (fn []
@@ -271,15 +282,9 @@
          ($ :div.gap-8.w-full.h-full {:class
 	                                  (str "md:grid md:grid-cols-[minmax(0px,7fr)_minmax(17rem,17rem)] "
                                            "2xl:grid-cols-[minmax(0px,7fr)_minmax(20rem,20rem)]")}
-            (if (not orgx)
-              ($ :div.cr-document {:class "md:mt-1"
-                                   :ref doc-ref
 
-                                   :dangerouslySetInnerHTML {:__html content}})
-              (when orgx-comp
-                ($ :div.cr-document {:class "md:mt-1"
-                                     :ref doc-ref}
-                   ($ orgx-comp))))
+            ($ blog-content (merge blog-asset {:doc-ref doc-ref}))
+
             ($ :div.mt-4
                (when show-toc?
                  ($ toc {:class (str "w-78 fixed right-0 top-[13.5rem] z-200 max-h-[80vh] "

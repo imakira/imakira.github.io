@@ -10,7 +10,8 @@
    [clojure.java.io :as io]
    [reitit.core :as r]
    [shadow.cljs.devtools.api :as shadow]
-   [net.coruscation.cerulean.user-config :as user-config]))
+   [net.coruscation.cerulean.user-config :as user-config]
+   [net.coruscation.cerulean.server.slash-pages :as slash-pages]))
 
 (defn- derive-routes [routes]
   (let [router (r/router routes)
@@ -48,7 +49,7 @@
 (defn- get-all-routes []
   (derive-routes [""
                   assets/json-assets-route
-                  assets/resource-route
+                  slash-pages/resource-route
                   ["" {:handler render-wrapper} pages/routes]]))
 
 

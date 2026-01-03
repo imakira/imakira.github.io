@@ -2,8 +2,9 @@
   (:require
    [net.coruscation.cerulean.check :as check]
    [net.coruscation.cerulean.common.pages :as pages]
-   [net.coruscation.cerulean.server.assets :as assets]
    [net.coruscation.cerulean.render.render :as render]
+   [net.coruscation.cerulean.server.assets :as assets]
+   [net.coruscation.cerulean.server.slash-pages :as slash-pages]
    [reitit.ring :as ring]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.content-type :refer [wrap-content-type]]
@@ -35,7 +36,7 @@
                        wrap-restful-response]}
       assets/json-assets-route]
      ["" {:middleware [wrap-restful-response]}
-      assets/resource-route]])))
+      slash-pages/resource-route]])))
 
 (def app (-> #'router
              (wrap-file "./public")
