@@ -164,5 +164,3 @@
                      blog-ids
                      ])
       (assoc ::blog-from-file-cache blog-from-file-cache)))
-
-
