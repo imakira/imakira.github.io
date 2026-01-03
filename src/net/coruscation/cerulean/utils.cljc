@@ -70,7 +70,7 @@
      (when use?
        (render-context/add-extra-script! module-name
                                          (str "./" module-name ".js"))
-       (require (symbol module-name))
+       (require (symbol module-name) :reload)
        (find-ns (symbol module-name)))))
 
 (defn use-orgx [id orgx?]
