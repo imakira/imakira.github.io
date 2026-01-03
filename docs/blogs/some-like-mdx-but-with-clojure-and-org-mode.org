@@ -208,15 +208,15 @@ Similar to MDX, we can access the component's properties with the ~post-props~ v
 #+begin_orgx_metadata-example
 #+begin_example
   ($ :pre
-    (with-out-str
-       (pprint/pprint post-props)))
+    (binding [*print-namespace-maps* true]
+      (with-out-str (pprint/pprint post-props))))
 #+end_example
 #+end_orgx_metadata-example
 
 The following metadata are provided by default:
 
 #+begin_orgx
-($ showcase ($ tabs {:tab-list [{:name "Example" :content ($ metadata-example)}]}) ($ :pre (with-out-str (pprint/pprint post-props))))
+($ showcase ($ tabs {:tab-list [{:name "Example" :content ($ metadata-example)}]}) ($ :pre (binding [*print-namespace-maps* true] (with-out-str (pprint/pprint post-props)))))
 #+end_orgx
 
 ** Use Other OrgX Files as Components
@@ -321,7 +321,7 @@ This is a note!
 #+end_orgx
 
 ** Inline OrgX with Macros
-#+MACRO: my-button @@orgx:($ my-button {:callback '(or $2 nil)} $1)@@
+#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
 
 Currently no similar syntax for inline OrgX is supported, however, it is fairly easy to make life easier with macros. Let's go back to use ~my-button~ as the example.
 
@@ -329,7 +329,7 @@ Currently no similar syntax for inline OrgX is supported, however, it is fairly 
 #+begin_orgx_macro-example
 We can define a macro like:
 #+begin_example
-#+MACRO: my-button @@orgx:($ my-button {:callback '(or $2 nil)} $1)@@
+#+MACRO: my-button @@orgx:($ my-button {:callback (or $2 nil)} $1)@@
 #+end_example
 
 
