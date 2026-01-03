@@ -80,10 +80,8 @@
                   #?(:clj :default
                      :cljs
                      (do
-                       (if (not external?)
-                         (do (.preventDefault e)
-                             (navigate-to! href))
-                         (set! (.. js/window -location -href)
-                               href)))))]
+                       (when (not external?)
+                         (.preventDefault e)
+                         (navigate-to! href)))))]
     ($ :a {:on-click onclick :style style :href href :class class}
        children)))
