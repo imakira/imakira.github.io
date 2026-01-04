@@ -20,3 +20,11 @@ neil dep upgrade
 #+END_SRC
 
 
+* Build the site
+
+#+BEGIN_SRC bash
+clj -X:generate
+#+END_SRC
+
+This command builds the clojure project, css files, generates static pages and necessary json files for 
+
