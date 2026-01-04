@@ -38,6 +38,7 @@
                                                   (xml/element :title {:type "html"}
                                                                (:blog/title blog))
                                                   (xml/element :link {:href href})
+                                                  (xml/element :published {} (:blog/published-date blog))
                                                   (xml/element :updated {}
                                                                (:blog/modified-date blog))
                                                   (xml/element :id {}
