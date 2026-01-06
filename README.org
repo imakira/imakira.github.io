@@ -1,6 +1,6 @@
 * Cerulean
 
-Static Site Generation with Client Size Rehygration blogging program
+Static Site Generation with Client Size Rehydration blogging program
 
 * Install & Usage
 
