@@ -6,7 +6,7 @@ Blogging program written in Clojure/ClojureScript.
 
 1. First class org-mode support
 2. Use Emacs itself to convert Org files into HTML
-3. Embed Clojure/ClojureScript code in a org mode (more on [[https://coruscation.net/blogs/something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i.html][here]])
+3. Embed Clojure/ClojureScript code in a org mode file (more on [[https://coruscation.net/blogs/something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i.html][here]])
 4. Static generated site, single page applicatoin After rehydration on the browser.
 5. [TODO] Optional JavaScript-free
 
