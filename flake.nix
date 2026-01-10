@@ -24,40 +24,62 @@
             clj-nix.overlays.default
           ];
         };
-        deps = with pkgs; [
-          clojure
-          nodejs
-          emacs-nox
-          git
-          babashka-unwrapped
-        ];
+        clj-bin = pkgs.mkCljBin {
+            projectSrc = ./.;
+            name = "net.coruscation/cerulean";
+            main-ns = "net.coruscation.cerulean.build";
+            version = "1.0";
+            jdkRunner = pkgs.jdk25_headless;
+            buildCommand = ''
+            clj -X:uberjar'';
+          };
         deps-cache = pkgs.mk-deps-cache { lockfile = ./deps-lock.json; };
+        deps = with pkgs; [
+          nodejs-slim
+          (emacs-nox.override {
+            withNativeCompilation=false;
+            withMailutils=false;
+            withSQLite3=false;
+            withDbus=false;
+            withSystemd=false;
+            withGpm=false;
+            withToolkitScrollBars=false;
+            withTreeSitter=false;
+            withWebP=false;
+          })
+          gitMinimal
+          babashka-unwrapped
+          pkgs.dockerTools.binSh
+          pkgs.dockerTools.usrBinEnv
+        ];
         make-docker =
           { extra-deps }:
-          (pkgs.dockerTools.buildImage {
+          (pkgs.dockerTools.buildLayeredImage {
             name = "cerulean";
-            # fromImage = (
-            #   pkgs.dockerTools.pullImage {
-            #     imageName = "alpine";
-            #     imageDigest = "sha256:ea71a031ed91cd46b00d438876550bc765da43b4ae40f331a12daf62f0937758";
-            #     sha256 = "sha256-WIoHQRU1jwIgLNzGIzxVgLsf+0geDbhx9MqrsB9/K9c=";
-            #   }
-            # );
-            copyToRoot = [
+            fromImage = (
+              pkgs.dockerTools.pullImage {
+                imageName = "clojure";
+                imageDigest = "sha256:3326eef6fdb2089c7cb10c330076e8d7b22d1c0d4fd670dad6077789f34d7d66";
+                sha256 = "sha256-qYyLGRF80yBOLKOdaS0r4nbqd+/FuqkXZFS55me5xLM=";
+              }
+            );
+            created = "now";
+            contents = [
+              deps-cache
               (pkgs.buildEnv {
                 name = "image-root";
-                paths = deps ++ extra-deps;
+                paths = deps  ++ extra-deps;
                 pathsToLink = [
                   "/bin"
                   "/usr/bin/"
                 ];
               })
-              pkgs.dockerTools.binSh
-              pkgs.dockerTools.usrBinEnv
             ];
-            runAsRoot = ''
-              mkdir -p /root/.m2/
-              ln -s "${deps-cache}/.m2/repository" /root/.m2/repository
+            enableFakechroot = true;
+            fakeRootCommands = ''
+              echo ${deps-cache} > /path
+              mkdir -p /root
+              ln -s "${deps-cache}/.m2" /root/.m2
             '';
             config = {
               Cmd = [
@@ -69,6 +91,10 @@
       in
       {
         packages = {
+
+          # Not ready to use
+          uberjar = clj-bin;
+
           build = (
             pkgs.writeShellApplication {
               name = "build";
@@ -83,8 +109,6 @@
           docker-dev = (
             make-docker {
               extra-deps = [
-                pkgs.bash
-                pkgs.coreutils
               ];
             }
           );
