@@ -18,13 +18,20 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            clj-nix.overlays.default
+          ];
+        };
         deps = with pkgs; [
           clojure
           nodejs
           emacs-nox
           git
+          babashka-unwrapped
         ];
+        deps-cache = pkgs.mk-deps-cache { lockfile = ./deps-lock.json; };
         make-docker =
           { extra-deps }:
           (pkgs.dockerTools.buildImage {
@@ -49,7 +56,8 @@
               pkgs.dockerTools.usrBinEnv
             ];
             runAsRoot = ''
-              mkdir -p /tmp
+              mkdir -p /root/.m2/
+              ln -s "${deps-cache}/.m2/repository" /root/.m2/repository
             '';
             config = {
               Cmd = [

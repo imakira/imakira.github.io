@@ -7,7 +7,9 @@
     "styles-dev": "npx @tailwindcss/cli -i ./resources/main.css -o ./public/main.css --watch",
     "styles-release": "npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css",
     "docker-build": "nix run .#docker && docker load < result",
-    "docker-build-dev": "nix build .#docker-dev && docker load < result"
+    "docker-build-dev": "nix build .#docker-dev && docker load < result",
+    "nix-deps-lock": "nix run github:jlesquembre/clj-nix#deps-lock"
+
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.10",
