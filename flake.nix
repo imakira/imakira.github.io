@@ -35,7 +35,9 @@
           };
         deps-cache = pkgs.mk-deps-cache { lockfile = ./deps-lock.json; };
         deps = with pkgs; [
-          nodejs-slim
+          (nodejs-slim.override {
+            enableNpm = true;
+          })
           (emacs-nox.override {
             withNativeCompilation=false;
             withMailutils=false;
@@ -52,6 +54,29 @@
           pkgs.dockerTools.binSh
           pkgs.dockerTools.usrBinEnv
         ];
+
+        npmDeps = pkgs.buildNpmPackage(finalAttrs: {
+          src = self;
+          pname = "cerulean-npm-deps";
+          version = "0.0";
+          dontNpmBuild = true;
+          npmDepsHash = (builtins.readFile ./npm-deps.sha256);
+          installPhase = ''
+          mkdir $out
+          cp -r ./node_modules $out/node_modules
+          '';
+        });
+
+        cerulean-src = pkgs.stdenv.mkDerivation {
+          name = "cerulean";
+          src = self;
+          installPhase = ''
+          mkdir -p $out
+          cp -r * $out/
+          cp -r ${npmDeps}/node_modules $out/node_modules
+          '';
+        };
+
         make-docker =
           { extra-deps }:
           (pkgs.dockerTools.buildLayeredImage {
@@ -66,6 +91,7 @@
             created = "now";
             contents = [
               deps-cache
+              self
               (pkgs.buildEnv {
                 name = "image-root";
                 paths = deps  ++ extra-deps;
@@ -80,6 +106,7 @@
               echo ${deps-cache} > /path
               mkdir -p /root
               ln -s "${deps-cache}/.m2" /root/.m2
+              ln -s "${cerulean-src}" /cerulean
             '';
             config = {
               Cmd = [
@@ -94,7 +121,6 @@
 
           # Not ready to use
           uberjar = clj-bin;
-
           build = (
             pkgs.writeShellApplication {
               name = "build";
