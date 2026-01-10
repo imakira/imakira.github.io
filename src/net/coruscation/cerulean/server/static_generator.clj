@@ -82,11 +82,11 @@
                                   (json/generate-string result)))))))))
 
 (defn build-full [& _]
-  (fs/delete-tree config/*output*)
-  (fs/delete-tree "./public/js/cljs-runtime")
+  (doseq [f (rest (file-seq (io/file config/*output*)))]
+    (.delete f))
+  (fs/delete-tree  "./public/js/cljs-runtime")
   (shadow/release :app)
   (build))
-
 
 (defn -main []
   (build-full))
