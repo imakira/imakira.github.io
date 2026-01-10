@@ -101,7 +101,7 @@
   (not (boolean (re-matches #"^(https?:/)?/.*$" path))))
 
 (defonce image-cache-dir
-  (future
+  (delay
     (let [cache-dir (str config/*cache* "/image-cache")]
       (.mkdirs (io/file cache-dir))
       cache-dir)))

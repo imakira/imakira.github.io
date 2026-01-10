@@ -5,22 +5,23 @@
 
 #?(:clj
    (def ^:dynamic *js-context*
-     (-> (Context/newBuilder (into-array String ["js"]))
-         (.allowExperimentalOptions true)
-         (.options (HashMap.
-                    {"js.commonjs-require" "true"
-                     "js.commonjs-require-cwd" (str (System/getProperty "user.dir")
-                                                    "/node_modules")}))
-         (.allowIO true)
-         (.build))))
+     (delay (-> (Context/newBuilder (into-array String ["js"]))
+                (.allowExperimentalOptions true)
+                (.options (HashMap.
+                           {"js.commonjs-require" "true"
+                            "js.commonjs-require-cwd" (str (System/getProperty "user.dir")
+                                                           "/node_modules")}))
+                (.allowIO true)
+                (.build)))))
 
 #?(:clj
-   (def ^:dynamic *module* (locking *js-context* (.eval *js-context* "js" "require('../wrapper')"))))
+   (defn get-wrapper-module []
+     (locking @*js-context* (.eval @*js-context* "js" "require('../wrapper')"))))
 
 #?(:clj (defn add-language-alias! [alias code]
-          (locking *js-context* (.execute (.getMember *module* "language_alias_wrapper")
-                                          (into-array Object [alias code])))))
+          (locking @*js-context* (.execute (.getMember (get-wrapper-module) "language_alias_wrapper")
+                                           (into-array Object [alias code])))))
 
 #?(:clj
    (defn highlight [code lang]
-     (locking *js-context* (.asString (.execute (.getMember *module*  "highlight_wrapper") (into-array Object [code lang]))))))
+     (locking @*js-context* (.asString (.execute (.getMember (get-wrapper-module)  "highlight_wrapper") (into-array Object [code lang]))))))

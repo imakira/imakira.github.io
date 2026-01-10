@@ -1,1 +1,1 @@
-((nil . ((cider-clojure-cli-aliases . ":dev"))))
+((nil . ((cider-clojure-cli-aliases . ":dev:uberjar"))))

@@ -45,6 +45,9 @@
                              :access-control-allow-methods [:get :put :post :delete])
              wrap-json-params))
 
-(check/environment-check)
-;; (assets/refresh-blogs)
-(def ^:dynamic *jetty* (jetty/run-jetty #'app {:port 3001 :join? false}))
+
+(def jetty (atom nil))
+
+(defn start-server! []
+  (check/environment-check)
+  (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))

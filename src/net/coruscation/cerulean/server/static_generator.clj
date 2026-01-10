@@ -11,7 +11,8 @@
    [reitit.core :as r]
    [shadow.cljs.devtools.api :as shadow]
    [net.coruscation.cerulean.user-config :as user-config]
-   [net.coruscation.cerulean.server.slash-pages :as slash-pages]))
+   [net.coruscation.cerulean.server.slash-pages :as slash-pages])
+  (:gen-class))
 
 (defn- derive-routes [routes]
   (let [router (r/router routes)
@@ -85,3 +86,7 @@
   (fs/delete-tree "./public/js/cljs-runtime")
   (shadow/release :app)
   (build))
+
+
+(defn -main []
+  (build-full))
