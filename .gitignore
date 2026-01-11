@@ -27,3 +27,4 @@ note.org
 .clj-kondo
 /orgx
 /docs
+.cljc
