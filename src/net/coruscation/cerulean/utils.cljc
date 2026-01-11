@@ -82,6 +82,10 @@
        (when orgx? (intern (use-module qualified-name orgx?)
                            (symbol orgx-commons/orgx-default-component-name))))))
 
+(defn use-user-config [config-id]
+  (let [config (use-asset "user-config")]
+    (config-id config)))
+
 (defn set-title! [title]
   #?(:cljs (use-effect (fn [] (set! js/document.title title) (fn []))
                        [title])

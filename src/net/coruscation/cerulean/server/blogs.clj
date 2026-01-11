@@ -3,7 +3,7 @@
    [clojure.java.io :as io]
    [clojure.java.shell :as sh]
    [clojure.string :as str]
-   [net.coruscation.cerulean.user-config :as user-config])
+   [net.coruscation.cerulean.server.user-config :refer [get-user-config]])
   (:import
    [com.google.common.io Files]
    [java.time Instant ZoneId ZonedDateTime]
@@ -17,7 +17,7 @@
                    (or (:file-path blog)
                        (:id blog)
                        (:blog/file-path blog) (:blog/id blog)))))
-        user-config/special-pages))
+        (get-user-config :special-pages)))
 
 (defn assert-file-exist [path]
   (assert (.exists (io/file path)) (str "File " path " doesn't exist"))

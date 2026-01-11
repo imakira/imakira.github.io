@@ -6,8 +6,8 @@
    [net.coruscation.cerulean.common.pages :refer [blog-content]]
    [net.coruscation.cerulean.server.assets :refer [fetch-all-blogs fetch-blog
                                                    fetch-blogs]]
+   [net.coruscation.cerulean.server.user-config :refer [get-user-config]]
    [net.coruscation.cerulean.variables :refer [*rss*]]
-   [net.coruscation.cerulean.user-config :as user-config]
    [uix.core :refer [$]]
    [uix.dom.server :as dom.server]))
 
@@ -25,15 +25,15 @@
 (defn generate-rss [& _]
   (binding [*rss* true]
     (xml/indent-str (xml/element :feed  {:xmlns "http://www.w3.org/2005/Atom"}
-                                 (xml/element :title {} user-config/title)
-                                 (xml/element :link {:href user-config/root-url})
+                                 (xml/element :title {} (get-user-config :title))
+                                 (xml/element :link {:href (get-user-config :root-url)})
                                  (xml/element :updated {}
                                               (site-last-modified))
-                                 (xml/element :author {} user-config/author)
-                                 (xml/element :id {} user-config/root-url)
+                                 (xml/element :author {} (get-user-config :author))
+                                 (xml/element :id {} (get-user-config :root-url))
 
                                  (for [blog (fetch-blogs)]
-                                   (let [href (str user-config/root-url "/blogs/" (:blog/id blog) ".html")]
+                                   (let [href (str (get-user-config :root-url) "/blogs/" (:blog/id blog) ".html")]
                                      (xml/element :entry {}
                                                   (xml/element :title {:type "html"}
                                                                (:blog/title blog))
@@ -51,13 +51,13 @@
   (xml/indent-str (xml/element :urlset {:xmlns "http://www.sitemaps.org/schemas/sitemap/0.9"}
                                (xml/element :url {}
                                             (xml/element :loc {}
-                                                         user-config/root-url)
+                                                         (get-user-config :root-url))
                                             (xml/element :lastmod {}
                                                          (site-last-modified)))
                                (for [blog (fetch-all-blogs)]
                                  (xml/element :url {}
                                               (xml/element :loc {}
-                                                           (str user-config/root-url "/blogs/" (:blog/id blog) ".html"))
+                                                           (str (get-user-config :root-url) "/blogs/" (:blog/id blog) ".html"))
                                               (xml/element :lastmod {}
                                                            (:blog/modified-date blog)))))))
 

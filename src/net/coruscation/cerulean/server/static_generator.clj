@@ -10,7 +10,7 @@
    [net.coruscation.cerulean.render.render :as render]
    [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all]]
    [net.coruscation.cerulean.server.slash-pages :as slash-pages]
-   [net.coruscation.cerulean.user-config :as user-config]
+   [net.coruscation.cerulean.server.user-config :refer [get-user-config]]
    [reitit.core :as r]
    [shadow.cljs.devtools.api :as shadow])
   (:gen-class))
@@ -67,9 +67,9 @@
                      "/public")
                 config/*output*
                 {:replace-existing true})
-  (when user-config/cname
+  (when (get-user-config :cname)
     (spit (str config/*output* "/CNAME")
-          user-config/cname))
+          (get-user-config :cname)))
   (doseq [[path {handler :handler match :match}] (get-all-routes)]
     (when path
       (let [file (io/file (str config/*output*  (if (= path "/")

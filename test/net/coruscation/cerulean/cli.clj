@@ -3,11 +3,10 @@
    [clojure.java.io :as io]
    [net.coruscation.cerulean.config :refer [*blog-dir* *workspace*
                                             join-workspace-path]]
-   [net.coruscation.cerulean.server.utils :refer [path-join]]
-   [net.coruscation.cerulean.user-config :refer [*config-file-path*]]))
+   [net.coruscation.cerulean.server.utils :refer [path-join]]))
 
 (defn init-workspace []
-  (let [config-file (io/file (join-workspace-path *config-file-path*))]
+  (let [config-file (io/file (join-workspace-path "config.edn"))]
     (assert (not (.exists config-file))
             "configuration already eixsts, do not initialize")
     (.mkdirs (io/file *workspace*))

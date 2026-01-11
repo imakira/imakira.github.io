@@ -7,7 +7,7 @@
    [net.coruscation.cerulean.common.pages :as pages]
    [net.coruscation.cerulean.render.context :refer [with-new-context] :as render-context]
    [net.coruscation.cerulean.render.context-commons :refer [extra-script-global-this-name]]
-   [net.coruscation.cerulean.user-config :as user-config]
+   [net.coruscation.cerulean.utils :refer [use-user-config]]
    [uix.core :refer [$]]
    [uix.dom.server :as dom.server]))
 
@@ -27,7 +27,7 @@
          [:meta {:http-equiv "x-ua-compatible" :content "ie=edge"}]
          [:meta {:name "description" :content (if (seq description) description title)}]
          [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-         [:title (or title user-config/title)]
+         [:title (or title (use-user-config :title))]
          [:link {:rel "preconnect", :href "https://fonts.googleapis.com"}]
          [:link
           {:rel "preconnect",
@@ -43,8 +43,8 @@
          [:link
           {:rel "alternate",
            :type "application/rss+xml",
-           :title user-config/title,
-           :href (str user-config/root-url "/atom.xml")}]
+           :title (use-user-config :title),
+           :href (str (use-user-config :root-url) "/atom.xml")}]
          [:link {:rel "modulepreload" :href "/js/main.js"}]
          (map (fn [{:keys [_ module]}]
                 [:link {:rel "modulepreload"

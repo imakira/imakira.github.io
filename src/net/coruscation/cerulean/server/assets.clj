@@ -1,11 +1,8 @@
 (ns net.coruscation.cerulean.server.assets
   (:require
-   [cljc.java-time.zoned-date-time :as zoned-date-time]
-   [clojure.data.xml :as xml]
    [com.wsscode.pathom3.interface.eql :as p.eql]
-   [net.coruscation.cerulean.common.commons :as commons]
    [net.coruscation.cerulean.server.resolver :refer [blog-eql env]]
-   [net.coruscation.cerulean.user-config :as user-config]))
+   [net.coruscation.cerulean.server.user-config :refer [read-user-config]]))
 
 (defonce ^:dynamic *blogs* (atom []))
 
@@ -31,6 +28,10 @@
                      {:blog.query/all-visible-desc
                       [:blog/id]}))
 
+
+(defn user-config [& _]
+  (read-user-config))
+
 (def json-assets-route
   ["/assets"
    ["/blogs"  {:name ::blogs
@@ -41,4 +42,6 @@
                         {:route ::blogs
                          :params-list-fn
                          #'fetch-blog-ids}}]
+   ["/user-config" {:name ::user-config
+                    :handler #'user-config}]
    ])

@@ -3,17 +3,16 @@
    #?@(:clj [[net.coruscation.cerulean.server.assets :as assets]
              [hickory.core :as hc]
              [hickory.select :as hs]
-             [net.coruscation.cerulean.server.utils :as su]
-             [net.coruscation.cerulean.orgx.orgx :as orgx]])
+             [net.coruscation.cerulean.server.utils :as su]])
    #?@(:cljs [["@js-joda/locale_en-us" :as js-joda-locale]])
    [cljc.java-time.format.date-time-formatter :as date-time-formatter]
    [clojure.string :as str]
    [net.coruscation.cerulean.common.commons :as commons]
    [net.coruscation.cerulean.components :refer [btn-wrapper]]
    [net.coruscation.cerulean.router :as router]
-   [net.coruscation.cerulean.user-config :as user-config]
    [net.coruscation.cerulean.utils :refer
-    [#?@(:cljs [obj->clj]) use-asset use-context use-orgx] :as utils]
+    [#?@(:cljs [obj->clj]) use-asset use-context use-orgx
+     use-user-config] :as utils]
    [uix.core :as uix :refer
     [$ #?@(:cljs [lazy suspense]) defui use-effect use-memo
      use-ref use-state]]))
@@ -235,7 +234,7 @@
                      [content show-toc?])
         doc-ref (use-ref nil)
         [current-header-id set-current-header-id!] (use-state nil)]
-    (utils/set-title! (str title " | " user-config/title))
+    (utils/set-title! (str title " | " (use-user-config :title)))
     (utils/set-description! description)
     #?(:cljs
        (use-effect (fn []
@@ -326,7 +325,7 @@
             (fn []
               (js/removeEventListener "scroll" scroll-listener)))))
      [])
-    (utils/set-title! (str "HOME | " user-config/title))
+    (utils/set-title! (str "HOME | " (use-user-config :title)))
     (utils/set-description! "")
     ($ :div.flex.flex-col
        ($ :div.flex.flex-col.justify-center.items-center {:class "xl:w-[1100px]"}
@@ -365,7 +364,7 @@
                              (if home-page?
                                "md:sideways-lr md:text-6xl md:pb-8"
                                "xl:sideways-lr xl:text-6xl xl:pb-8"))}
-                user-config/title))
+                (use-user-config :title)))
 
           ($ :div.flex.justify-center
              ($ :div.flex.flex-col.items-center.justify-end.py-1.relative
@@ -377,7 +376,7 @@
                    {:class (if home-page?
                              "md:text-2xl md:flex-col md:pt-6"
                              "xl:text-2xl xl:flex-col xl:pt-6")}
-                   (for [[key {:keys [text href]}] user-config/navigation]
+                   (for [[key {:keys [text href]}] (use-user-config :navigation)]
                      ($ btn-wrapper {:key key :bg-class "group-hover:bg-yellow-400"}
                         ($ :div.px-1.group-hover:text-cyan-50 {:key href :class "text-lg"}
                            ($ router/link {:href href}
@@ -388,7 +387,7 @@
                               "md:flex"
                               "xl:flex")}
                    ($ :div.flex.relative
-                      (for [[key {:keys [href external?] :as link-config}] user-config/links]
+                      (for [[key {:keys [href external?] :as link-config}] (use-user-config :links)]
                         (cond
                           (= key :email)
                           ($ email (merge link-config {:key :email}))

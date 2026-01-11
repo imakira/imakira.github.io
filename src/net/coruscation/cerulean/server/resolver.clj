@@ -12,7 +12,7 @@
                                                   file-last-commit-date
                                                   file-last-modified-date
                                                   special-page?]]
-   [net.coruscation.cerulean.user-config :as user-config])
+   [net.coruscation.cerulean.server.user-config :refer [get-user-config]])
   (:import
    [com.google.common.io Files]))
 
@@ -100,7 +100,7 @@
 (pco/defresolver blog-special-page? [{:blog/keys [id]}]
   {:blog/special-page? (boolean (some (fn [name]
                                         (= name id))
-                                      user-config/special-pages))})
+                                      (get-user-config :special-pages)))})
 
 (pco/defresolver file-last-modified-time [{:file/keys [file-path]}]
   {::pco/output
