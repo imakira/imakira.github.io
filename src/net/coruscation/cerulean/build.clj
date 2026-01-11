@@ -11,25 +11,6 @@
    [net.coruscation.cerulean.server.watch-service :as watch-service]
    [shadow.build.targets.esm :as esm]))
 
-(defn generate-all-orgx! []
-  (doseq [blog (fetch-all)]
-    (when (:blog/orgx blog)
-      (orgx/generate-cljc-from-blog blog))))
-
-(defonce maybe-init-orgx-watch!
-  (memoize
-   (fn []
-     (let [service (watch-service/watch config/*blog-dir*)
-           [resp cancel] service]
-       {:service service
-        :future (future
-                  (loop [event (a/<!! resp)]
-                    (when (not (nil? event))
-                      (try (generate-all-orgx!)
-                           (catch Throwable t
-                             (logging/warn "Generated orgx file failed" t)))
-                      (recur (a/<!! resp)))))}))))
-
 (defn build-css-hook {:shadow.build/stage :compile-prepare}
   [build-state & _]
   (process/shell "npm run styles-release")
@@ -37,8 +18,6 @@
 
 (defn orgx-hook {:shadow.build/stage :configure}
   [build-state & _]
-  (maybe-init-orgx-watch!)
-  (generate-all-orgx!)
   (let [modules (merge (get-in build-state [:shadow.build/config :modules])
                        #_{:demonstration
                           {:entries

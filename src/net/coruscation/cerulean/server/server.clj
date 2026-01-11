@@ -1,10 +1,15 @@
 (ns net.coruscation.cerulean.server.server
   (:require
+   [clojure.core.async :as a]
+   [clojure.tools.logging :as logging]
    [net.coruscation.cerulean.check :as check]
    [net.coruscation.cerulean.common.pages :as pages]
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.orgx.orgx :as orgx]
    [net.coruscation.cerulean.render.render :as render]
-   [net.coruscation.cerulean.server.assets :as assets]
+   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all]]
    [net.coruscation.cerulean.server.slash-pages :as slash-pages]
+   [net.coruscation.cerulean.server.watch-service :as watch-service]
    [reitit.ring :as ring]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.content-type :refer [wrap-content-type]]
@@ -48,6 +53,26 @@
 
 (def jetty (atom nil))
 
+(defn generate-all-orgx! []
+  (doseq [blog (fetch-all)]
+    (when (:blog/orgx blog)
+      (orgx/generate-cljc-from-blog blog))))
+
+(defonce maybe-init-orgx-watch!
+  (memoize
+   (fn []
+     (let [service (watch-service/watch config/*blog-dir*)
+           [resp cancel] service]
+       {:service service
+        :future (future
+                  (loop [event (a/<!! resp)]
+                    (when (not (nil? event))
+                      (try (generate-all-orgx!)
+                           (catch Throwable t
+                             (logging/warn "Generated orgx file failed" t)))
+                      (recur (a/<!! resp)))))}))))
+
 (defn start-server! []
+  (maybe-init-orgx-watch!)
   (check/environment-check)
   (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))
