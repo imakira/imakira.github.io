@@ -1,0 +1,19 @@
+{:title "Example Title"
+ :cname "example.com"
+ :root-url "https://example.com"
+ :author "author"
+ :links {:rss {:href "/atom.xml"
+               #_"using :external? true will load the link as a new page, instead of doing SPA routing"
+               :external? true}
+         #_"full url are external automatically"
+         :github {:href "https://github.com/"}
+         #_"We have special handling of :email"
+         :email {:path "your email name"
+                 :domain "your email domain"}}
+ :navigation {:home {:text "HOME"
+                     :href "/"}
+              :about {:text "ABOUT"
+                      :href "url"}
+              :projects {:text "PROJECTS"
+                         :href "url"}}
+ :special-pages ["about"]}

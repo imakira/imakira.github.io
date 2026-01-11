@@ -1,5 +1,11 @@
 (ns net.coruscation.cerulean.server.utils
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as str])
+  (:import
+   [java.lang.reflect Method]
+   [java.net URL]
+   (java.nio.file Path)))
 
 (defn extract-string [hickory-elements & {:keys [spacer]
                                           :or {spacer " "}}]
@@ -15,6 +21,30 @@
          (str/join spacer)
          str/trim)))
 
+(defn path-join [& paths]
+  (->> (rest paths)
+       (mapv (fn [path]
+               (cond (instance? java.nio.file.Path path)
+                     (.toString path)
+		             (instance? java.io.File path)
+                     (.toString path)
+                     :else
+                     path)))
+       (into-array String)
+       (java.nio.file.Path/of (first paths))
+       (.normalize)
+       (.toAbsolutePath)
+       (.toString)))
+
+(defn add-to-classpath [path]
+  (let [path (-> (Path/of path (into-array String []))
+                 (.normalize)
+                 (.toAbsolutePath)
+                 (.toString)
+                 (io/file)
+                 (.toURI)
+                 (.toURL))]
+    (add-classpath path)))
 
 (defn take-until
   [pred coll]

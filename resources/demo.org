@@ -1,0 +1,454 @@
+#+title: Demo
+#+TAGS: clojure lsp tailwindcss
+#+CATEGORY: Coding
+#+OPTIONS: tex:dvisvgm
+#+ORGX: true
+#+ORGX_REQUIRE: [[net.coruscation.cerulean.components :as comp]]
+#+DESCRIPTION: This is a demonstration of this static blog generator
+#+LATEX_HEADER: \usepackage{pgfplots}
+#+LATEX_HEADER: \usepackage{svg}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{amsthm}
+#+LATEX_HEADER: \usepackage{IEEEtrantools}
+#+LATEX_HEADER: \usepackage{mathtools}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{siunitx}
+
+* Code Blocks
+:PROPERTIES:
+:custom_id: code-blocks
+:END:
+
+** Inline Code Block
+:PROPERTIES:
+:custom_id: inline-code-block
+:END:
+
+Text around src_clojure[:exports code]{(uix.dom/create-root (js/document.getElementById "root"))} the inline code block.
+
+** Code Blocks
+:PROPERTIES:
+:custom_id: code-blocks3
+:END:
+
+- Java
+
+#+BEGIN_SRC java
+public static int fib(int n) { 
+    if (n <= 1) {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+#+END_SRC
+
+- Clojure
+
+#+BEGIN_SRC clojure
+(defui app [{:keys [initial-route]}]
+  (let [[show-header? set-header!]
+        (use-state
+         (some #(= % initial-route)
+               ["/" "/home.html" "/template.html"
+                "/index.html"]))]
+    (context-binding [*header-context* [show-header? set-header!]]
+      ($ router/router {:routes routes :initial-route initial-route}
+         ($ main {})))))
+#+END_SRC
+
+- Emacs Lisp
+
+#+BEGIN_SRC emacs-lisp
+  (save-excursion                 
+      (goto-char (point-min))    
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (with-current-buffer (current-buffer)
+    (let ((ids (org-map-entries (lambda ()
+                                  (org-entry-get nil "custom_id")))))
+      (org-map-entries (lambda ()
+                         (when (not (org-entry-get nil "custom_id"))
+                           (let* ((candidate-id (concat "blog_" (url-encode-url (nth 4 (org-heading-components)))))
+                                  (duplicates (cl-count candidate-id ids)))
+                             (org-entry-put nil "custom_id" (concat candidate-id
+                                                                    (prin1-to-string (+ 1 duplicates))))))
+                         (setq ids (cons (org-entry-get nil "custom_id")
+                                         ids))))))
+#+END_SRC
+
+
+
+* H2 Sample Text
+:PROPERTIES:
+:custom_id: h2-sample-text
+:END:
+
+** H3 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: h3-sample-text-sample-text
+:END:
+
+Some text in between
+
+*** H4 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: h4-sample-text-sample-text
+:END:
+
+Some text in between
+
+**** H5 Sample Text Sample Text
+:PROPERTIES:
+:custom_id: h5-sample-text-sample-text
+:END:
+
+Some text in between
+
+
+* Common Elements
+:PROPERTIES:
+:custom_id: common-elements
+:END:
+
++ /italic/
++ *bold*
++ _underline_
++ =verbatim=
++ ~code~
++ +strike-through+
++ Horizontal Rule
++ ~code~
+-----
+
+* Other Elements
+:PROPERTIES:
+:custom_id: other-elements
+:END:
+
+** Table
+:PROPERTIES:
+:custom_id: table
+:END:
+
+| Name  | Phone | Age |
+|-------+-------+-----|
+| Peter |  1234 |  17 |
+| Anna  |  4321 |  25 |
+
+** Reference
+:PROPERTIES:
+:custom_id: reference
+:END:
+
+ #+BEGIN_QUOTE
+ Everything should be made as simple as possible,
+ but not any simpler -- Albert Einstein
+ #+END_QUOTE
+
+** Unordered List
+:PROPERTIES:
+:custom_id: unordered-list
+:END:
+
++ Item 1
++ Item 2
+  * Level 2
+    - Level 3
+      - Level 4
+    - Another Mark
++ Item 3
+  
+**** Ordered List
+:PROPERTIES:
+:custom_id: ordered-list
+:END:
+
+1. Item 1
+2. Item 2
+3. Item 3
+4. Item 4
+
+** Description List
+:PROPERTIES:
+:custom_id: description-list
+:END:
+
++ Name :: Description
+  - Nested :: Nested Description
++ Name :: Description
+
+
+** Sample Image
+:PROPERTIES:
+:custom_id: sample-image
+:END:
+
+#+CAPTION: This is an image
+[[file:imgs/1.jpg]]
+
+[[file:imgs/1.webp]]
+
+#+CAPTION: sample high resolution vertical image
+[[https://images.unsplash.com/photo-1746717410283-f4017128c38f?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=natalia-grela-sFINbLpdfqw-unsplash.jpg]]
+
+#+CAPTION: sample high resolution horizontal iamge
+[[https://images.unsplash.com/photo-1653384236127-c61634419fe0?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=johann-walter-bantz-Bp7hIvZnj9I-unsplash.jpg]]
+
+** Verbatim
+:PROPERTIES:
+:custom_id: verbatim
+:END:
+
+
+* Inline CLJC Code (OrgX)
+:PROPERTIES:
+:custom_id: inline-cljc-code
+:END:
+
+You can embedded Clojure code inside a blog file using ~#+begin_orgx~ blocks.
+
+Enable this feature first in the org metadata:
+
+#+begin_example
+#+ORGX: true
+#+end_example
+
+With the following snippet embedded in a org file.
+
+#+begin_example
+  ,#+begin_orgx
+    ;; You can style it using tailwindcss
+    ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg" :on-click (fn [& _] #?(:cljs (js/alert "clicked!")))} "Click Me")
+  ,#+end_orgx
+#+end_example
+
+We can get a clickable button in the generated page:
+
+#+begin_orgx
+  ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg" :on-click (fn [& _] #?(:cljs (js/alert "clicked!")))} "Click Me")
+#+end_orgx
+
+
+Since the code is in CLJC, this feature works very well with static page generation / server side rendering. However, you must wrap plaform specified code in read macros like we do in a normal CLJC file.
+
+We can access the blog page's meta data using ~post-props~ variable.
+
+#+begin_example
+#+begin_orgx
+($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys post-props)))
+#+end_orgx
+#+end_example
+
+#+begin_orgx
+($ :div {:class "bg-stone-50 pl-4 py-2 border-l-3 border-sky-500"} (str (keys post-props)))
+#+end_orgx
+
+** Inline Clojure Snippet
+
+#+begin_example
+We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-1.border-l-3.border-sky-500 "also have inline Clojure snippets")@@ like this.
+#+end_example
+
+Will be render as
+
+We can @@orgx:($ :span.bg-cyan-50.mt-2.pl-2.py-2.border-l-3.border-sky-500 "also have inline Clojure snippets")@@ like this.
+
+** Using Other OrgX files as components
+
+
+** Builtin Components
+
+*** Simple Remarks
+:PROPERTIES:
+:CUSTOM_ID: simple-remarks
+:END:
+
+
+It has several builtin components, notebly, the following snippet:
+
+#+begin_example
+#+begin_orgx
+($ info "This is an info")
+($ note "This is a note")
+($ warn "This is a warn")
+($ error "This is an error")
+#+end_orgx
+#+end_example
+
+Will be rendered as:
+
+#+begin_orgx
+($ info "This is an info")
+($ note "This is a note")
+($ warn "This is a warn")
+($ error "This is an error")
+#+end_orgx
+
+*** Tabs
+
+#+attr_orgx_defui: true
+#+begin_orgx_code_org
+#+begin_example
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_code_clj
+  ,#+begin_src clojure
+  (defui tabs [{:keys [tab-list default-table class]}]
+    (let [[selected-tab set-selected-tab!] (use-state (or default-table
+                                                          (:name (first tab-list))))]
+      ($ :div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100 {:class class}
+         ($ :div.my-0.flex.relative.bg-neutral-100
+            (map (fn [{:keys [name]}]
+                   ($ :button.font-medium.text-neutral-700.bg-neutral-50.py-1.px-2.border-t-2.border-neutral-50.min-w-28.bg-neutral-50.border-t-neutral-100
+                      {:key name
+                       :class (when (= name selected-tab)
+                                " text-sky-800 border-sky-400 bg-sky-100 border-t-sky-400")
+                       :on-click (fn []
+                                   #?(:cljs
+                                      (set-selected-tab! name)))}
+                      name))
+                 tab-list))
+         ($ :div.my-0.bg-neutral-50.overflow-hidden.px-2.h-full
+            (:content (first (filter (fn [{:keys [name]}]
+                                       (= name selected-tab))
+                                     tab-list)))))))
+
+  ,#+end_src
+  ,#+end_orgx_code_clj
+
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_code_org
+  ,#+begin_example
+  Well we can't display the contents recurisvely
+  ,#+end_example
+  ,#+end_orgx_code_org
+
+
+  ,#+begin_orgx
+  ($ tabs {:tab-list [{:name "tab_demo.org" :content ($ code_org)} {:name "tabs.clj" :content ($ code_clj)}]})
+  ,#+end_orgx
+#+end_example
+#+end_orgx_code_org
+
+#+attr_orgx_defui: true
+#+begin_orgx_code_clj
+#+begin_src clojure
+  (defui tabs [{:keys [tab-list default-table class]}]
+    (let [[selected-tab set-selected-tab!] (use-state (or default-table
+                                                          (:name (first tab-list))))]
+      ($ :div.my-4.relative.border-sky-300.border-l-2.border-l-neutral-100 {:class class}
+         ($ :div.my-0.flex.relative.bg-neutral-100
+            (map (fn [{:keys [name]}]
+                   ($ :button.font-medium.text-neutral-700.bg-neutral-50.py-1.px-2.border-t-2.border-neutral-50.min-w-28.bg-neutral-50.border-t-neutral-100
+                      {:key name
+                       :class (when (= name selected-tab)
+                                " text-sky-800 border-sky-400 bg-sky-100 border-t-sky-400")
+                       :on-click (fn []
+                                   #?(:cljs
+                                      (set-selected-tab! name)))}
+                      name))
+                 tab-list))
+         ($ :div.my-0.bg-neutral-50.overflow-hidden.px-2.h-full
+            (:content (first (filter (fn [{:keys [name]}]
+                                       (= name selected-tab))
+                                     tab-list)))))))
+#+end_src
+#+end_orgx_code_clj
+
+#+begin_orgx
+($ tabs {:tab-list [{:name "tab_demo.org" :content ($ code_org)} {:name "tabs.clj" :content ($ code_clj)}]})
+#+end_orgx
+
+
+*** Split Layout
+
+Split layout lets you show two things side by side:
+
+#+begin_example
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_split_1
+  ,#+begin_src clojure
+    ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+                :on-click (fn [& _]
+                            #?(:cljs (js/alert "clicked!")))}
+       "Click Me")
+  ,#+end_src
+  ,#+end_orgx_split_1
+
+  ,#+attr_orgx_defui: true
+  ,#+begin_orgx_split_2
+  ,#+begin_orgx
+    ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+                :on-click (fn [& _]
+                            #?(:cljs (js/alert "clicked!")))}
+       "Click Me")
+  ,#+end_orgx
+  ,#+end_orgx_split_2
+
+  ,#+begin_orgx
+  ($ split-layout
+  ($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+  ($ tabs {:tab-list [{:name "showcase" :content ($ split_2)}]}))
+  ,#+end_orgx
+#+end_example
+
+Will be rendered as:
+
+
+#+attr_orgx_defui: true
+#+begin_orgx_split_1
+#+begin_src clojure
+  ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+              :on-click (fn [& _]
+                          #?(:cljs (js/alert "clicked!")))}
+     "Click Me")
+#+end_src
+#+end_orgx_split_1
+
+#+attr_orgx_defui: true
+#+begin_orgx_split_2
+#+begin_orgx
+  ($ :button {:class "bg-sky-600 text-neutral-50 py-1 px-2 rounded-lg"
+              :on-click (fn [& _]
+                          #?(:cljs (js/alert "clicked!")))}
+     "Click Me")
+#+end_orgx
+#+end_orgx_split_2
+
+#+begin_orgx
+($ split-layout
+($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+($ tabs {:tab-list [{:name "showcase" :content ($ split_2)}]}))
+#+end_orgx
+
+
+*** Showcase
+
+Showcase is a simple wrapper over ~split-layout~.
+
+#+attr_orgx_defui: true
+#+begin_orgx_showcase_1
+#+begin_example
+#+begin_orgx
+($ showcase
+  ($ tabs {:tab-list [{:name "button" :content ($ split_1)}]})
+  ($ split_2))
+#+end_orgx
+#+end_example
+#+end_orgx_showcase_1
+
+#+begin_orgx
+($ showcase
+  ($ tabs {:tab-list [{:name "showcase demo" :content ($ showcase_1)}
+                      {:name "button" :content ($ split_1)}]})
+  ($ split_2))
+#+end_orgx
+
+
+** Use uix components with org-mode markups
+
+#+begin_orgx_note
+Hello
+#+end_orgx_note

@@ -1,11 +1,13 @@
 (ns net.coruscation.cerulean.orgx.orgx
   (:require
+   [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.zip :as zip]
    [hickory.core :refer [as-hiccup]]
    [net.coruscation.cerulean.common.components :refer [default-exports]]
+   [net.coruscation.cerulean.config :refer [join-workspace-path]]
    [net.coruscation.cerulean.orgx.orgx-commons :refer :all]
-   [net.coruscation.cerulean.server.assets :refer [fetch-all]]
+   [net.coruscation.cerulean.server.utils :refer [add-to-classpath]]
    [uix.dev :refer [from-hiccup]])
   (:import
    [java.nio.file Path]
@@ -129,9 +131,14 @@
          (map str)
          (str/join "\n"))))
 
+(defn get-orgx-dest-dir []
+  (join-workspace-path "./.cljc/orgx"))
+
 (defn generate-cljc-from-blog [{:blog/keys [id] :as blog}]
+  (.mkdirs (io/file (get-orgx-dest-dir)))
+  (add-to-classpath (join-workspace-path "./.cljc/"))
   (binding [*print-namespace-maps* false]
-    (spit (.toString (Path/of orgx-dest-dir
+    (spit (.toString (Path/of (get-orgx-dest-dir)
                               (into-array String
                                           [(str (str/replace id "-" "_")
                                                 ".cljc")])))

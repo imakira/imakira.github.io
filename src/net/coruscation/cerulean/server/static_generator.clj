@@ -1,17 +1,18 @@
 (ns net.coruscation.cerulean.server.static-generator
   (:require
-   [net.coruscation.cerulean.common.pages :as pages]
-   [net.coruscation.cerulean.config :as config]
-   [net.coruscation.cerulean.server.assets :as assets]
-   [net.coruscation.cerulean.check :as check]
-   [net.coruscation.cerulean.render.render :as render]
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.java.io :as io]
-   [reitit.core :as r]
-   [shadow.cljs.devtools.api :as shadow]
+   [net.coruscation.cerulean.check :as check]
+   [net.coruscation.cerulean.common.pages :as pages]
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.orgx.orgx :as orgx]
+   [net.coruscation.cerulean.render.render :as render]
+   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all]]
+   [net.coruscation.cerulean.server.slash-pages :as slash-pages]
    [net.coruscation.cerulean.user-config :as user-config]
-   [net.coruscation.cerulean.server.slash-pages :as slash-pages])
+   [reitit.core :as r]
+   [shadow.cljs.devtools.api :as shadow])
   (:gen-class))
 
 (defn- derive-routes [routes]
@@ -81,7 +82,13 @@
                                   result
                                   (json/generate-string result)))))))))
 
+(defn generate-all-orgx! []
+  (doseq [blog (fetch-all)]
+    (when (:blog/orgx blog)
+      (orgx/generate-cljc-from-blog blog))))
+
 (defn build-full [& _]
+  (generate-all-orgx!)
   (doseq [f (rest (file-seq (io/file config/*output*)))]
     (.delete f))
   (fs/delete-tree  "./public/js/cljs-runtime")
