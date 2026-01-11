@@ -1,15 +1,12 @@
-(ns net.coruscation.cerulean.build
+(ns net.coruscation.cerulean.shadow-dev
   (:require
    [babashka.process :as process]
-   [clojure.core.async :as a]
-   [clojure.tools.logging :as logging]
-   [net.coruscation.cerulean.config :as config]
-   [net.coruscation.cerulean.orgx.orgx :as orgx]
    [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
-   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all
-                                                              fetch-all-blogs]]
-   [net.coruscation.cerulean.server.watch-service :as watch-service]
-   [shadow.build.targets.esm :as esm]))
+   [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all-blogs]]
+   [net.coruscation.cerulean.server.server :refer [start-server!]]
+   [shadow.build.targets.esm :as esm]
+   [shadow.cljs.devtools.api :as shadow]
+   [shadow.cljs.devtools.server :as server]))
 
 (defn build-css-hook {:shadow.build/stage :compile-prepare}
   [build-state & _]
@@ -45,3 +42,13 @@
                                (assoc-in [:shadow.build/config
                                           :modules]
                                          modules)))))
+
+(defn cljs-repl
+  "Connects to a given build-id. Defaults to `:app`."
+  ([]
+   (cljs-repl :app))
+  ([build-id]
+   (start-server!)
+   (server/start!)
+   (shadow/watch build-id)
+   (shadow/nrepl-select build-id)))

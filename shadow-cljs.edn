@@ -16,8 +16,8 @@
 
            :devtools {:preloads [preload devtools.preload]}
            :compiler-options {:source-map true}
-           :build-hooks [(net.coruscation.cerulean.build/build-css-hook)
-                         (net.coruscation.cerulean.build/orgx-hook)]
+           :build-hooks [(net.coruscation.cerulean.shadow-dev/build-css-hook)
+                         (net.coruscation.cerulean.shadow-dev/orgx-hook)]
            }}
 
  :dependencies [[cider/cider-nrepl "0.47.0"] ;; mandatory (unless it's inherited from deps.edn or otherwise present in the classpath of shadow-cljs's JVM process)
