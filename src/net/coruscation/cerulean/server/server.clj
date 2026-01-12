@@ -18,7 +18,11 @@
    [ring.middleware.json :refer
     [wrap-json-params wrap-json-response]]
    [ring.util.http-response :as resp]
-   [shadow.cljs.devtools.api :as api]))
+   [shadow.cljs.devtools.api :as api])
+  (:import
+   [java.nio.file Path]))
+
+(def ^:dynamic *in-cli?* false)
 
 (defn wrap-restful-response [handler]
   (fn [request]
@@ -68,9 +72,19 @@
         :future (future
                   (loop [event (a/<!! resp)]
                     (when (not (nil? event))
-                      (try (generate-all-orgx!)
-                           (catch Throwable t
-                             (logging/warn "Generated orgx file failed" t)))
+                      (try
+                        (when (and (instance? Path (:path event))
+                                   (.endsWith (.toString (:path event)) ".org"))
+                          (generate-all-orgx!)
+                          (cond (= (:kind event)
+                                   :entry-create)
+                                (api/watch-compile-all!)
+
+                                ;; necessary for some unknown reason
+                                *in-cli?*
+                                (api/watch-compile! :app)))
+                        (catch Throwable t
+                          (logging/warn "Generated orgx file failed" t)))
                       (recur (a/<!! resp)))))}))))
 
 (defn stop-orgx-watch! []
@@ -78,7 +92,7 @@
     (a/>!! cancel true)))
 
 (defn start-server! []
+  (generate-all-orgx!)
   (maybe-init-orgx-watch!)
   (check/environment-check)
   (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))
-
