@@ -32,5 +32,8 @@
                (is (.exists (io/file (path-join workspace
                                                 "docs"
                                                 "index.html"))))
+               (is (= "example.com" (slurp (io/file (path-join workspace
+                                                               "docs"
+                                                               "CNAME")))))
                (finally
                  (fs/delete-tree workspace)))))))

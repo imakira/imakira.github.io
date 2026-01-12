@@ -5,13 +5,15 @@
                                             join-workspace-path]]
    [net.coruscation.cerulean.server.utils :refer [path-join]]))
 
+(defonce config-file-name "config.edn")
+
 (defn init-workspace []
-  (let [config-file (io/file (join-workspace-path "config.edn"))]
+  (let [config-file (io/file (join-workspace-path config-file-name))]
     (assert (not (.exists config-file))
             "configuration already eixsts, do not initialize")
     (.mkdirs (io/file *workspace*))
     (print "Copying default configuration file")
-    (spit (join-workspace-path *config-file-path*)
+    (spit (join-workspace-path config-file-name)
           (slurp (io/resource "config.edn")))
     (print "Copying demonstration blog")
     (.mkdirs (io/file *blog-dir*))
