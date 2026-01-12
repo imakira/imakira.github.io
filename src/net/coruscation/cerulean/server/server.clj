@@ -49,7 +49,6 @@
       slash-pages/resource-route]])))
 
 (def app (-> #'router
-             (wrap-file "./public")
              (wrap-content-type)
              (cors/wrap-cors :access-control-allow-origin [#"http://localhost:8080" #"http://localhost:8000"]
                              :access-control-allow-methods [:get :put :post :delete])
@@ -95,4 +94,4 @@
   (generate-all-orgx!)
   (maybe-init-orgx-watch!)
   (check/environment-check)
-  (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))
+  (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public")) {:port 3001 :join? false})))

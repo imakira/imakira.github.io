@@ -19,6 +19,7 @@
     (assert (not (.exists config-file))
             "configuration already eixsts, do not initialize")
     (.mkdirs (io/file *workspace*))
+    (.mkdirs (io/file (path-join *workspace* "public")))
     (print "Copying default configuration file")
     (spit (join-workspace-path config-file-name)
           (slurp (io/resource "config.edn")))
