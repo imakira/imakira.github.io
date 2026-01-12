@@ -1,5 +1,4 @@
-{:deps {:aliases [:orgx]}
- :dev-http {8080 {:roots ["public" "./"]
+{:dev-http {8080 {:roots ["public" "./"]
                   :handler net.coruscation.cerulean.render.render/dev-template}}
  :builds {:app
           {:target :esm

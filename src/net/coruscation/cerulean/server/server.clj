@@ -17,7 +17,8 @@
    [ring.middleware.file :refer [wrap-file]]
    [ring.middleware.json :refer
     [wrap-json-params wrap-json-response]]
-   [ring.util.http-response :as resp]))
+   [ring.util.http-response :as resp]
+   [shadow.cljs.devtools.api :as api]))
 
 (defn wrap-restful-response [handler]
   (fn [request]
@@ -62,7 +63,7 @@
   (memoize
    (fn []
      (let [service (watch-service/watch config/*blog-dir*)
-           [resp cancel] service]
+           [resp _] service]
        {:service service
         :future (future
                   (loop [event (a/<!! resp)]
@@ -72,7 +73,12 @@
                              (logging/warn "Generated orgx file failed" t)))
                       (recur (a/<!! resp)))))}))))
 
+(defn stop-orgx-watch! []
+  (let [[_ cancel] (:service (maybe-init-orgx-watch!))]
+    (a/>!! cancel true)))
+
 (defn start-server! []
   (maybe-init-orgx-watch!)
   (check/environment-check)
   (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))
+

@@ -36,15 +36,19 @@
        (.toAbsolutePath)
        (.toString)))
 
-(defn add-to-classpath [path]
-  (let [path (-> (Path/of path (into-array String []))
-                 (.normalize)
-                 (.toAbsolutePath)
-                 (.toString)
-                 (io/file)
-                 (.toURI)
-                 (.toURL))]
-    (add-classpath path)))
+(def add-to-classpath
+  (memoize (fn [path]
+             (let [path (-> (Path/of path (into-array String []))
+                            (.normalize)
+                            (.toAbsolutePath)
+                            (.toString))
+                   url (-> path (io/file) (.toURI) (.toURL))
+                   shadow-property-name "java.class.path"]
+               (add-classpath url)
+               (if (nil? (System/getProperty shadow-property-name))
+                 (System/setProperty shadow-property-name path)
+                 (System/setProperty shadow-property-name
+                                     (str path ":" (System/getProperty shadow-property-name))))))))
 
 (defn take-until
   [pred coll]
