@@ -45,7 +45,7 @@
           (future
             (.setName (java.lang.Thread/currentThread) (str "emacs-servant-" (.pid emacs)))
             (.waitFor emacs)
-            (a/>!! emacs
+            (a/>!! process-sevant-chan
                    {:exit-code (.exitValue emacs)}))
           stdout-future
           (future
