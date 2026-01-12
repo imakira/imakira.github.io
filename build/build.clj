@@ -47,7 +47,7 @@
   (b/uber {:class-dir class-dir
            :uber-file uber-file
            :basis basis
-           :main 'net.coruscation.cerulean.server.static-generator}))
+           :main 'net.coruscation.cerulean.cli}))
 
 (defn deploy [opts]
   (jar opts)
