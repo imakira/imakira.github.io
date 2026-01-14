@@ -22,19 +22,20 @@
          str/trim)))
 
 (defn path-join [& paths]
-  (->> (rest paths)
-       (mapv (fn [path]
-               (cond (instance? java.nio.file.Path path)
-                     (.toString path)
-		             (instance? java.io.File path)
-                     (.toString path)
-                     :else
-                     path)))
-       (into-array String)
-       (java.nio.file.Path/of (first paths))
-       (.normalize)
-       (.toAbsolutePath)
-       (.toString)))
+  (let [paths (mapv (fn [path]
+                      (cond (instance? java.nio.file.Path path)
+                            (.toString path)
+		                    (instance? java.io.File path)
+                            (.toString path)
+                            :else
+                            path))
+                    paths)]
+    (->> (rest paths)
+         (into-array String)
+         (java.nio.file.Path/of (first paths))
+         (.normalize)
+         (.toAbsolutePath)
+         (.toString))))
 
 (def add-to-classpath
   (memoize (fn [path]
