@@ -1,6 +1,6 @@
 (ns net.coruscation.cerulean.server.blog-gen
   (:require
-   [net.coruscation.cerulean.common.code-highlight :as code-highlight]
+   [net.coruscation.cerulean.server.code-highlight :as code-highlight]
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.server.utils :refer [extract-string]]
    [net.coruscation.cerulean.server.utils :as su]

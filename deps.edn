@@ -34,7 +34,7 @@
         org.apache.commons/commons-text {:mvn/version "1.15.0"}
         com.wsscode/pathom3 {:mvn/version "2025.01.16-alpha"}
         org.clojure/tools.cli {:mvn/version "1.3.250"}}
- :paths ["src" "dev" "resources" "orgx" "public"]
+ :paths ["src" "dev" "resources" "orgx" "public" "node_modules"]
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps
                  {refactor-nrepl/refactor-nrepl {:mvn/version "3.11.0"}}
