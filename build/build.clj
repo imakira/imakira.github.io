@@ -42,7 +42,6 @@
 
 (defn uber [_]
   (clean nil)
-  (b/write-file)
   (write-graaljs-files!)
   (b/copy-dir {:src-dirs ["src" "resources" "dev" "node_modules"]
                :target-dir class-dir})
