@@ -2,16 +2,20 @@
   (:require
    [cheshire.core :as cheshire]
    [clojure.core.async :as a]
+   [clojure.java.io :as io]
    [clojure.java.process :as java.process]
-   [clojure.tools.logging :as logging]))
+   [clojure.tools.logging :as logging]
+   [net.coruscation.cerulean.server.utils :refer [path-join]]))
 
 
 (defonce ^:dynamic *emacs* (atom nil))
 (defonce ^:dynamic *debug* (atom false))
 
 (defn- launch-emacs []
-  (java.process/start "emacs" "--batch" "-q" "-l" "init.el"
-                      "--eval" "(main)"))
+  (let [init-file-location (path-join (java.nio.file.Files/createTempDirectory "cerulean-elisp" (into-array java.nio.file.attribute.FileAttribute [])) "init.el")]
+    (spit (io/file init-file-location) (slurp (io/resource "init.el")))
+    (java.process/start "emacs" "--batch" "-q" "-l" init-file-location
+                        "--eval" "(main)")))
 
 (defn- generate-request [method params id]
   {:json-rpc "2.0"
