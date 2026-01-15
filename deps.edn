@@ -44,4 +44,6 @@
                      :exec-fn build/uber}
            :build {:exec-fn net.coruscation.cerulean.cli/-build}
            :watch {:exec-fn net.coruscation.cerulean.cli/-watch}
+           :kaocha {:extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+                    :main-opts ["-m" "kaocha.runner"]}
            }}
