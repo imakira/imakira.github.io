@@ -1,22 +1,19 @@
 (ns net.coruscation.cerulean.server.blog-gen
   (:require
-   [net.coruscation.cerulean.server.code-highlight :as code-highlight]
-   [net.coruscation.cerulean.config :as config]
-   [net.coruscation.cerulean.server.utils :refer [extract-string]]
-   [net.coruscation.cerulean.server.utils :as su]
-   [cheshire.core :refer [parse-string]]
-   [clojure.java.io :as io]
    [clojure.edn :as edn]
-   [clojure.java.shell :refer [sh]]
+   [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.zip :as zip]
+   [com.potetm.fusebox.fallback :as fallback]
+   [com.potetm.fusebox.retry :as retry]
    [hickory.core :as hk]
    [hickory.render :as hr]
    [hickory.select :as hs]
    [hickory.zip :as hz]
-   [com.potetm.fusebox.fallback :as fallback]
-   [com.potetm.fusebox.retry :as retry]
-   [net.coruscation.cerulean.server.emacs-ipc :as eipc])
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.server.code-highlight :as code-highlight]
+   [net.coruscation.cerulean.server.emacs-ipc :as eipc]
+   [net.coruscation.cerulean.server.utils :refer [extract-string path-join]])
   (:import
    [com.google.common.io Files]
    [javax.imageio ImageIO]))
@@ -100,11 +97,11 @@
 (defn relative-path? [path]
   (not (boolean (re-matches #"^(https?:/)?/.*$" path))))
 
-(defonce image-cache-dir
-  (delay
-    (let [cache-dir (str config/*cache* "/image-cache")]
-      (.mkdirs (io/file cache-dir))
-      cache-dir)))
+
+(defn image-cache-dir []
+  (let [cache-dir (str config/*cache* "/image-cache")]
+    (.mkdirs (io/file cache-dir))
+    cache-dir))
 
 (defn sanitize-filename [url]
   (java.net.URLEncoder/encode url))
@@ -114,7 +111,7 @@
     (retry/with-retry {::retry/retry? (fn [n _ _]
                                         (< n 3))
                        ::retry/delay (constantly 1000)}
-      (let [out-path (str @image-cache-dir "/" (sanitize-filename url-or-path))
+      (let [out-path (path-join (image-cache-dir) (sanitize-filename url-or-path))
             tmp-path (str out-path ".tmp")]
         (if (.exists (io/file out-path))
           out-path
@@ -216,8 +213,6 @@
                                  (subs text 0 (min (count text) 153)))))
               :unlisted (boolean unlisted)}]
     blog))
-
-
 
 
 #_(def ^:dynamic *demo* (org-file->html "./blogs/demo.org"))

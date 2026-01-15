@@ -1,10 +1,16 @@
 (ns net.coruscation.cerulean.server.blog-gen-test
   (:require
    [clojure.java.io :as io]
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing use-fixtures]]
    [hickory.core :as core]
-   [net.coruscation.cerulean.server.blog-gen :as subject :refer [org-file->html]]))
+   [net.coruscation.cerulean.test-constants :as constants]
+   [net.coruscation.cerulean.server.blog-gen :as subject :refer [org-file->html]]
+   [net.coruscation.cerulean.server.utils :refer [path-join]]
+   [net.coruscation.cerulean.test-utils :refer [temp-workspace-fixture with-temp-workspace]]))
 
+(use-fixtures :each temp-workspace-fixture)
+
+(defonce test-resources-dir (path-join constants/resources-dir "blog-gen-test"))
 
 (deftest relative-path?-test
   (is (= false (subject/relative-path? "https://example.com")))
@@ -16,40 +22,40 @@
 (deftest get-img-dimension-test
   (is (= {:height 368
           :width 550}
-         (subject/get-img-dimension "./test/resource/1.webp")))
+         (subject/get-img-dimension (path-join test-resources-dir "1.webp"))))
   (is (= {:height 368
           :width 550}
-         (subject/get-img-dimension "./test/resource/1.jpg")))
+         (subject/get-img-dimension (path-join test-resources-dir "1.jpg"))))
 
   (is (= {:height 368
           :width 550}
          (subject/get-img-dimension "https://www.gstatic.com/webp/gallery/1.jpg")))
 
   (is (= {}
-         (subject/get-img-dimension "./test/resource/1.svg")))
+         (subject/get-img-dimension (path-join "1.svg"))))
   (is (= {}
          (subject/get-img-dimension "./nonexistence"))))
 
 (deftest cache-image-if-remote-test
-  (let [sample-remote "https://www.gstatic.com/webp/gallery/1.jpg"
-        sample-remote-cache (str @subject/image-cache-dir
-                                 "/"
-                                 (subject/sanitize-filename sample-remote))
-        sample-remote-nonexistence "https://nonexistence/.jpg"]
-    (.delete (io/file sample-remote-cache))
-    (is (= "./non-existence"
-           (subject/cache-image-if-remote "./non-existence")))
-    (is (= sample-remote-cache
-           (subject/cache-image-if-remote sample-remote)))
-    (is (.exists (io/file sample-remote-cache)))
-    (is (thrown? Exception
-                 (subject/cache-image-if-remote sample-remote-nonexistence)))
-    (.delete (io/file sample-remote-cache))))
+  (testing (let [sample-remote "https://www.gstatic.com/webp/gallery/1.jpg"
+                 sample-remote-cache (str (subject/image-cache-dir)
+                                          "/"
+                                          (subject/sanitize-filename sample-remote))
+                 sample-remote-nonexistence "https://nonexistence/.jpg"]
+             (.delete (io/file sample-remote-cache))
+             (is (= "./non-existence"
+                    (subject/cache-image-if-remote "./non-existence")))
+             (is (= sample-remote-cache
+                    (subject/cache-image-if-remote sample-remote)))
+             (is (.exists (io/file sample-remote-cache)))
+             (is (thrown? Exception
+                          (subject/cache-image-if-remote sample-remote-nonexistence)))
+             (.delete (io/file sample-remote-cache)))))
 
 (deftest optimize-img-tag-test
-  (let [sample-img-html-jpg "<img src=\"./imgs/1.jpg\"></img>"
-        sample-img-html-jpg-dimension "<img src=\"./imgs/1.jpg\" width=\"100\" height=\"100\"></img>"
-        sample-img-html-svg "<img src=\"./imgs/1.svg\"></img>"
+  (let [sample-img-html-jpg (str "<img src=\"" (path-join test-resources-dir "./1.jpg")  "\"></img>")
+        sample-img-html-jpg-dimension(str "<img src=\"" (path-join test-resources-dir "./imgs/1.jpg") "\" width=\"100\" height=\"100\"></img>")
+        sample-img-html-svg (str "<img src=\"" (path-join test-resources-dir "./1.svg")"\"></img>")
         sample-img-html-nonexistence "<img src=\"./nonexistence.jpg\"></img>"
         sample-img-html-remote "<img src=\"https://www.gstatic.com/webp/gallery/1.jpg\"></img>"
         sample-img-html-remote-nonexistence  "<img src=\"https://nonexistence/nonexistence\"></img>"
@@ -58,7 +64,6 @@
                          core/parse-fragment
                          first
                          core/as-hickory))]
-    (to-hickory sample-img-html-jpg-dimension)
     (subject/get-image-src (to-hickory sample-img-html-jpg-dimension))
 
     (is (= (subject/set-img-dimension-if-not-exist (to-hickory sample-img-html-jpg)
@@ -86,8 +91,8 @@
 
 (deftest orgx-test
   (testing ""
-    (let [demo (org-file->html "./blogs/demo.org")]
-      (is (= (:orgx-require demo)
-             [['net.coruscation.cerulean.components :as 'comp]]))
+    (let [demo (org-file->html (path-join test-resources-dir "simple-orgx.org"))]
+      (is (= [['net.coruscation.cerulean.components :as 'comp]]
+             (:orgx-require demo)))
       (is (true? (:orgx demo))))))
 

@@ -1,0 +1,6 @@
+#+ORGX: true
+
+#+attr_orgx_toplevel: true
+#+begin_orgx
+(defui demo [])
+#+end_orgx
