@@ -10,7 +10,8 @@
     "docker-build-dev": "nix build .#docker-dev && docker load < result",
     "nix-deps-lock": "nix run github:jlesquembre/clj-nix#deps-lock",
     "nix-npm-deps-lock": "nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256",
-    "test-static-site": "cd docs && python -m http.server"
+    "test-static-site": "cd docs && python -m http.server",
+    "uberjar": "clj -X:uberjar"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.10",
