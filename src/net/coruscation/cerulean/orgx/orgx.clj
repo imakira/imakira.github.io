@@ -70,7 +70,7 @@
          toplevels nil]
     (if (zip/end? loc)
       [(zip/node loc)
-       (reverse toplevels)]
+       (apply list (reverse toplevels))]
       (let [node (zip/node loc)]
         (if (and (seq? node)
                  (= (first node)
@@ -111,7 +111,7 @@
                      (map from-hiccup)
                      (map unwrap-clj-code))]
     [(remove nil? (map first results))
-     (apply concat (map second results))]))
+     (apply list (apply concat (map second results)))]))
 
 (defn blog->cljc [{:blog/keys [id content orgx-require] :as blog-asset}]
   (let [[inplace toplevels] (from-html content)]
