@@ -2,7 +2,7 @@
   "name": "cerulean",
   "version": "0.0.1",
   "scripts": {
-    "dev": "shadow-cljs -A:dev watch app & npm run styles-dev",
+    "watch": "clj -X:watch",
     "release": "shadow-cljs -A:dev release app && npm run styles-release",
     "styles-dev": "npx @tailwindcss/cli -i ./resources/main.css -o ./public/main.css --watch",
     "styles-release": "npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css",
@@ -11,7 +11,8 @@
     "nix-deps-lock": "nix run github:jlesquembre/clj-nix#deps-lock",
     "nix-npm-deps-lock": "nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256",
     "test-static-site": "cd docs && python -m http.server",
-    "uberjar": "clj -X:uberjar"
+    "uberjar": "clj -X:uberjar",
+    "tests": "clj -M:kaocha"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.10",
