@@ -51,7 +51,8 @@
                :init init-workspace
                :build build-workspace
                :watch watch-workspace)
-             subcmd-args))))
+             subcmd-args)
+      (System/exit 0))))
 
 
 (defn -build [& _]
