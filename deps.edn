@@ -13,7 +13,7 @@
         metosin/ring-http-response {:mvn/version "0.9.5"}
         org.clojure/core.async {:mvn/version "1.8.741"}
         metosin/reitit {:mvn/version "0.10.0"}
-        thheller/shadow-cljs {:mvn/version "3.3.4"}
+        thheller/shadow-cljs {:mvn/version "3.3.5"}
         binaryage/devtools {:mvn/version "1.0.7"}
         org.graalvm.polyglot/polyglot {:mvn/version "24.1.0"}
         org.graalvm.js/js-language {:mvn/version "24.1.0"}

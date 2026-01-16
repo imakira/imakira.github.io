@@ -12,7 +12,8 @@
     "nix-npm-deps-lock": "nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256",
     "test-static-site": "cd docs && python -m http.server",
     "uberjar": "clj -X:uberjar",
-    "tests": "clj -M:kaocha"
+    "tests": "clj -M:kaocha",
+    "update-dependencies": "npm update && npm run nix-npm-deps-lock && neil dep update && npm run nix-deps-lock"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.10",

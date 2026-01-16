@@ -24,8 +24,19 @@
             clj-nix.overlays.default
           ];
         };
+
+        cerulean-src = pkgs.stdenv.mkDerivation {
+          name = "cerulean";
+          src = self;
+          installPhase = ''
+          mkdir -p $out
+          cp -r * $out/
+          cp -r ${npmDeps}/node_modules $out/node_modules
+          '';
+        };
+
         clj-bin = pkgs.mkCljBin {
-            projectSrc = ./.;
+            projectSrc = cerulean-src;
             name = "net.coruscation/cerulean";
             main-ns = "net.coruscation.cerulean.build";
             version = "1.0";
@@ -67,16 +78,6 @@
           '';
         });
 
-        cerulean-src = pkgs.stdenv.mkDerivation {
-          name = "cerulean";
-          src = self;
-          installPhase = ''
-          mkdir -p $out
-          cp -r * $out/
-          cp -r ${npmDeps}/node_modules $out/node_modules
-          '';
-        };
-
         make-docker =
           { extra-deps }:
           (pkgs.dockerTools.buildLayeredImage {
@@ -90,8 +91,7 @@
             );
             created = "now";
             contents = [
-              deps-cache
-              self
+              clj-bin
               (pkgs.buildEnv {
                 name = "image-root";
                 paths = deps  ++ extra-deps;
@@ -103,7 +103,6 @@
             ];
             enableFakechroot = true;
             fakeRootCommands = ''
-              echo ${deps-cache} > /path
               mkdir -p /root
               ln -s "${deps-cache}/.m2" /root/.m2
               ln -s "${cerulean-src}" /cerulean
@@ -113,6 +112,10 @@
                 "/usr/bin/env"
                 "bash"
               ];
+              Env = [
+                "CERULEAN_WORKSPACE=/workspace/"
+              ];
+              WorkingDir = "/cerulean";
             };
           });
       in
