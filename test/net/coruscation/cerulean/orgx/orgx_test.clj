@@ -1,7 +1,17 @@
 (ns net.coruscation.cerulean.orgx.orgx-test
   (:require
+   [cemerick.pomegranate :as pome]
+   [clojure.java.io :as io]
    [clojure.test :refer [deftest is testing]]
-   [net.coruscation.cerulean.orgx.orgx :as sut]))
+   [clojure.tools.logging :as log]
+   [kaocha.classpath :as kaocha.classpath]
+   [net.coruscation.cerulean.config :refer [join-workspace-path]]
+   [net.coruscation.cerulean.orgx.orgx :as sut]
+   [net.coruscation.cerulean.server.utils :refer [add-to-classpath path-join]]
+   [net.coruscation.cerulean.test-constants :refer [resources-dir]]
+   [net.coruscation.cerulean.test-utils :refer [with-temp-workspace]]))
+
+(defonce test-resources-dir (path-join resources-dir "orgx-test"))
 
 (deftest from-html-test
   (testing
@@ -15,3 +25,20 @@
       (let [[_ toplevels] (sut/from-html "<pre class=\"orgx\" data-toplevel> (defui demo []) </pre> ")]
         (is (= (str toplevels)
                (str '((defui demo []))))))))
+
+(deftest load-orgx-test
+  (testing
+      (with-temp-workspace
+        (let [cl (.getContextClassLoader (Thread/currentThread))]
+          (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
+        (spit (io/file (path-join (doto (io/file (sut/get-orgx-dest-dir))
+                                    (.mkdirs))
+                                  "demo.cljc"))
+              (slurp (io/file (path-join test-resources-dir
+                                         "demo_orgx.cljc"))))
+        (add-to-classpath (join-workspace-path "./.cljc/"))
+        (kaocha.classpath/add-classpath (join-workspace-path "./.cljc/"))
+        (log/warn (pome/get-classpath))
+        (require (symbol "orgx.demo") :reload)
+        (is (= 10 (var-get (intern (find-ns (symbol "orgx.demo"))
+                                   'a)))))))

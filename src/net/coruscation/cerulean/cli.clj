@@ -17,7 +17,9 @@
 (defn init-workspace [& _]
   (let [config-file (io/file (join-workspace-path config-file-name))]
     (assert (not (.exists config-file))
-            "configuration already eixsts, do not initialize")
+            {:text "configuration already eixsts, do not initialize"
+             :states {:workspace *workspace*
+                      :blog-dir *blog-dir*}})
     (.mkdirs (io/file *workspace*))
     (.mkdirs (io/file (path-join *workspace* "public")))
     (print "Copying default configuration file")
