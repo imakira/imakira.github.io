@@ -107,8 +107,4 @@ The install process provided by ~buildNpmPackage~ will package necessary depende
 
 * Tips
 
-- If you didn't modified ~:js-provider~ in ~shadow-cljs.edn~, shadow.cljs will most probably produce a self-contained JavaScript. Therefore you can put all the JavaScript dependencies in ~devDependencies~ to reduce the nix package's size.
-
-- You can future reduce the nix package's size by customize the final packaging step, and use ~pkgs.nodejs-slim~.
-
 - Check [[https://github.com/imakira/espoir/blob/main/flake.nix][imakira/espoir/blob/main/flake.nix]] for a working example.
