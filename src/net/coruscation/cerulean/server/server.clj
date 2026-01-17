@@ -47,4 +47,9 @@
 
 (check/environment-check)
 ;; (assets/refresh-blogs)
-(def ^:dynamic *jetty* (jetty/run-jetty #'app {:port 3001 :join? false}))
+
+(def jetty (atom nil))
+
+(defn start-server! []
+  (reset! jetty (jetty/run-jetty #'app {:port 3001 :join? false})))
+
