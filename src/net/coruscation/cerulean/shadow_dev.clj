@@ -1,17 +1,12 @@
 (ns net.coruscation.cerulean.shadow-dev
   (:require
-   [babashka.process :as process]
    [net.coruscation.cerulean.orgx.orgx-commons :as orgx-commons]
    [net.coruscation.cerulean.server.assets :as assets :refer [fetch-all-blogs]]
    [net.coruscation.cerulean.server.server :refer [start-server!]]
+   [net.coruscation.cerulean.server.tools :as tools]
    [shadow.build.targets.esm :as esm]
    [shadow.cljs.devtools.api :as shadow]
    [shadow.cljs.devtools.server :as server]))
-
-(defn build-css-hook {:shadow.build/stage :compile-prepare}
-  [build-state & _]
-  (process/shell "npm run styles-release")
-  build-state)
 
 (defn orgx-hook {:shadow.build/stage :configure}
   [build-state & _]
@@ -49,6 +44,7 @@
    (cljs-repl :app))
   ([build-id]
    (start-server!)
+   (tools/watch-css!)
    (server/start!)
    (shadow/watch build-id)
    (shadow/nrepl-select build-id)))

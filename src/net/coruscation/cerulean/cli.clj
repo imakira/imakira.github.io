@@ -8,7 +8,9 @@
    [net.coruscation.cerulean.server.static-generator :as static-generator]
    [net.coruscation.cerulean.server.utils :refer [path-join]]
    [shadow.cljs.devtools.api :as shadow]
-   [shadow.cljs.devtools.server :as shadow.server])
+   [shadow.cljs.devtools.server :as shadow.server]
+   [clojure.tools.logging :as logging]
+   [net.coruscation.cerulean.server.tools :as tools])
   (:gen-class))
 
 (defonce config-file-name "config.edn")
@@ -35,6 +37,7 @@
   (static-generator/build-full))
 
 (defn watch-workspace [& _]
+  (tools/watch-css!)
   (server/start-server!)
   (shadow.server/start!)
   (shadow/watch :app))
@@ -42,6 +45,7 @@
 (def cli-options-root [])
 
 (defn -main [& args]
+  (logging/log-capture!)
   (let [cl (.getContextClassLoader (Thread/currentThread))]
     (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
   (let [{:keys [arguments]} (parse-opts args cli-options-root)
