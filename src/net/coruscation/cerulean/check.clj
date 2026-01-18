@@ -20,4 +20,5 @@
 
 (defn environment-check []
   (assert (which "emacs") "emacs is not installed in this system.")
-  (assert (which "git") "git is not installed in this system."))
+  (assert (which "git") "git is not installed in this system.")
+  (assert (which "npm") "npm is not installed in this system."))

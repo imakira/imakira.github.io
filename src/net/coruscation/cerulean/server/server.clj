@@ -91,7 +91,7 @@
     (a/>!! cancel true)))
 
 (defn start-server! []
+  (check/environment-check)
   (generate-all-orgx!)
   (maybe-init-orgx-watch!)
-  (check/environment-check)
   (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public")) {:port 3001 :join? false})))
