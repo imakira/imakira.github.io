@@ -4,11 +4,11 @@
    [clojure.tools.logging :as logging]))
 
 (defn watch-css! []
-  (process/process "npm run styles-dev"
+  (process/process "make styles-dev"
                    {:out (logging/log-stream :info *ns*)
                     :err (logging/log-stream :info *ns*)}))
 
 (defn release-css! []
-  (process/process "npm run styles-release"
+  (process/process "make styles-release"
                    {:out (logging/log-stream :info *ns*)
                     :err (logging/log-stream :info *ns*)}))
