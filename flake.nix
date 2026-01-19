@@ -43,7 +43,9 @@
             version = "1.0";
             jdkRunner = pkgs.jdk25_headless;
             buildCommand = ''
-            clj -X:uberjar'';
+            clj -X:uberjar
+            export jarPath=./target/*.jar
+            '';
           };
         deps-cache = pkgs.mk-deps-cache { lockfile = ./deps-lock.json; };
         deps = with pkgs; [
