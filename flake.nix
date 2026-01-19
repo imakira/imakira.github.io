@@ -89,7 +89,13 @@
             created = "now";
             tag = "latest";
             contents = [
-              clj-bin
+              (pkgs.writeShellApplication {
+                name = "cerulean";
+                text = ''
+                git config --global --add safe.directory /workspace
+                ${clj-bin}/bin/cerulean "$@"
+                '';
+              })
               pkgs.gnumake
               pkgs.dockerTools.binSh
               pkgs.dockerTools.usrBinEnv

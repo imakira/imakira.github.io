@@ -1,11 +1,11 @@
 (ns net.coruscation.cerulean.server.utils
   (:require
+   [babashka.process :as process]
+   [cemerick.pomegranate :as pome]
    [clojure.java.io :as io]
    [clojure.string :as str]
-   [cemerick.pomegranate :as pome])
+   [clojure.tools.logging :as logging])
   (:import
-   [java.lang.reflect Method]
-   [java.net URL]
    (java.nio.file Path)))
 
 (defn extract-string [hickory-elements & {:keys [spacer]
@@ -61,3 +61,7 @@
      (if (pred f)
        (cons f (take-until pred r))
        [f]))))
+
+(defn assert-file-exist [path]
+  (assert (.exists (io/file path)) (str "File " path " doesn't exist"))
+  (assert (.isFile (io/file path)) (str "Path " path " is a directory")))

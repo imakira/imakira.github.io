@@ -8,10 +8,10 @@
    [net.coruscation.cerulean.common.commons :as commons]
    [net.coruscation.cerulean.config :as config]
    [net.coruscation.cerulean.server.blog-gen :as blog-gen]
-   [net.coruscation.cerulean.server.blogs :refer [file-first-commit-date
-                                                  file-last-commit-date
-                                                  file-last-modified-date
+   [net.coruscation.cerulean.server.blogs :refer [file-last-modified-date
                                                   special-page?]]
+   [net.coruscation.cerulean.server.git :refer [file-first-commit-date
+                                                file-last-commit-date]]
    [net.coruscation.cerulean.server.user-config :refer [get-user-config]])
   (:import
    [com.google.common.io Files]))
@@ -69,10 +69,10 @@
                      :language (or (:language temp)
                                    "en_US")
                      :published-date (or (:published-date temp)
-                                         (file-first-commit-date file-path)
+                                         (file-first-commit-date config/*workspace* file-path)
                                          (file-last-modified-date file-path))
                      :modified-date (or (:modified-date temp)
-                                        (file-last-commit-date file-path)
+                                        (file-last-commit-date config/*workspace* file-path)
                                         (file-last-modified-date file-path))})
         (merge blog {:id (if (special-page? blog)
                            (str (Files/getNameWithoutExtension file-path)
