@@ -45,7 +45,6 @@
 (def cli-options-root [])
 
 (defn -main [& args]
-  (logging/log-capture!)
   (let [cl (.getContextClassLoader (Thread/currentThread))]
     (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
   (let [{:keys [arguments]} (parse-opts args cli-options-root)
