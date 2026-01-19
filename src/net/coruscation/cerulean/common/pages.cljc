@@ -191,11 +191,11 @@
        ($ :ul
           (for [{:keys [content id level] :as toc-item} toc-content]
             ($ :li.my-1.list-inside.text-neutral-600  {:key id}
-               ;; to make tailwindcss-cli happy
-               ;; "pl-0 pl-4 pl-8 pl-12 pl-16 pl-20"
                ($ btn-wrapper
                   ($ :div.group.w-full.h-full
                      ($ :a.h-12.transition-all.w-full.h-full.inline-block.flex.flex-col.justify-center
+                        ;; to make tailwindcss-cli happy
+                        #_"pl-0 pl-4 pl-8 pl-12 pl-16 pl-20"
                         {:class (str "group-hover:text-[#0260B3] "
                                      (str "pl-" (* 4 level))
                                      (if (= current-header-id id)
