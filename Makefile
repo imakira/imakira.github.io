@@ -33,6 +33,9 @@ uberjar:
 	clj -X:uberjar
 
 test:
+	clj -M:uberjar:kaocha --skip-meta slow
+
+test-all:
 	clj -M:uberjar:kaocha
 
 npm-update:

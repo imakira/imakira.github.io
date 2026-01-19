@@ -109,7 +109,7 @@
                 (.delete file))
               (a/>!! cancel true)))))))
 
-(deftest watch-test2
+(deftest ^:slow watch-test2
   (testing "(kinda) heavier test"
     (let [test-dir (str *test-dir* "/test2")]
       (.mkdirs (io/file test-dir))
