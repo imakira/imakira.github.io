@@ -7,7 +7,7 @@ build:
 	clj -X:build
 
 styles-dev:
-	npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css
+	npx @tailwindcss/cli -i ./resources/main.css -o ./public/main.css --watch
 
 styles-release:
 	npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css
