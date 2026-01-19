@@ -26,7 +26,7 @@
         };
 
         cerulean-src = pkgs.stdenv.mkDerivation {
-          name = "cerulean";
+          name = "cerulean-source";
           src = self;
           buildPhase = '':'';
           installPhase = ''
@@ -38,8 +38,8 @@
 
         clj-bin = pkgs.mkCljBin {
             projectSrc = cerulean-src;
-            name = "net.coruscation/cerulean";
-            main-ns = "net.coruscation.cerulean.build";
+            name = "cerulean";
+            main-ns = "net.coruscation.cerulean.cli";
             version = "1.0";
             jdkRunner = pkgs.jdk25_headless;
             buildCommand = ''
@@ -131,6 +131,7 @@
           docker-dev = (
             make-docker {
               extra-deps = [
+                (pkgs.clojure.override{jdk=pkgs.jdk25_headless;})
                 pkgs.toybox
               ];
             }
@@ -138,8 +139,8 @@
         };
         devShells.default = pkgs.mkShell {
           packages =  [
+            (pkgs.clojure.override{jdk=pkgs.jdk25_headless;})
           ] ++ deps;
-
         };
       }
     );
