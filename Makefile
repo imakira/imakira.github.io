@@ -33,7 +33,7 @@ uberjar:
 	clj -X:uberjar
 
 test:
-	clj -M:kaocha
+	clj -M:uberjar:kaocha
 
 npm-update:
 	npm update
