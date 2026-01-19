@@ -34,7 +34,9 @@
 
 
 (defn build-workspace [& _]
-  (static-generator/build-full))
+  (try (static-generator/build-full)
+       (finally
+         (System/exit 0))))
 
 (defn watch-workspace [& _]
   (tools/watch-css!)
@@ -54,8 +56,7 @@
                :init init-workspace
                :build build-workspace
                :watch watch-workspace)
-             subcmd-args)
-      (System/exit 0))))
+             subcmd-args))))
 
 
 (defn -build [& _]
