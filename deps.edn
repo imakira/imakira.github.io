@@ -41,7 +41,7 @@
         org.clojure/tools.cli {:mvn/version "1.3.250"}
         clj-commons/pomegranate {:mvn/version "1.2.25"}}
  :paths ["src" "dev" "resources" "orgx" "public" "node_modules"]
- :aliases {:dev {:extra-paths ["dev"]
+ :aliases {:dev {:extra-paths ["dev"  "test"]
                  :extra-deps
                  {lambdaisland/kaocha {:mvn/version "1.91.1392"}
                   refactor-nrepl/refactor-nrepl {:mvn/version "3.11.0"}}
@@ -51,6 +51,7 @@
                      :exec-fn build/uber}
            :build {:exec-fn net.coruscation.cerulean.cli/-build}
            :watch {:exec-fn net.coruscation.cerulean.cli/-watch}
-           :kaocha {:extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+           :kaocha {:extra-pths ["test"]
+                    :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
                     :main-opts ["-m" "kaocha.runner"]}
            }}
