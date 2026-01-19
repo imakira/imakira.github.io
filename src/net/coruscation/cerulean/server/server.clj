@@ -49,13 +49,12 @@
       slash-pages/resource-route]])))
 
 (def app (-> #'router
-             (wrap-content-type)
              (cors/wrap-cors :access-control-allow-origin [#"http://localhost:8080" #"http://localhost:8000"]
                              :access-control-allow-methods [:get :put :post :delete])
              wrap-json-params))
 
 
-(def jetty (atom nil))
+(defonce jetty (atom nil))
 
 (defn generate-all-orgx! []
   (doseq [blog (fetch-all)]
@@ -94,4 +93,4 @@
   (check/environment-check)
   (generate-all-orgx!)
   (maybe-init-orgx-watch!)
-  (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public")) {:port 3001 :join? false})))
+  (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public") (wrap-content-type)) {:port 3004 :join? false})))
