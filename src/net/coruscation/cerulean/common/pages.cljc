@@ -377,7 +377,7 @@
                              "md:text-2xl md:flex-col md:pt-6"
                              "xl:text-2xl xl:flex-col xl:pt-6")}
                    (for [[key {:keys [text href]}] (use-user-config :navigation)]
-                     ($ :div.px-1.group-hover:text-cyan-50 {:key href :class "text-lg"}
+                     ($ :div.px-1.group-hover:text-cyan-50 {:key key :class "text-lg"}
                         ($ router/link {:href href}
                            text))))
 
