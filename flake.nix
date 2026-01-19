@@ -28,6 +28,7 @@
         cerulean-src = pkgs.stdenv.mkDerivation {
           name = "cerulean";
           src = self;
+          buildPhase = '':'';
           installPhase = ''
           mkdir -p $out
           cp -r * $out/
@@ -72,6 +73,7 @@
           version = "0.0";
           dontNpmBuild = true;
           npmDepsHash = (builtins.readFile ./npm-deps.sha256);
+          buildPhase = '':'';
           installPhase = ''
           mkdir $out
           cp -r ./node_modules $out/node_modules
@@ -82,16 +84,13 @@
           { extra-deps }:
           (pkgs.dockerTools.buildLayeredImage {
             name = "cerulean";
-            fromImage = (
-              pkgs.dockerTools.pullImage {
-                imageName = "clojure";
-                imageDigest = "sha256:3326eef6fdb2089c7cb10c330076e8d7b22d1c0d4fd670dad6077789f34d7d66";
-                sha256 = "sha256-qYyLGRF80yBOLKOdaS0r4nbqd+/FuqkXZFS55me5xLM=";
-              }
-            );
             created = "now";
+            tag = "latest";
             contents = [
               clj-bin
+              pkgs.gnumake
+              pkgs.dockerTools.binSh
+              pkgs.dockerTools.usrBinEnv
               (pkgs.buildEnv {
                 name = "image-root";
                 paths = deps  ++ extra-deps;
@@ -103,44 +102,42 @@
             ];
             enableFakechroot = true;
             fakeRootCommands = ''
+              mkdir -p /tmp
               mkdir -p /root
+              chmod 777 /tmp
+              chmod 777 /root
               ln -s "${deps-cache}/.m2" /root/.m2
-              ln -s "${cerulean-src}" /cerulean
+              mkdir -p /cerulean
+              cp -r "${cerulean-src}"/* /cerulean/
+              find -L /cerulean -type d -print0 | xargs -0 chmod ugo+rwx
+              find -L /cerulean -type f -print0 | xargs -0 chmod ugo+rw
             '';
             config = {
-              Cmd = [
-                "/usr/bin/env"
-                "bash"
-              ];
               Env = [
                 "CERULEAN_WORKSPACE=/workspace/"
+                "HOME=/root/"
               ];
               WorkingDir = "/cerulean";
+              Entrypoint = "cerulean";
             };
           });
       in
       {
         packages = {
-
-          # Not ready to use
           uberjar = clj-bin;
-          build = (
-            pkgs.writeShellApplication {
-              name = "build";
-              runtimeInputs = deps;
-              text = ''
-                npm i
-                clj -X:build-full
-              '';
-            }
-          );
           docker = (make-docker { extra-deps = [ ]; });
           docker-dev = (
             make-docker {
               extra-deps = [
+                pkgs.toybox
               ];
             }
           );
+        };
+        devShells.default = pkgs.mkShell {
+          packages =  [
+          ] ++ deps;
+
         };
       }
     );

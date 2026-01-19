@@ -3132,14 +3132,44 @@
       "hash": "sha256-SK+Ln7xwzgCgM5lFhckR5IND3PkmILZ7Ji9iT6UDm5g="
     },
     {
-      "mvn-path": "org/slf4j/jcl-over-slf4j/1.7.36/jcl-over-slf4j-1.7.36.jar",
+      "mvn-path": "org/slf4j/jcl-over-slf4j/2.0.17/jcl-over-slf4j-2.0.17.jar",
       "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-q1fKj9IjdywXNl0SH1npTsvwrlnQjAOjy1uBBxwBkZU="
+      "hash": "sha256-r/0GdxWJ6/5FS7ETFaT0ZuyqE1uV8+eTlTTPHS/XBkw="
     },
     {
-      "mvn-path": "org/slf4j/jcl-over-slf4j/1.7.36/jcl-over-slf4j-1.7.36.pom",
+      "mvn-path": "org/slf4j/jcl-over-slf4j/2.0.17/jcl-over-slf4j-2.0.17.pom",
       "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-vZYkPX1CGM18x9RcDjD6E0gKGk+R01bt19/pPx/7aOY="
+      "hash": "sha256-YaRGiqPB8zyfeSURHybiM5LZ9atx7gy8KHGD/BtSr8U="
+    },
+    {
+      "mvn-path": "org/slf4j/jul-to-slf4j/2.0.17/jul-to-slf4j-2.0.17.jar",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-p6/NI7nP0UdeVclPlDuAjFkiA15+LCpcZaSHpBBrxTg="
+    },
+    {
+      "mvn-path": "org/slf4j/jul-to-slf4j/2.0.17/jul-to-slf4j-2.0.17.pom",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-OMMwoKtfCT5WK1L7Ya7GMK4cH5FAbjz1R3UEXlzPbAM="
+    },
+    {
+      "mvn-path": "org/slf4j/log4j-over-slf4j/2.0.17/log4j-over-slf4j-2.0.17.jar",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-y/MOr5U1ere6v5vhI9qcxwLw/oOyM5K3piWJ1gtYYtE="
+    },
+    {
+      "mvn-path": "org/slf4j/log4j-over-slf4j/2.0.17/log4j-over-slf4j-2.0.17.pom",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-35an+cEk2UwP2EfYccg6PgdGpP+4JxphJ2zPBCrhO6I="
+    },
+    {
+      "mvn-path": "org/slf4j/osgi-over-slf4j/2.0.17/osgi-over-slf4j-2.0.17.jar",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-RPXEx/UvMbXyCM4QtKaxIolRX8iuj4Ct0UeNY0KwffE="
+    },
+    {
+      "mvn-path": "org/slf4j/osgi-over-slf4j/2.0.17/osgi-over-slf4j-2.0.17.pom",
+      "mvn-repo": "https://repo1.maven.org/maven2/",
+      "hash": "sha256-d0jNYGVOvTTi/7QheYWN3LEcsVfci5CC3opN5nPWR3c="
     },
     {
       "mvn-path": "org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
