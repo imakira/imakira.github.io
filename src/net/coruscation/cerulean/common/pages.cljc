@@ -377,10 +377,9 @@
                              "md:text-2xl md:flex-col md:pt-6"
                              "xl:text-2xl xl:flex-col xl:pt-6")}
                    (for [[key {:keys [text href]}] (use-user-config :navigation)]
-                     ($ btn-wrapper {:key key :bg-class "group-hover:bg-yellow-400"}
-                        ($ :div.px-1.group-hover:text-cyan-50 {:key href :class "text-lg"}
-                           ($ router/link {:href href}
-                              text)))))
+                     ($ :div.px-1.group-hover:text-cyan-50 {:key href :class "text-lg"}
+                        ($ router/link {:href href}
+                           text))))
 
                 ($ :div.justify-center.w-full.mb-8.relative.hidden
                    {:class  (if home-page?
