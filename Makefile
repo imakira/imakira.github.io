@@ -1,5 +1,8 @@
 MAKEFLAGS += --always-make
 
+git-add-all:
+	git add ./
+
 watch:
 	clj -X:watch
 
@@ -12,18 +15,18 @@ styles-dev:
 styles-release:
 	npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css
 
-docker-build-and-load:
+docker-build-and-load: git-add-all
 	nix build .#docker
 	docker load < result
 
-docker-build-and-load-dev:
+docker-build-and-load-dev: git-add-all
 	nix build .#docker-dev
 	docker load < result
 
-nix-deps-lock:
+nix-deps-lock: git-add-all
 	nix run github:jlesquembre/clj-nix#deps-lock
 
-nix-npm-deps-lock:
+nix-npm-deps-lock: git-add-all
 	nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256
 
 live-static-site:
