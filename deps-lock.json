@@ -517,34 +517,19 @@
       "hash": "sha256-eQooRkQq9Gt2IPxU8eYGJz4FLYZWBUjDN2sOvrMyc/c="
     },
     {
-      "mvn-path": "com/google/javascript/closure-compiler-main/v20250820/closure-compiler-main-v20250820.pom",
-      "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-RTpfmhncT1tiQ5lFixbbzxInqVrqEWXHrjtzk6JSJrg="
-    },
-    {
       "mvn-path": "com/google/javascript/closure-compiler-parent/v20250407/closure-compiler-parent-v20250407.pom",
       "mvn-repo": "https://repo1.maven.org/maven2/",
       "hash": "sha256-gIfZZbpF+ym1uWLycVnxs1ClNrz9tkrR60Rm3NjjQhc="
     },
     {
-      "mvn-path": "com/google/javascript/closure-compiler-parent/v20250820/closure-compiler-parent-v20250820.pom",
+      "mvn-path": "com/google/javascript/closure-compiler/v20250407/closure-compiler-v20250407.jar",
       "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-TGLuEwK/LAQmDdxPd8klnb9XPzERw66RfUQTowmrGbA="
+      "hash": "sha256-T9qZBdjeV+pa5d+wRGSAwmP1Kn7laZTuFuDOxqadhVQ="
     },
     {
       "mvn-path": "com/google/javascript/closure-compiler/v20250407/closure-compiler-v20250407.pom",
       "mvn-repo": "https://repo1.maven.org/maven2/",
       "hash": "sha256-an9SzlxLwffrGZWsgYf4tYxSKenvccit0xUcMQHV8Y8="
-    },
-    {
-      "mvn-path": "com/google/javascript/closure-compiler/v20250820/closure-compiler-v20250820.jar",
-      "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-Fx0kNU/+fc03j+Tfsw5Gc4WTkfTaEacLoE/awN1NgtI="
-    },
-    {
-      "mvn-path": "com/google/javascript/closure-compiler/v20250820/closure-compiler-v20250820.pom",
-      "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-CWl7ACHLp1ZL6TDjz0+xBY02nFDr4pig8/CciwuBq60="
     },
     {
       "mvn-path": "com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar",
@@ -2052,14 +2037,14 @@
       "hash": "sha256-xRh5Bi5B/58hr6DkCbGZ/+nyo8aucizf7F/Z26BeQXI="
     },
     {
-      "mvn-path": "org/clojure/clojurescript/1.12.116/clojurescript-1.12.116.jar",
+      "mvn-path": "org/clojure/clojurescript/1.12.134/clojurescript-1.12.134.jar",
       "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-ZYzm0QAjccuVJeIe+gzQcAlib5271/4O3b0jOrfNaw8="
+      "hash": "sha256-0Bm3MXfkgFdI9O6ZXEz80U6/KL/2hahAWYE/vk6Mh48="
     },
     {
-      "mvn-path": "org/clojure/clojurescript/1.12.116/clojurescript-1.12.116.pom",
+      "mvn-path": "org/clojure/clojurescript/1.12.134/clojurescript-1.12.134.pom",
       "mvn-repo": "https://repo1.maven.org/maven2/",
-      "hash": "sha256-Y3/CX+5vnjwXcZ53qyDJzjcszzZRFye/UK/2sXjxrOE="
+      "hash": "sha256-cR3RqvaL0oKBJJTjFGmcEWBfbtonopRAP6VWoYbg9As="
     },
     {
       "mvn-path": "org/clojure/core.async/1.8.741/core.async-1.8.741.jar",
