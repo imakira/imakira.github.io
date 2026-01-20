@@ -17,11 +17,13 @@ styles-release:
 	npx @tailwindcss/cli -m -i ./resources/main.css -o ./public/main.css
 
 docker-build-and-load: git-add-all
+	docker image rm cerulean:latest || true
 	nix build .#docker
 	docker load < result
 	docker image tag cerulean:latest ${DOCKER_USERNAME}/cerulean:latest
 
 docker-build-and-load-dev: git-add-all
+	docker image rm cerulean-dev:latest || true
 	nix build .#docker-dev
 	docker load < result
 
@@ -43,13 +45,16 @@ nix-npm-deps-lock: git-add-all
 	nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256
 
 live-static-site:
-	cd docs && python -m http.server
+	cd workspace/docs && python -m http.server
 
 uberjar:
 	clj -X:uberjar
 
 test:
 	clj -M:uberjar:kaocha --skip-meta slow
+
+test-slow:
+	clj -M:uberjar:kaocha --focus-meta slow
 
 test-all:
 	clj -M:uberjar:kaocha
@@ -61,4 +66,3 @@ clj-deps-update:
 	neil dep update
 
 update-dependencies: | npm-update clj-deps-update nix-deps-lock nix-npm-deps-lock
-
