@@ -1,10 +1,10 @@
 (ns net.coruscation.cerulean.server.code-highlight
   (:require
+   [clojure.edn :as edn]
    [clojure.java.io :as io]
-   [net.coruscation.cerulean.server.utils :refer [path-join]]
-   [clojure.edn :as edn])
+   [net.coruscation.cerulean.config :as config]
+   [net.coruscation.cerulean.server.utils :refer [path-join]])
   (:import
-   [java.io File]
    [java.nio.file Files ]
    [java.nio.file.attribute FileAttribute]
    (java.util HashMap)
@@ -13,7 +13,7 @@
 
 (def  graaljs-node-modules-directory "node_modules")
 (def  graaljs-node-modules ["highlight.js"])
-(def  extra-classpath-files ["wrapper.js"])
+(def  extra-files ["wrapper.js"])
 
 (def graaljs-declaration-file-name "graaljs-files.edn")
 
@@ -23,31 +23,33 @@
                module-dir (io/file (path-join graaljs-node-modules-directory module))]
            (assert (.exists module-dir))
            (mapv (fn [file]
-                   (let [path (.toString (.relativize node-modules-path (.toPath file)))]
+                   (let [path (.toString (.relativize (.toAbsolutePath (.toPath (io/file ""))) (.toPath file)))]
                      (if (.isDirectory file)
                        (str path "/")
                        path)))
                  (file-seq (io/file module-dir)))))
-       (apply concat)
+       (apply concat extra-files)
        (into [])))
 
 (defn write-graaljs-files! []
-  (spit (io/file (path-join "./resources" graaljs-declaration-file-name)) (pr-str (into [] (concat (graaljs-files) extra-classpath-files)))))
+  (spit (io/file (path-join "./resources" graaljs-declaration-file-name)) (pr-str (graaljs-files))))
 
 (def node-modules-directory
   (delay
-    (let [dir (Files/createTempDirectory "cerulean-runtime-resources" (into-array FileAttribute []))
-          graaljs-files (edn/read-string (slurp (io/resource graaljs-declaration-file-name)))]
-      (doseq [path graaljs-files]
-        (if (and (.endsWith path "/")
-                 (not (= path "/")))
-          (.mkdirs (io/file (path-join dir path)))
-          (let [dst (io/file (path-join dir path))]
-            (when (.getParentFile dst)
-              (.mkdirs (.getParentFile dst)))
-            (spit dst
-                  (slurp (io/resource path))))))
-      (.toString dir))))
+    (if (config/running-as-jar?)
+      (let [dir (Files/createTempDirectory "cerulean-runtime-resources" (into-array FileAttribute []))
+            graaljs-files (edn/read-string (slurp (io/resource graaljs-declaration-file-name)))]
+        (doseq [path graaljs-files]
+          (if (and (.endsWith path "/")
+                   (not (= path "/")))
+            (.mkdirs (io/file (path-join dir path)))
+            (let [dst (io/file (path-join dir path))]
+              (when (.getParentFile dst)
+                (.mkdirs (.getParentFile dst)))
+              (spit dst
+                    (slurp (io/resource path))))))
+        (.toString dir))
+      "")))
 
 (def ^:dynamic *js-context*
   (delay (-> (Context/newBuilder (into-array String ["js"]))

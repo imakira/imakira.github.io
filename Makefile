@@ -43,13 +43,16 @@ nix-npm-deps-lock: git-add-all
 	nix run nixpkgs#prefetch-npm-deps package-lock.json > npm-deps.sha256
 
 live-static-site:
-	cd docs && python -m http.server
+	cd workspace/docs && python -m http.server
 
 uberjar:
 	clj -X:uberjar
 
 test:
 	clj -M:uberjar:kaocha --skip-meta slow
+
+test-slow:
+	clj -M:uberjar:kaocha --focus-meta slow
 
 test-all:
 	clj -M:uberjar:kaocha
@@ -61,4 +64,3 @@ clj-deps-update:
 	neil dep update
 
 update-dependencies: | npm-update clj-deps-update nix-deps-lock nix-npm-deps-lock
-

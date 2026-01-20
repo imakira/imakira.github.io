@@ -1,5 +1,10 @@
 {:deps {org.clojure/clojure {:mvn/version "1.12.4"}
-        org.clojure/clojurescript {:mvn/version "1.12.116"}
+        org.clojure/clojurescript
+        {:mvn/version  "1.12.134"
+         :exclusions
+         [com.google.javascript/closure-compiler
+          org.clojure/google-closure-library
+          org.clojure/google-closure-library-third-party]}
         org.clojure/core.match {:mvn/version "1.1.0"}
         com.pitch/uix.core {:mvn/version "1.4.8"}
         com.pitch/uix.dom {:mvn/version "1.4.8"}

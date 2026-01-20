@@ -83,9 +83,9 @@
         });
 
         make-docker =
-          { extra-deps }:
+          { extra-deps, name }:
           (pkgs.dockerTools.buildLayeredImage {
-            name = "cerulean";
+            name = name;
             created = "now";
             tag = "latest";
             contents = [
@@ -122,7 +122,6 @@
             '';
             config = {
               Env = [
-                "CERULEAN_WORKSPACE=/workspace/"
                 "HOME=/root/"
               ];
               WorkingDir = "/cerulean";
@@ -133,9 +132,12 @@
       {
         packages = {
           uberjar = clj-bin;
-          docker = (make-docker { extra-deps = [ ]; });
+          docker = (make-docker {
+            name = "cerulean-dev";
+            extra-deps = [ ]; });
           docker-dev = (
             make-docker {
+              name = "cerulean";
               extra-deps = [
                 (pkgs.clojure.override{jdk=pkgs.jdk25_headless;})
                 pkgs.toybox
