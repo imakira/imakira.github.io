@@ -133,11 +133,11 @@
         packages = {
           uberjar = clj-bin;
           docker = (make-docker {
-            name = "cerulean-dev";
+            name = "cerulean";
             extra-deps = [ ]; });
           docker-dev = (
             make-docker {
-              name = "cerulean";
+              name = "cerulean-dev";
               extra-deps = [
                 (pkgs.clojure.override{jdk=pkgs.jdk25_headless;})
                 pkgs.toybox
