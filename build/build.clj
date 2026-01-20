@@ -1,10 +1,9 @@
 (ns build
   (:require
    [clojure.edn :as edn]
-   [clojure.java.io :as io]
    [clojure.tools.build.api :as b]
-   [net.coruscation.cerulean.server.code-highlight :refer [extra-classpath-files
-                                                           graaljs-files
+   [net.coruscation.cerulean.config :refer [running-as-jar-resource-stub]]
+   [net.coruscation.cerulean.server.code-highlight :refer [graaljs-files
                                                            write-graaljs-files!]]
    [net.coruscation.cerulean.server.utils :refer [path-join]]))
 
@@ -44,32 +43,35 @@
               :class-dir class-dir}))
 
 
-(defn uber [_]
+(defn uber [&  _]
   (clean nil)
   (write-graaljs-files!)
   (b/copy-dir {:src-dirs ["src" "resources" "dev"]
                :target-dir class-dir})
+
   (doseq [f (graaljs-files)]
     (when (not (.endsWith f "/"))
-      (b/copy-file {:src (path-join "./node_modules" f)
+      (b/copy-file {:src (path-join f)
                     :target (path-join class-dir f)})))
-  (doseq [f extra-classpath-files]
-    (b/write-file {:path f
-                   :string (slurp (io/resource f))}))
+
+  (b/write-file {:path (path-join class-dir running-as-jar-resource-stub)
+                 :content "true"})
+
   (b/compile-clj {:basis basis
                   :src-dirs ["src"]
                   :class-dir class-dir})
   (b/uber {:class-dir class-dir
            :uber-file uber-file
            :basis basis
-           :main 'net.coruscation.cerulean.cli}))
+           :exclude [#"lib/reflect.js" #"lib/goog.js" #"lib/base.js"]
+           :main 'net.coruscation.cerulean.cli
+           :conflict-handlers {#".*" :warn}}))
 
 (defn deploy [opts]
   (jar opts)
   ((requiring-resolve 'deps-deploy.deps-deploy/deploy)
-    (merge {:installer :remote
-                       :artifact jar-file
-                       :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
-                    opts))
+   (merge {:installer :remote
+           :artifact jar-file
+           :pom-file (b/pom-path {:lib lib :class-dir class-dir})}
+          opts))
   opts)
-

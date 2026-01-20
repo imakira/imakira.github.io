@@ -1,6 +1,12 @@
 (ns net.coruscation.cerulean.config
   (:require
+   [clojure.java.io :as io]
    [net.coruscation.cerulean.server.utils :refer [path-join]]))
+
+(defonce running-as-jar-resource-stub "net.coruscation.cerulean.running_as_jar")
+
+(defn running-as-jar? []
+  (io/resource running-as-jar-resource-stub))
 
 (def ^:private blog-dir "/blogs")
 (def ^:private cache-dir "/.cache")
@@ -8,7 +14,8 @@
 
 (def ^:dynamic *workspace* (or (System/getProperty "net.coruscation.cerulean")
                                (System/getenv "CERULEAN_WORKSPACE")
-                               (System/getProperty "user.dir")))
+                               (path-join (System/getProperty "user.dir")
+                                          "workspace")))
 
 (def ^:dynamic *blog-dir*
   (path-join *workspace*
