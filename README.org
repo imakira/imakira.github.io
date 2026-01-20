@@ -7,12 +7,64 @@ Blogging program written in Clojure/ClojureScript.
 1. First class org-mode support
 2. Use Emacs itself to convert Org files into HTML
 3. Embed Clojure/ClojureScript code in a org mode file (more on [[https://coruscation.net/blogs/something-like-mdx-but-with-clojure-and-org-mode-for-my-personal-blog--part-i.html][here]])
-4. Static generated site, single page applicatoin After rehydration on the browser.
+4. Static generated site, single page applicatoin after rehydration on the browser.
 5. [TODO] Optional JavaScript-free
 
 * Install & Usage
 
-TODO
++ Warning: early stage of development, expect:
+  - excessive debug logging
+  - not user-friendly error log
+  - unhandled (not so) edge case
+  - undocumented usage
+
+** Using Docker
+
++ Pull the latest docker image
+
+  #+BEGIN_SRC bash
+  docker pull coruscation/cerulean:latest
+  #+END_SRC
+
++ Create a directory, say ~workspace~
+
+  #+BEGIN_SRC bash
+    mkdir workspace 
+    cd workspace
+  #+END_SRC
+
++ Init the workspace
+
+  #+BEGIN_SRC bash
+  docker run --rm -it --user 1000:100 -v ./:/cerulean/workspace coruscation/cerulean:latest init
+  #+END_SRC
+
+  It will create a configuration file: ~config.edn~ and a demo blog ~blogs/demo.org~.
+  Check the ~config.edn~ for available configuration and ~blogs/demo.org~ for example usage.
+
+  Documentations are working in progress.
+
++ Build the workspace
+
+  #+BEGIN_SRC bash
+  docker run --rm -it --user 1000:100 -v ./:/cerulean/workspace coruscation/cerulean:latest build
+  #+END_SRC
+
+  The generated static pages are put in ~docs~ directory, readly to be served under static site hosting service, e.g. Github Pags.
+  
+
++ Watch the workspace
+
+  #+BEGIN_SRC bash
+    docker run --rm -it --user 1000:100 -p 8083:3001 -p 9630:9630 -v ./:/cerulean/workspace coruscation/cerulean:latest watch
+  #+END_SRC
+
+  Open the browser at ~localhost:8083~.
+
+  Then edit the ~blogs/demo.org~ to see the result reflect on the web page.
+
+  (Note: this function is not fully supported as of now, refresh the page if necessary)
+
 
 * Example Site
 
