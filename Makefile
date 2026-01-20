@@ -31,7 +31,7 @@ define with-secrets
 	env env $$(gpg --batch --decrypt --passphrase $$CERULEAN_PASSPHRASE  ./secrets.gpg | xargs) $(MAKE) $1
 endef
 
-docker-publish-impl:
+docker-publish-impl: docker-build-and-load
 	docker login -u ${DOCKER_USERNAME} -p $${DOCKER_TOKEN}
 	docker push ${DOCKER_USERNAME}/cerulean
 
