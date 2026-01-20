@@ -1,4 +1,5 @@
 MAKEFLAGS += --always-make
+DOCKER_USERNAME = coruscation
 
 git-add-all:
 	git add ./
@@ -18,10 +19,22 @@ styles-release:
 docker-build-and-load: git-add-all
 	nix build .#docker
 	docker load < result
+	docker image tag cerulean:latest ${DOCKER_USERNAME}/cerulean:latest
 
 docker-build-and-load-dev: git-add-all
 	nix build .#docker-dev
 	docker load < result
+
+define with-secrets
+	env env $$(gpg --batch --decrypt --passphrase $$CERULEAN_PASSPHRASE  ./secrets.gpg | xargs) $(MAKE) $1
+endef
+
+docker-publish-impl:
+	docker login -u ${DOCKER_USERNAME} -p $${DOCKER_TOKEN}
+	docker push ${DOCKER_USERNAME}/cerulean
+
+docker-publish:
+	$(call with-secrets,docker-publish-impl)
 
 nix-deps-lock: git-add-all
 	nix run github:jlesquembre/clj-nix#deps-lock
@@ -48,3 +61,4 @@ clj-deps-update:
 	neil dep update
 
 update-dependencies: | npm-update clj-deps-update nix-deps-lock nix-npm-deps-lock
+
