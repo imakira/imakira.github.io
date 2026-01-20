@@ -1,8 +1,12 @@
 (ns build
   (:require
    [clojure.edn :as edn]
+   [clojure.java.io :as io]
    [clojure.tools.build.api :as b]
-   [net.coruscation.cerulean.server.code-highlight :refer [write-graaljs-files!]]))
+   [net.coruscation.cerulean.server.code-highlight :refer [extra-classpath-files
+                                                           graaljs-files
+                                                           write-graaljs-files!]]
+   [net.coruscation.cerulean.server.utils :refer [path-join]]))
 
 (def project (-> (edn/read-string (slurp "deps.edn"))
                  :aliases :neil :project))
@@ -43,8 +47,15 @@
 (defn uber [_]
   (clean nil)
   (write-graaljs-files!)
-  (b/copy-dir {:src-dirs ["src" "resources" "dev" "node_modules"]
+  (b/copy-dir {:src-dirs ["src" "resources" "dev"]
                :target-dir class-dir})
+  (doseq [f (graaljs-files)]
+    (when (not (.endsWith f "/"))
+      (b/copy-file {:src (path-join "./node_modules" f)
+                    :target (path-join class-dir f)})))
+  (doseq [f extra-classpath-files]
+    (b/write-file {:path f
+                   :string (slurp (io/resource f))}))
   (b/compile-clj {:basis basis
                   :src-dirs ["src"]
                   :class-dir class-dir})
