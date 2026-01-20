@@ -54,7 +54,7 @@
              wrap-json-params))
 
 
-(defonce jetty (atom nil))
+(def jetty (atom nil))
 
 (defn generate-all-orgx! []
   (doseq [blog (fetch-all)]
@@ -93,4 +93,4 @@
   (check/environment-check)
   (generate-all-orgx!)
   (maybe-init-orgx-watch!)
-  (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public") (wrap-content-type)) {:port 3004 :join? false})))
+  (reset! jetty (jetty/run-jetty (-> #'app (wrap-file "./public") (wrap-content-type)) {:port 3001 :join? false})))
