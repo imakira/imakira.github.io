@@ -71,6 +71,7 @@
 
         dev-deps = with pkgs; [
           jdk25_headless
+          (pkgs.clojure.override{jdk=pkgs.jdk25_headless;})
         ];
 
         ci-deps = with pkgs; [
