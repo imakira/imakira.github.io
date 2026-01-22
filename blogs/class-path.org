@@ -1,19 +1,196 @@
-#+title: (Draft) Class Path
+#+title: About Dynamic Adding to Classpath in Clojure
 #+CATEGORY: Coding
 #+ORGX: true
-#+UNLISTED: true
+#+UNLISETD: true
 
-#+begin_orgx_note
-This post is a draft
-#+end_orgx_note
+#+begin_orgx_warn
+This post is unfinished
+#+end_orgx_warn
 
-* Chap. 1
+
+Well, I guess people will just inevitably get into the problem of ~classpath~, one way or another. The great post [[https://lambdaisland.com/blog/2021-08-25-classpath-is-a-lie][The Classpath is a Lie]] described the problem very well: /classpath is a lie/. ~classpath~, /per se/, is a simple list separated by colons, however, the read work is done by the ~Classloader~.
+
+Nevertheless, this isn't a post talking about [[https://www.infoworld.com/article/2171026/find-a-way-out-of-the-classloader-maze.html][how ~classpath~ is a a problem dating back to the early Java dates]]. There are already a lot of great articles talking about it, and I can't claim I understand ~ClassLoaders~ in Clojure to the extent that I can confidently teach others about it.
+
+* Use Builtin clojure.core/add-classpath
+
+~Clojure~ has a builtin ~add-classpath~ function. Although it has been deprecated, it works for simple use case.
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (setq-local cider-buffer-ns 'demo)
+  (setq-local org-babel-clojure-backend 'cider)
+#+END_SRC
+
+#+RESULTS:
+: cider
+
+#+BEGIN_SRC clojure :exports none
+(ns demo
+    (:require [clojure.java.io :as io])
+    (:import (java.nio.file Files Path)
+             (java.io File)
+             (java.net URI)))
+#+END_SRC
+
+#+RESULTS:
+: nil
+
+
+#+BEGIN_SRC clojure :results output
+  (in-ns 'demo)
+
+  (defn check-dynamic-load []
+    (let [tmp-dir (.toFile (Files/createTempDirectory "classpath-demo" (into-array java.nio.file.attribute.FileAttribute [])))
+          tmp-clj (File/createTempFile "demo" ".clj" tmp-dir)
+          tmp-name (subs (.getName tmp-clj)
+                         0
+                         (.lastIndexOf (.getName tmp-clj)
+                                       "."))]
+      ;; Add `tmp-dir` to `classpath` using builtin `add-classpath`.
+      (add-classpath (.toURL tmp-dir))
+
+      ;; Put a Clojure file under the directory
+      (spit tmp-clj
+            (str "(ns " tmp-name ") (def a 1)"))
+                                          ;
+      ;; `require` the Clojure file, and resolve the variable
+      (assert (= 1 (var-get (requiring-resolve (symbol tmp-name
+                                                       "a")))))
+
+      ;; Update the Clojure file
+      (spit tmp-clj
+            (str "(ns " tmp-name ") (def a 2)"))
+
+      ;; Reload the Clojure file
+      (require (symbol tmp-name)
+               :reload-all)
+
+      ;; We can read the new value
+      (assert (= 2 (var-get (requiring-resolve (symbol tmp-name
+                                                       "a")))))
+      (println "sucess")))
+
+  ;; success
+  (check-dynamic-load)
+#+END_SRC
+
+#+RESULTS:
+: WARNING: add-classpath is deprecated
+: sucess
+
+However, there is a reason of it being deprecated. We can check its source code:
+
+#+BEGIN_SRC java
+ // The method used by clojure.core/add-classpath
+#+END_SRC
+#+BEGIN_SRC java
+  static public void addURL(Object url) throws MalformedURLException{
+  	URL u = (url instanceof String) ? toUrl((String) url) : (URL) url;
+  	ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+  	if(ccl instanceof DynamicClassLoader)
+  		((DynamicClassLoader)ccl).addURL(u);
+  	else
+  		throw new IllegalAccessError("Context classloader is not a DynamicClassLoader");
+  }
+#+END_SRC
+
+If checks if the current thread's ~ContextClassLoader~ is a ~DynamicClassLoader~. If so, it will call the ~ClassLoader~'s ~addURL~ method.
+That means, this method will fail if there's some toolset sets the current ~ContextClassLoader~ to something other than a ~DynamicClassLoader~.
+
+#+BEGIN_SRC clojure :results output
+  (in-ns 'demo)
+
+  (let [future
+        (future
+          (let [cl (.getContextClassLoader (Thread/currentThread))]
+            (.setContextClassLoader (Thread/currentThread)
+                                    (java.net.URLClassLoader. (into-array java.net.URL [])
+                                                              cl)))
+  	    (try (check-dynamic-load)
+               (assert "unreachable")
+               (catch Throwable t
+                 (println "dynamic loading failed"))))]
+    ;; "dynamic loading failed"
+    @future)
+#+END_SRC
+
+#+RESULTS:
+: WARNING: add-classpath is deprecated
+: dynamic loading failed
+
+
+* Use ~add-classpath~ from ~pomegranate~
+
+[[https://github.com/clj-commons/pomegranate][pomegranate]] provides a ~add-classpath~ solves the problem described in the previous section.
+
+#+BEGIN_SRC clojure
+  (ns demo
+    (:require
+     [cemerick.pomegranate :as pomegranate]))
+
+  (defn check-dynamic-load-using-pomegranate []
+    (let [;; ...
+          ]
+      ;; same code as `check-dynamic-load`
+      (pomegranate/add-classpath (.toURL tmp-dir))
+      ;; same code as `check-dynamic-load`
+      ))
+
+  (let [future
+        (future
+          (let [cl (.getContextClassLoader (Thread/currentThread))]
+            (.setContextClassLoader (Thread/currentThread)
+                                    (java.net.URLClassLoader. (into-array java.net.URL [])
+                                                              cl)))
+          (check-dynamic-load-use-pomegranate)
+          (print "success"))]
+    ;; success
+    @future)
+#+END_SRC
+
+Unlike ~add-classpath~ from ~clojure.core~, ~pomegranate~'s ~add-classpath~ try to find the ~ClassLoader~ closest to the /Primordial ClassLoader/ that is compatible with ~add-classpath~, and call the ~addURL~ method from it.
+
+#+BEGIN_SRC clojure
+  ;; `add-classpath` function in pomegranate.clj  
+  (let [classloaders (classloader-hierarchy)]
+        (if-let [cl (last (filter modifiable-classloader? classloaders))]
+          (add-classpath jar-or-dir cl)
+          (throw (IllegalStateException. (str "Could not find a suitable classloader to modify from "
+                                              (mapv (fn [^ClassLoader c]
+                                                      (-> c .getClass .getSimpleName))
+                                                    classloaders))))))
+#+END_SRC
+
+
+* Add to ~classpath~ When Running as an AOT Jar File
+
+If you run Clojure with ~clj~ command or with ~nrepl~, the default ~ClassLoader~ will certainly be ~DynamicClassLoader~ set by one of those tools. However, if you compile your Clojure code into an uberjar, and run it directly with ~java -jar~. The ~ClassLoader~ would just be the one provided by Java. As this is one of the advantages of AOT compilation stated by [[https://clojure.org/reference/compilation][the Clojure documentation]].
+
+#+begin_quote
+Some reasons to use AOT compilation are:
++ ...
++ To create an application that does not need runtime bytecode generation and custom classloaders
+#+end_quote
+
+This problem is quite easy to solve, we just need to set the ~ContextClassLoader~ to a ~DynamicClassLoader~ created by ourself.
+
+#+BEGIN_SRC clojure
+  (defn -main [& args]
+    (let [cl (.getContextClassLoader (Thread/currentThread))]
+      (.setContextClassLoader (Thread/currentThread) (clojure.lang.DynamicClassLoader. cl)))
+    ;; other code...
+    )
+#+END_SRC
+
+Only one thing needs to be noted about is...
+
+* Misc.1
 
 - [[https://www.infoworld.com/article/2171026/find-a-way-out-of-the-classloader-maze.html][Find a way out of the ClassLoader maze]] :: A problem dated back to the early Java era. Two parallel systems of getting a ~ClassLoader~.
 - [[https://danielsz.github.io/2021-05-12T13_24.html][Once Upon a Class]] :: How Clojure solves the problem of dynamic loading Java Classes. ~DynamicClassLoader~, and its issues.
 - [[https://lambdaisland.com/blog/2021-08-25-classpath-is-a-lie][The Classpath is a Lie]] :: How to realistically dynamic add classpath so that Clojure can know how to do a ~require~.
 
-* Chap. 2
+* Misc.2
 
 - builtin Clojure ~add-classpath~
 - pomegranate's ~add-classpath~
