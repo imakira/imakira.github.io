@@ -1,19 +1,15 @@
 #+title: About Dynamic Adding to Classpath in Clojure
 #+CATEGORY: Coding
 #+ORGX: true
-#+UNLISTED: true
-
-#+begin_orgx_warn
-This post is unfinished
-#+end_orgx_warn
+#+PUBLISHED_DATE: 2026-01-23T20:19:30Z
 
 Well, I guess people will just inevitably get into the problem of ~classpath~, one way or another. [[https://lambdaisland.com/blog/2021-08-25-classpath-is-a-lie][The Classpath is a Lie]] described the problem very well: /classpath is a lie/. ~classpath~, /per se/, is a simple list separated by colons, however, the real work is done by the ~Classloader~.
 
 Nevertheless, this isn't a post talking about ~classpath~ and ~ClassLoader~. There are already a lot of great articles talking about it ([[#links][links]] at the end of this post), and I can't claim I understand ~ClassLoaders~ to the extent that I can confidently teach others about it either.
 
-This is a blog about what I have found during the process of trying to adding new directories to ~classpath~ and ~require~ Clojure files in them at runtime. ~ClassLoader~ in Clojure is something very messy. The best strategy probably is to avoid the problem altogether. But still, if you really want to do it, I wish the following content can offer some help.
+This is a blog about what I have found during the process of trying to add new directories to ~classpath~ and ~require~ Clojure files in them at runtime. ~ClassLoader~ in Clojure is something very messy. The best strategy probably is to avoid the problem altogether. But still, if you really want to do it, I wish the following content can offer some help.
 
-* Use Builtin clojure.core/add-classpath
+* Use Builtin ~clojure.core/add-classpath~
 
 ~Clojure~ has a builtin ~add-classpath~ function. Although it has been deprecated, it works for simple use cases.
 
@@ -77,21 +73,19 @@ This is a blog about what I have found during the process of trying to adding ne
 : WARNING: add-classpath is deprecated
 : success
 
-If we evaluate the above code in a REPL or in cider, it works and prints "success". As we can see from the code, we can ~require~ a Clojure file whose path determinated at runtime, and reload it to get the updated value.
+If we evaluate the above code in a REPL or in cider, it works and prints "success". As we can see from the code, we can ~require~ a Clojure file whose path determined at runtime, and reload it to get the updated value.
 
 However, there is a reason of it being deprecated. We can check its source code:
 
 #+BEGIN_SRC java
- // The method used by clojure.core/add-classpath
-#+END_SRC
-#+BEGIN_SRC java
+  // The method used by clojure.core/add-classpath
   static public void addURL(Object url) throws MalformedURLException{
-  	URL u = (url instanceof String) ? toUrl((String) url) : (URL) url;
-  	ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-  	if(ccl instanceof DynamicClassLoader)
-  		((DynamicClassLoader)ccl).addURL(u);
-  	else
-  		throw new IllegalAccessError("Context classloader is not a DynamicClassLoader");
+        URL u = (url instanceof String) ? toUrl((String) url) : (URL) url;
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        if(ccl instanceof DynamicClassLoader)
+                ((DynamicClassLoader)ccl).addURL(u);
+        else
+                throw new IllegalAccessError("Context classloader is not a DynamicClassLoader");
   }
 #+END_SRC
 
@@ -99,7 +93,7 @@ It checks if the current thread's ~ContextClassLoader~ is a ~DynamicClassLoader~
 That means, this method will fail if there's some code set the current ~ContextClassLoader~ to something other than a ~DynamicClassLoader~.
 
 #+begin_orgx_note
-We expect ~add-classpath~ continues to work in case because the convention of setting a new ~ClassLoader~ is to set the current ~ClassLoader~ as the parent of the newly created ~ClassLoader~.
+We expect ~add-classpath~ continues to work in case because the convention of setting a new ~ClassLoader~ is to set the current ~ClassLoader~ as the parent of the newly created ~ClassLoader~. However, ~clojure.core/add-classpath~ only checks the current ~ClassLoader~, more on this in the section.
 #+end_orgx_note
 
 #+BEGIN_SRC clojure :results output
@@ -124,7 +118,7 @@ We expect ~add-classpath~ continues to work in case because the convention of se
 
 * Use ~add-classpath~ from ~pomegranate~
 
-[[https://github.com/clj-commons/pomegranate][pomegranate]] provides a ~add-classpath~ solves the problem described in the previous section.
+[[https://github.com/clj-commons/pomegranate][pomegranate]] provides a ~add-classpath~ that solves the problem described in the previous section.
 
 The only thing we need to change is to replace ~clojure.core/add-classpath~ with ~cemerick.pomegranate/add-classpath~.
 
@@ -147,7 +141,7 @@ The only thing we need to change is to replace ~clojure.core/add-classpath~ with
             (.setContextClassLoader (Thread/currentThread)
                                     (java.net.URLClassLoader. (into-array java.net.URL [])
                                                               cl)))
-          (check-dynamic-load-use-pomegranate)
+          (check-dynamic-load-using-pomegranate)
           (print "success"))]
     ;; success
     @future)
@@ -171,7 +165,7 @@ Unlike ~add-classpath~ from ~clojure.core~, ~pomegranate~'s ~add-classpath~ try 
 
 If you are running Clojure in REPL or with ~nrepl~, the ~ContextClassLoader~ of the current thread will certainly be ~DynamicClassLoader~, set by one of those tools. However, when you run ~clj~ command in a non-interactive manner, or use a AOT-compiled jar file, this wouldn't be the case.
 
-This problem is quite easy to solve, we just need to set the ~ContextClassLoader~ to a ~DynamicClassLoader~ created by ourself in the entrypoint of the program.
+This problem is quite easy to solve, we just need to set the ~ContextClassLoader~ to a ~DynamicClassLoader~ created by ourselves in the entrypoint of the program.
 
 #+BEGIN_SRC clojure
   (defn -main [& args]
@@ -183,9 +177,9 @@ This problem is quite easy to solve, we just need to set the ~ContextClassLoader
 
 * When Using ~kaocha~
 
-So far, so good. Except when you finish the code and try to test some code and run it under the [[https://github.com/lambdaisland/kaocha][kaocha]] test runner. ~kaocha~ also did it own thing with ~ClassLoader~ and provides a ~add-classpath~ method. It breaks the previous method.
+So far, so good. Except when you finish the code and try to test some code and run it under the [[https://github.com/lambdaisland/kaocha][kaocha]] test runner. ~kaocha~ also did its own thing with ~ClassLoader~ and provides a ~add-classpath~ method. It breaks the previous method.
 
-By detecting ~kaocha~'s presence and calling its ~add-classpath~, along side with the ~pomegranate~ one solves the issue for me.
+By detecting ~kaocha~'s presence and calling its ~add-classpath~, alongside with the ~pomegranate~ one solves the issue for me.
 
 #+BEGIN_SRC clojure
   (when (find-ns 'kaocha.classpath)
@@ -197,7 +191,7 @@ By detecting ~kaocha~'s presence and calling its ~add-classpath~, along side wit
 
 * A Few More Words
 
-This post is definitely not comprehensive, and there are still a lot things I currently do not understand. The method I posed works for me, for now. If you want to understand more about this topic, I list a few lists below.
+This post is definitely not comprehensive, and there are still a lot things I currently do not understand. The method I have described works for me for now. If you want to understand more about this topic, I have listed a few lists below.
 
 * Links
 :PROPERTIES:

@@ -1,1 +1,0 @@
-{:lint-as {uix.core/defui clojure.core/defn}}
