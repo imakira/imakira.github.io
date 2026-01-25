@@ -1,0 +1,110 @@
+#+title: Build a ClojureScript Application Running on Node Using Nix
+#+CATEGORY: Coding
+#+ORGX: true
+
+To build a ClojureScript application, we need to pull dependencies from two package managers. That is, JavaScript packages from ~npm~ and Clojure packages from ~deps.edn~. After pulling the dependencies, we can then let ~shadow-cljs~ compiles the ClojureScript files into a single javascript and make the result a npm package. In this post, we rely on ~nixpkgs~'s builtin ~fetchNpmDeps~ and ~buildNpmPackage~ for the npm side, and [[https://github.com/jlesquembre/clj-nix][clj-nix]] for the nix side.
+
+#+begin_orgx_note
+- *changelog*   Jan 17, 2026: use a new method to build the nix package, supports git repos, reduces output size.
+#+end_orgx_note
+
+* Prerequisites
+
+I will skip the details that are not unique to Nix. The following contents assume we already have a working shadow-cljs project that can produce a node.js target when running ~npm run release~. Which is basically:
+
+- a ~:node-script~ target in ~shadow-cljs.edn~, with ~:main~ function specified
+- a ~release~ script in package.json, most probably ~shadow-cljs release script~
+- an entry script specified in ~bin~ in package.json.
+
+* Prefetch and generate lock file for dependencies
+
+During the /build/ phase of nix package, the process cannot perform any network request, as that will defeat the whole point of /determinism/. The common practice is to use a /lock file/. Which is essentially a recipe of all the necessary resources (and their checksums) for the building process. We can then prefetch all the resources into the nix store and tell the building process where to find the necessary resources during the actual building.
+
+On the npm side, we do it by running the following command. It will output a sha256 code, we save it for later.
+
+#+BEGIN_SRC bash
+  nix run nixpkgs#prefetch-npm-deps package-lock.json
+#+END_SRC
+
+On the Clojure side, we execute the following command. It will generate a ~deps-lock.json~ file. We will refer it in the ~flake.nix~.
+
+#+BEGIN_SRC bash
+nix run github:jlesquembre/clj-nix#deps-lock
+#+END_SRC
+
+* Build with shadow-cljs and ~mkCljLib~
+
+We need to add ~clj-nix~'s overlays to our flake.nix to be able to use ~mkCljLib~.
+
+#+BEGIN_SRC nix
+
+  pkgs = import nixpkgs {
+    inherit system;
+    overlays = [
+      clj-nix.overlays.default
+    ];
+  };
+#+END_SRC
+
+First, we create a ~node_modules~ derivative which we will use later.
+
+#+BEGIN_SRC nix
+
+  deps-hash = "deps-hash";
+
+  npm-deps = pkgs.buildNpmPackage(finalAttrs: {
+    src = self;
+    pname = "package-npm-deps";
+    version = "0.0";
+    dontNpmBuild = true;
+    npmDepsHash = deps-hash;
+    installPhase = ''
+    mkdir $out
+    cp -r ./node_modules $out/node_modules
+    '';
+  });
+#+END_SRC
+
+We will use ~mkCljLib~ to setup Clojure dependencies for us, while we copy JavaScript dependencies from the earlier step manually.
+
+#+BEGIN_SRC nix
+
+  build = pkgs.mkCljLib {
+    projectSrc = self;
+    name = "espoir";
+    buildCommand = "
+    # copy node_modules from earlier step to build directory
+    cp -r ${npm-deps}/node_modules ./node_modules
+    ${pkgs.nodejs}/bin/npm run release
+    ";
+    installPhase = ''
+    mkdir -p $out
+    cp -R * $out/
+    '';
+  };
+#+END_SRC
+
+In the ~buildCommand~, we setup the JavaScript dependencies, and call ~npm run release~ which in turn calls ~shadow-cljs~ to build the project.
+
+In ~installPhase~, we override the install process provided by ~mkCljLib~. Instead, we simply use all the files in the build directory as output.
+
+* Package results as a npm package
+
+We can directly feed output from the earlier example to ~builNpmPackage~. Since we already build the package, we will set ~dontNpmBuild = true;~.
+
+The install process provided by ~buildNpmPackage~ will package necessary dependencies and generate an executable calling the entry script. 
+
+#+BEGIN_SRC nix
+
+  packages.default = pkgs.buildNpmPackage {
+    pname = "espoir";
+    src = build;
+    dontNpmBuild = true;
+    version = "0.0.1";
+    npmDepsHash = deps-hash;
+  };
+#+END_SRC
+
+* Tips
+
+- Check [[https://github.com/imakira/espoir/blob/main/flake.nix][imakira/espoir/blob/main/flake.nix]] for a working example.

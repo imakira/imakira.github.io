@@ -1,0 +1,31 @@
+#+title: Build Something Similar to MDX but with Clojure and org-mode for My Personal Blog
+#+CATEGORY: Coding
+#+ORGX: true
+#+UNLISTED: true
+#+ORGX_REQUIRE: [[net.coruscation.cerulean.components :as comp] [orgx.note :as note]]
+
+#+begin_uix
+($ note/component "This post is a draft")
+#+end_uix
+
+One thing I always want to have for this blog is, the ability to use arbitrary component defined in Clojure code (this blog program is written in Clojure/ClojureScript).
+
+There is already [[https://mdxjs.com/][MDX]] in the JavaScript world. We could turn our org files into markdown files, generate JavaScript files from them using ~MDX~, and use the JS files from ClojureScript. But doing this way means we will have to using JavaScript to do Server Side Rendering or Static Generation, while this blog is doing static generation using Clojure on the JVM.
+
+Instead, we could also generated Clojure code from the Org files. Although Cljc code is not of pure s-expression, it is still rather easy to manipulate. Doing this will also allow us to use Cljc conditional macros. Thus it works well with static generation on the JVM. 
+
+This post is composed of two parts. The first is about how I make it; some details specified to this blog program are omitted. The second part illustrates its features.
+
+* Generate Clojure Code from Org file
+
+This is a somewhat difficult problem to tackle. The method I have chosen is to use HTML as an intermediary format. 
+
+** Convert Org File into HTML
+
+** Convert HTML into Clojure code
+
+* Make ~shadow-cljs~ Recognize and Compile Them as Modules
+
+* Dynamically Load Modules from The Blog Program
+
+* Demonstration
