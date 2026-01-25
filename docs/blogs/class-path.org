@@ -189,6 +189,19 @@ By detecting ~kaocha~'s presence and calling its ~add-classpath~, alongside with
      new-path))
 #+END_SRC
 
+* Pitfall When Using a Threadpool
+
+When you create a thread, the new thread will inherit the ~ContextClassLoader~ of the thread created it. However when you explicitly or implicitly (like when using ~future~) use a threadpool, the executor may choose an existing thread, which could have a ~ContextClassLoader~ different from the calling thread.
+
+You may consider creating a thread directly instead of relying on ~future~ in this case.
+
+#+BEGIN_SRC clojure
+  (doto (Thread/new
+         (bound-fn []
+           ;; code
+           ))
+    (.start))
+#+END_SRC
 
 * A Few More Words
 

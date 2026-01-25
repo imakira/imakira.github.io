@@ -1,1 +1,0 @@
-{"version":3,"sources":["net/coruscation/cerulean/variables.cljc"],"mappings":";;;AAEA,qDAAA,rDAAeA","names":["net.coruscation.cerulean.variables/*rss*"],"sourcesContent":["(ns net.coruscation.cerulean.variables)\n\n(def ^:dynamic *rss* false)\n"]}
