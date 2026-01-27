@@ -13,5 +13,6 @@
                       :href "https://github.com/imakira"}
               :projects {:text "PROJECTS"
                          :href "https://github.com/imakira"}}
- :special-pages ["about"]}
+ :special-pages ["about"]
+ :cloudflare-analytics {:token "378b384e4ad04d7984098518f0a8ec72"}}
 
